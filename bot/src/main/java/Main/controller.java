@@ -18,6 +18,7 @@ public class controller {
         addCommands();
 
         JDA jda = new JDABuilder(token.getToken()).build();
+        token = null;
         jda.addEventListener(new eventListener(this));
     }
 
