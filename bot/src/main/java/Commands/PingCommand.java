@@ -10,7 +10,7 @@ public class PingCommand extends Command{
         MessageChannel channel = event.getChannel();
         long time = System.currentTimeMillis();
         channel.sendMessage("Pong: " + time).queue(response->{
-            response.editMessageFormat("Pong: %d ms", System.currentTimeMillis() - time);
+            response.editMessageFormat("Pong: %d ms", (System.currentTimeMillis() - time));
         });
     }
 }
