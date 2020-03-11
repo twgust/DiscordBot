@@ -1,8 +1,6 @@
 package Main;
 
-import Commands.Command;
-import Commands.CommandMap;
-import Commands.HelloCommand;
+import Commands.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -35,5 +33,7 @@ public class controller {
 
     private void addCommands(){
         cmdMap.put("Hello", new HelloCommand());
+        cmdMap.put("GoodBye", new GoodbyeCommand());
+        cmdMap.put("Ping", new PingCommand());
     }
 }
