@@ -7,13 +7,13 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.security.auth.login.LoginException;
 
 /**
- * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID.
+ * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
  */
 public class controller {
     public controller() throws LoginException {
 
 
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XkvVmw.atQ2blQD0B-R0lcKUEsD9tAfCx8").build();
+        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XmiwqA.JfjTrbb2mAW0HBhMpTYTuh1QogE").build();
         jda.addEventListener(new eventListener(this));
     }
 
