@@ -7,7 +7,7 @@ import javax.security.auth.login.LoginException;
 import javax.swing.*;
 
 /**
- * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID.
+ * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
  */
 public class controller {
     public controller() throws LoginException {
