@@ -6,16 +6,18 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
  */
 public class controller {
     private CommandMap cmdMap = new CommandMap();
-    public controller() throws LoginException {
+    private Token token = new Token();
+    public controller() throws LoginException, IOException {
         addCommands();
 
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.Xmi1Qw.YWg2zrgmgaPk-hcnD1q93a3Ot1E").build();
+        JDA jda = new JDABuilder(token.getToken()).build();
         jda.addEventListener(new eventListener(this));
     }
 
