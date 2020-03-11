@@ -1,6 +1,4 @@
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.exceptions.RateLimitedException;
+package Main;
 
 
 public class Bot {
