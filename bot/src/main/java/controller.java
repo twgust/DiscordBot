@@ -13,7 +13,7 @@ public class controller {
     public controller() throws LoginException {
 
 
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XkvVmw.atQ2blQD0B-R0lcKUEsD9tAfCx8").build();
+        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XmiwqA.JfjTrbb2mAW0HBhMpTYTuh1QogE").build();
         jda.addEventListener(new eventListener(this));
     }
 
