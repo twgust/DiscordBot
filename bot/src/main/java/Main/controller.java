@@ -27,7 +27,9 @@ public class controller {
      */
     public void processMessage(GuildMessageReceivedEvent event){
         String[] arguments = event.getMessage().getContentRaw().substring(1).split(" ");
+
         arguments[0] = arguments[0].substring(0,1).toUpperCase()+arguments[0].substring(1);
+
         ((Command)cmdMap.get(arguments[0])).execute(event);
     }
 
