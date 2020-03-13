@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -17,16 +18,15 @@ public class WeatherCommand extends Command{
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         String recievedMessage = event.getMessage().getContentRaw();
-        String city = recievedMessage.substring(9);
 
 
         OWM owm = new OWM("19c501207c33f1d716f086176d524036");
         //try catch som fångar API exception, beror förmodligen på fel stad namn.
         try {
             //nedan finns kod för att få max och min temperatur.
-
             //String tempMax = (int) Math.round(Objects.requireNonNull(cwm.getMainData().getTempMax() - 273.15)) + "°C";
             //String tempMin = (int) Math.round(Objects.requireNonNull(cwm.getMainData().getTempMin() - 273.15)) + "°C";
+            String city = recievedMessage.substring(9);
             CurrentWeather cwm = owm.currentWeatherByCityName(city);
             String currentCondition = "";
             String currentConditionImg = "";
@@ -45,12 +45,16 @@ public class WeatherCommand extends Command{
             try {
                 currentCondition = cwm.getWeatherList().get(0).getDescription();
                 currentConditionImg = cwm.getWeatherList().get(0).getIconLink();
+                char[] arr = currentCondition.toCharArray();
+                arr[0] = Character.toUpperCase(arr[0]);
+                currentCondition = new String(arr);
                 countryCode = cwm.getSystemData().getCountryCode();
-                tempCurr = (int) Math.round(cwm.getMainData().getTemp() - 273.15) + "°C";
+                tempCurr = (int) Math.round(cwm.getMainData().getTemp() - 273.15) + "°C "  + "(" + Math.round((cwm.getMainData().getTemp())*(1.8)-(459.67)) + "°F)";
                 time = cwm.getDateTime();
                 humidity = Double.toString(cwm.getMainData().getHumidity());
                 windDirectionTemp = cwm.getWindData().getDegree();
-                windDirection = calculateWindDirection(windDirectionTemp);windSpeed = Double.toString(cwm.getWindData().getSpeed());
+                windDirection = calculateWindDirection(windDirectionTemp);
+                windSpeed = Double.toString(cwm.getWindData().getSpeed()) + " m/s "+ "(" + Double.toString(Math.round(cwm.getWindData().getSpeed()*2.23693629)) + " mph)";
                 emojiId = cwm.getWeatherList().get(0).getIconCode();
                 emojiCode = Integer.toString(cwm.getWeatherList().get(0).getConditionId());
                 emoji = getEmojiForCondition(emojiCode, emojiId);
@@ -67,13 +71,14 @@ public class WeatherCommand extends Command{
             weather.setFooter("Powered by OpenWeatherMap.org","https://raw.githubusercontent.com/ioBroker/ioBroker.openweathermap/master/admin/openweathermap.png");
             TemporalAccessor currTime = OffsetDateTime.now();
             weather.setTimestamp(currTime);
-            weather.addField("💨 Wind",windSpeed + " m/s" + " from the " + windDirection , false);
+            weather.addField("💨 Wind",windSpeed + " from the " + windDirection , false);
             weather.addField("💧 Humidity", humidity + "%" , false);
 
 
             event.getChannel().sendMessage(weather.build()).queue();
+            city = "";
 
-        }catch (APIException e) {
+        }catch (APIException | NullPointerException | IndexOutOfBoundsException e) {
            event.getChannel().sendMessage("Invalid city name").queue();
         }
 
