@@ -13,6 +13,7 @@ import javax.security.auth.login.LoginException;
 public class controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
+
     public controller() throws LoginException {
         addCommands();
 
@@ -22,18 +23,19 @@ public class controller {
 
     /**
      * Denna metod skall söka och exekvera vilket kommando det är som är kallat på från användaren.
+     *
      * @param event
      */
-    public void processMessage(GuildMessageReceivedEvent event){
-        String[] arguments = event.getMessage().getContentRaw().substring(1).split(" ");
+    public void processMessage(GuildMessageReceivedEvent event) {
+        String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
-        arguments[0] = arguments[0].substring(0,1).toUpperCase()+arguments[0].substring(1);
-
-        if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0])) ((Command)cmdMap.get(arguments[0])).execute(event);
+        arguments[0] = arguments[0].substring(0, 1).toUpperCase() + arguments[0].substring(1);
+        if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
+            ((Command) cmdMap.get(arguments[0])).execute(event);
         else error.throwMissingCommand(event);
     }
 
-    private void addCommands(){
+    private void addCommands() {
         cmdMap.put("Hello", new HelloCommand());
         cmdMap.put("GoodBye", new GoodbyeCommand());
         cmdMap.put("Ping", new PingCommand());
