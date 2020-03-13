@@ -15,4 +15,8 @@ public class CommandMap {
     public Object get(String key){
         return cmdMap.get(key);
     }
+
+    public boolean containsKey(String key){
+        return cmdMap.containsKey(key);
+    }
 }

@@ -12,6 +12,7 @@ import javax.security.auth.login.LoginException;
  */
 public class controller {
     private CommandMap cmdMap = new CommandMap();
+    private ErrorCommand error = new ErrorCommand();
     public controller() throws LoginException {
         addCommands();
 
@@ -28,7 +29,8 @@ public class controller {
 
         arguments[0] = arguments[0].substring(0,1).toUpperCase()+arguments[0].substring(1);
 
-        ((Command)cmdMap.get(arguments[0])).execute(event);
+        if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0])) ((Command)cmdMap.get(arguments[0])).execute(event);
+        else error.throwMissingCommand(event);
     }
 
     private void addCommands(){
