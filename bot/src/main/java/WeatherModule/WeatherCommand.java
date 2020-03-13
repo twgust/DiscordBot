@@ -6,11 +6,11 @@ import net.aksingh.owmjapis.core.OWM;
 import net.aksingh.owmjapis.model.CurrentWeather;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.OffsetDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
-import java.util.Arrays;
-import java.util.Date;
-
+import java.util.Locale;
 
 
 public class WeatherCommand extends Command{
@@ -18,7 +18,6 @@ public class WeatherCommand extends Command{
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         String recievedMessage = event.getMessage().getContentRaw();
-
 
         OWM owm = new OWM("19c501207c33f1d716f086176d524036");
         //try catch som fångar API exception, beror förmodligen på fel stad namn.
@@ -32,39 +31,97 @@ public class WeatherCommand extends Command{
             String currentConditionImg = "";
             String countryCode = "";
             String tempCurr = "";
-            Date time = null;
+            Instant time;
+            ZonedDateTime zdt = null;
+            ZoneId zoneId;
             String humidity = "";
             double windDirectionTemp = 0;
             String windDirection = "";
             String windSpeed = "";
+            double cityLat = 0;
+            double cityLng = 0;
             String emojiId = "";
             String emojiCode = "";
             String emoji = "";
+            String timezone = "";
+            DateTimeFormatter dtf = null;
 
-            //try catch som försöker instansiera alla variabler med data, vissa kan ej nullpointerexception.
+            //följande try catcher finns för att enstaka variabler kan bli null.
+            //Då skickar botten ut Invaliad city name som inte är sant
+
             try {
                 currentCondition = cwm.getWeatherList().get(0).getDescription();
-                currentConditionImg = cwm.getWeatherList().get(0).getIconLink();
-                char[] arr = currentCondition.toCharArray();
-                arr[0] = Character.toUpperCase(arr[0]);
-                currentCondition = new String(arr);
+            }catch (NullPointerException e){
+                currentCondition = "Could not be found.";
+            }
+
+            currentConditionImg = cwm.getWeatherList().get(0).getIconLink();
+            char[] arr = currentCondition.toCharArray();
+            arr[0] = Character.toUpperCase(arr[0]);
+            currentCondition = new String(arr);
+
+            try {
                 countryCode = cwm.getSystemData().getCountryCode();
+            }catch (NullPointerException e){
+                countryCode = "FLAG 404";
+            }
+
+            try {
                 tempCurr = (int) Math.round(cwm.getMainData().getTemp() - 273.15) + "°C "  + "(" + Math.round((cwm.getMainData().getTemp())*(1.8)-(459.67)) + "°F)";
-                time = cwm.getDateTime();
+            } catch (NullPointerException e) {
+                tempCurr = "Temperature could not be found";
+            }
+
+            try {
                 humidity = Double.toString(cwm.getMainData().getHumidity());
+            }catch (NullPointerException e) {
+                humidity = "Humidity could not be found";
+            }
+
+
+            try {
                 windDirectionTemp = cwm.getWindData().getDegree();
                 windDirection = calculateWindDirection(windDirectionTemp);
+            }catch (NullPointerException e) {
+                windDirection = "direction could not be found";
+            }
+
+            try {
                 windSpeed = Double.toString(cwm.getWindData().getSpeed()) + " m/s "+ "(" + Double.toString(Math.round(cwm.getWindData().getSpeed()*2.23693629)) + " mph)";
-                emojiId = cwm.getWeatherList().get(0).getIconCode();
+            }catch (NullPointerException e) {
+                windSpeed = "Speed could not be found";
+            }
+
+            emojiId = cwm.getWeatherList().get(0).getIconCode();
+
+            try {
                 emojiCode = Integer.toString(cwm.getWeatherList().get(0).getConditionId());
                 emoji = getEmojiForCondition(emojiCode, emojiId);
-            }catch (NullPointerException e){
-                event.getChannel().sendMessage("Something wrong with input or API, try again please").queue();
+            } catch (NullPointerException e) {
+                emoji = "☁";
             }
+
+            try {
+                cityLat = cwm.getCoordData().getLatitude();
+                cityLng = cwm.getCoordData().getLongitude();
+            }catch (NullPointerException e) {
+                cityLat = 0;
+                cityLng = 0;
+            }
+
+            timezone = getTimeZone(cityLat, cityLng);
+            time = Instant.now();
+            zoneId = ZoneId.of(timezone);
+            zdt = ZonedDateTime.ofInstant(time, zoneId);
+            dtf = new DateTimeFormatterBuilder().appendPattern("HH:mm, EEEE dd-MM-yyyy").toFormatter(Locale.ENGLISH);
+            System.out.println(cwm.getCoordData().getLatitude());
+            System.out.println(cwm.getCoordData().getLongitude());
+            System.out.println(timezone);
+
 
             EmbedBuilder weather =  new EmbedBuilder();
             weather.setColor(0x349CEE);
-            weather.setTitle("Weather in " +cwm.getCityName() + " at " + time + " " + countryCodeToEmoji(countryCode));
+            weather.setTitle("Weather in " +cwm.getCityName() + " at " + zdt.format(dtf) + " " + countryCodeToEmoji(countryCode));
             weather.addField("🌡 Temperature", tempCurr , true);
             weather.addField(emoji + " Current condition", currentCondition , true);
             weather.setThumbnail( currentConditionImg);
@@ -76,10 +133,10 @@ public class WeatherCommand extends Command{
 
 
             event.getChannel().sendMessage(weather.build()).queue();
-            city = "";
+            city = ""; //anropas för att tomma strängen.
 
-        }catch (APIException | NullPointerException | IndexOutOfBoundsException e) {
-           event.getChannel().sendMessage("Invalid city name").queue();
+        }catch (APIException /*| NullPointerException */|  IndexOutOfBoundsException  e) {
+           event.getChannel().sendMessage("Invalid city name or time format").queue();
         }
 
     }
@@ -169,8 +226,11 @@ public class WeatherCommand extends Command{
         else if (iconCode.equals("800")) {
             return clearskyday;
         }
-        else if (iconCode.equals("801") || iconId.equals("02d") || iconId.equals("02n")) {
+        else if (iconCode.equals("801") && iconId.equals("02d")) {
             return fewclouds;
+        }
+        else if(iconCode.equals("801") && iconId.equals("02n")) {
+            return scatterdclouds;
         }
         else if (iconCode.equals("802") || iconId.equals("03d") || iconId.equals("03n")) {
             return scatterdclouds;
@@ -184,5 +244,7 @@ public class WeatherCommand extends Command{
         else return brokenclouds;
     }
 
-
+    public String getTimeZone(double lat, double lng){
+        return  TimezoneMapper.latLngToTimezoneString(lat, lng);
+    }
 }
