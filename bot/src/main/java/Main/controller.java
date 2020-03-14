@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.*;
+import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -18,6 +19,7 @@ public class controller {
         addCommands();
 
         JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.Xmi1Qw.YWg2zrgmgaPk-hcnD1q93a3Ot1E").build();
+
         jda.addEventListener(new eventListener(this));
     }
 
@@ -43,5 +45,6 @@ public class controller {
         cmdMap.put("Hello", new HelloCommand());
         cmdMap.put("GoodBye", new GoodbyeCommand());
         cmdMap.put("Ping", new PingCommand());
+        cmdMap.put("Weather", new WeatherCommand());
     }
 }
