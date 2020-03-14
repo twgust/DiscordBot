@@ -27,12 +27,16 @@ public class controller {
      * @param event
      */
     public void processMessage(GuildMessageReceivedEvent event) {
-        String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
+        try {
+            String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
-        arguments[0] = arguments[0].substring(0, 1).toUpperCase() + arguments[0].substring(1);
-        if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
-            ((Command) cmdMap.get(arguments[0])).execute(event);
-        else error.throwMissingCommand(event);
+            arguments[0] = arguments[0].substring(0, 1).toUpperCase() + arguments[0].substring(1);
+            if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
+                ((Command) cmdMap.get(arguments[0])).execute(event);
+            else error.throwMissingCommand(event);
+        }catch (Exception e){
+            error.throwFailedMessageProcessing(event);
+        }
     }
 
     private void addCommands() {
