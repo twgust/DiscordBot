@@ -1,14 +1,21 @@
 package Main;
 
+import LastfmModule.LastFmCommand;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import javax.annotation.Nonnull;
+
 public class eventListener extends ListenerAdapter {
+    private LastFmCommand lastFmCommand;
+
     public char getPrefix() {
         return prefix;
     }
 
-    private char prefix = '%';
+    private static char prefix = '%';
     private controller ctrl;
 
     public eventListener(controller ctrl){
@@ -26,4 +33,9 @@ public class eventListener extends ListenerAdapter {
             ctrl.processMessage(event);
         }
     }
+
+    public static void setPrefix(char inprefix) {
+        prefix = inprefix;
+    }
+
 }

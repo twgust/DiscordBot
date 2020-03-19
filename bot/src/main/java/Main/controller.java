@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.*;
+import LastfmModule.LastFmCommand;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -18,9 +19,11 @@ public class controller {
     public controller() throws LoginException {
         addCommands();
 
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.Xmi1Qw.YWg2zrgmgaPk-hcnD1q93a3Ot1E").build();
+        JDA jda = new JDABuilder(/*"Njg3MjMxNTc3MDAwMTE2MjI0.Xmi1Qw.YWg2zrgmgaPk-hcnD1q93a3Ot1E"*/
+        "Njc4MDM3ODcwNTMxMDUxNTMx.XmvhHw.Oauh9nH0bsgZGQzLQluloQi61TE").build();
 
         jda.addEventListener(new eventListener(this));
+        jda.addEventListener(new LastFmCommand());
     }
 
     /**
@@ -42,5 +45,7 @@ public class controller {
         cmdMap.put("GoodBye", new GoodbyeCommand());
         cmdMap.put("Ping", new PingCommand());
         cmdMap.put("Weather", new WeatherCommand());
+        cmdMap.put("Prefix", new PrefixCommand());
+        cmdMap.put("Fm", new LastFmCommand());
     }
 }
