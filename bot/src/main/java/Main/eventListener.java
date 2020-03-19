@@ -22,7 +22,7 @@ public class eventListener extends ListenerAdapter {
      */
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         String msg = event.getMessage().getContentRaw();
-        if (!event.getMember().getUser().isBot() && msg.charAt(0) == prefix){
+        if (!event.getMember().getUser().isBot() && msg.charAt(0) == prefix && event.getMessage().getAttachments().isEmpty()){
             ctrl.processMessage(event);
         }
     }
