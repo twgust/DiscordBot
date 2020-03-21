@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandMap {
-    private Map cmdMap = Collections.synchronizedMap(new HashMap());
+    private Map<String, Command> cmdMap = Collections.synchronizedMap(new HashMap());
 
     public void put(String key, Command cmd){
         cmdMap.put(key, cmd);
@@ -14,5 +14,9 @@ public class CommandMap {
 
     public Object get(String key){
         return cmdMap.get(key);
+    }
+
+    public boolean containsKey(String key){
+        return cmdMap.containsKey(key);
     }
 }
