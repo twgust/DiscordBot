@@ -1,15 +1,10 @@
 package Main;
 
-import LastfmModule.LastFmCommand;
-import net.dv8tion.jda.api.EmbedBuilder;
+import LastfmModule.LastFmCommandOld;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import javax.annotation.Nonnull;
-
 public class eventListener extends ListenerAdapter {
-    private LastFmCommand lastFmCommand;
 
     public char getPrefix() {
         return prefix;

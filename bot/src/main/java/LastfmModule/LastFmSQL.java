@@ -1,5 +1,7 @@
 package LastfmModule;
 
+import de.umass.lastfm.Period;
+
 import java.sql.*;
 
 public class LastFmSQL {
@@ -24,31 +26,69 @@ public class LastFmSQL {
 
     }
 
-    public String[] listUsers(){
+    public String[] listUser(String period, String username){
+        String trackPeriod = "";
+        String artistPeriod = "";
+        if (period.equalsIgnoreCase("week"))
+        {
+            trackPeriod = "toptracksWeek";
+            artistPeriod = "topartistsWeek";
+        }
+        else if (period.equalsIgnoreCase("1month"))
+        {
+            trackPeriod = "toptracks1Month";
+            artistPeriod = "topartists1Month";
+        }
+        else if (period.equalsIgnoreCase("month"))
+        {
+            trackPeriod = "toptracks3Month";
+            artistPeriod = "topartists3Month";
+        }
+        else if (period.equalsIgnoreCase("6month"))
+        {
+            trackPeriod = "toptracks6Month";
+            artistPeriod = "topartists6Month";
+        }
+        else if (period.equalsIgnoreCase("12month"))
+        {
+            trackPeriod = "toptracks12Month";
+            artistPeriod = "topartists12Month";
+        }
+        else if (period.equalsIgnoreCase("overall"))
+        {
+            trackPeriod = "toptracksOverall";
+            artistPeriod = "topartistsOverall";
+        }
+        else {
+            trackPeriod = "toptracksWeek";
+            artistPeriod = "topartistsWeek";
+        }
+
         String [] data = new String[4];
 
         try {
 
             this.state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM fmUsers");
+            ResultSet rs = state.executeQuery("SELECT "+trackPeriod+", "+artistPeriod+" FROM fmUsers WHERE fmUsername = '"+username+"';");
             String discordID = "";
-            String username = "";
+            String usernametemp = "";
             String toptracks = "";
             String topartists = "";
             while (rs.next()){
-                discordID += rs.getString("discordID") + " ";
-                username += rs.getString("fmUsername") + " ";
-                toptracks += rs.getString("toptracks") + " ";
-                topartists += rs.getString("topartists") + " ";
+                //discordID += rs.getString("discordID") + " ";
+                //usernametemp += rs.getString("fmUsername") + " ";
+                toptracks += rs.getString(trackPeriod) + " ";
+                topartists += rs.getString(artistPeriod) + " ";
 
 
             }
-            data[0] = discordID;
-            data[1] = username;
+            //data[0] = discordID;
+            //data[1] = usernametemp;
             data[2] = toptracks;
             data[3] = topartists;
             //System.out.println(data[0] + " " + data[1] + " " +data[2]+ " " + data[3]);
-            System.out.println(data[2]);
+            //System.out.println(data[2]);
+            //System.out.println(data[3]);
 
         } catch (SQLException e) {
 
@@ -75,40 +115,25 @@ public class LastFmSQL {
         }
     }
 
-    public void executeQuery(String discordID, String fmUsername, String toptracks, String topartists){
-        String updateQuery = "UPDATE fmUsers SET toptracks = '"+toptracks+"', topartists = '"+topartists+"', fmUsername = '"+fmUsername+"' WHERE discordID = '"+discordID+"';";
-        String insertQuery = "INSERT INTO fmUsers(discordID, fmUsername, toptracks, topartists) VALUES('"+discordID+"', '"+fmUsername+"', '"+toptracks+"', '"+topartists+"');";
-        try {
-            if(checkQuery(discordID)){
-                //System.out.println("found");
-                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks = ?, topartists = ?, fmUsername = ? WHERE discordID = ?;");
-                ps.setString(1,toptracks);
-                ps.setString(2,topartists);
-                ps.setString(3, fmUsername);
-                ps.setString(4, discordID);
-                ps.executeUpdate();
-                //state.executeUpdate(updateQuery);
-            }
-            else {
-                //System.out.println("notfound");
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO fmUsers(discordID, fmUsername, toptracks, topartists) VALUES (?, ?, ?, ?);");
+    //ANVÄNDS ENDAST OM ANVÄNDAREN INTE FINNS I SYSTEMET
+    public void setUsername (String discordID, String username){
+        if(!checkQuery(discordID))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO fmUsers(discordID, fmUsername) VALUES (?,?);");
                 ps.setString(1, discordID);
-                ps.setString(2, fmUsername);
-                ps.setString(3, toptracks);
-                ps.setString(4, topartists);
+                ps.setString(2, username);
                 ps.executeUpdate();
-
-                //state.executeUpdate(insertQuery);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-
-        } catch (SQLException e) {
-            System.out.println("sqlexception");
-            e.printStackTrace();
         }
+        else updateUsername(discordID, username);
 
     }
+
     public void updateUsername(String discordID, String username){
+
         try {
             PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET fmUsername = ? WHERE discordID = ?;");
             ps.setString(1, username);
@@ -119,25 +144,144 @@ public class LastFmSQL {
         }
     }
 
-    public void updateTopTracks(String discordID, String toptracks){
-        try {
-            PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks = ? WHERE discordID = ?;");
-            ps.setString(1, toptracks);
-            ps.setString(1, discordID);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void updateTopTracks(String username, String toptracks, String period){
+
+        if (period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("week"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracksWeek = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+        else if (period.equalsIgnoreCase("1month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks1Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(period.equalsIgnoreCase("3month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks3Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(period.equalsIgnoreCase("6month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks6Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (period.equalsIgnoreCase("12month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracks12Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (period.equalsIgnoreCase("overall"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET toptracksOverall = ? WHERE fmUsername = ?;");
+                ps.setString(1, toptracks);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
-    public void updateTopArtists(String discordID, String topartists){
-        try {
-            PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartists = ? WHERE discordID = ?;");
-            ps.setString(1, topartists);
-            ps.setString(2, discordID);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void updateTopArtists(String username, String topartists, String period){
+        if (period.equalsIgnoreCase("week"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartistsWeek = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (period.equalsIgnoreCase("1month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartists1Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(period.equalsIgnoreCase("3month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartists3Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(period.equalsIgnoreCase("6month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartists6Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (period.equalsIgnoreCase("12month"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartists12Month = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (period.equalsIgnoreCase("overall"))
+        {
+            try {
+                PreparedStatement ps = conn.prepareStatement("UPDATE fmUsers SET topartistsOverall = ? WHERE fmUsername = ?;");
+                ps.setString(1, topartists);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -161,7 +305,19 @@ public class LastFmSQL {
         }
         else return false;
 
+    }
 
+    public String getUsername(String discordID){
+        String username = "";
+        try {
+            this.state = conn.createStatement();
+            ResultSet rs = state.executeQuery("SELECT fmUsername FROM fmUsers WHERE discordID ='"+discordID+"';");
+            username = rs.getString("fmUsername");
+            System.out.println(username);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return username;
     }
 
     public void deleteQuery(String discordID, String username){
@@ -180,11 +336,13 @@ public class LastFmSQL {
         String test = "test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n ";
         LastFmSQL sql = new LastFmSQL();
         sql.checkQuery("110372734118174720");
-        //sql.executeQuery("test", "test", test, "test");
-        sql.updateUsername("test", "jabba");
-        //sql.deleteQuery("test", "test");
-        //sql.deleteQuery("110372734118174720", "test");
-        sql.listUsers();
+        sql.setUsername("test", "test");
+        sql.updateUsername("test", "dab");
+        String test1 = "dab";
+        sql.getUsername("110372734118174720");
+        sql.getUsername("110372734118174720");
+
+
 
         sql.closeConnection();
     }
