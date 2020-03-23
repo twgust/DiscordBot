@@ -1,6 +1,6 @@
 package Commands;
 
-import Main.eventListener;
+import Main.EventListener;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -19,7 +19,7 @@ public class PrefixCommand extends Command {
                 } else if (recievedMessage.length() == 0) {
                     event.getChannel().sendMessage("You didn't enter a prefix").queue();
                 } else {
-                    eventListener.setPrefix(recievedMessage.charAt(0));
+                    EventListener.setPrefix(recievedMessage.charAt(0));
                     event.getChannel().sendMessage("The prefix is now " + "'" + recievedMessage + "'").queue();
                 }
             }
