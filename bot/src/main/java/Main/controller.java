@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
@@ -19,11 +20,10 @@ public class controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
-
-    public controller() throws LoginException {
-
-
-        JDA jda = new JDABuilder().build();
+    private Token token;
+    public controller() throws LoginException, IOException {
+        token = new Token();
+        JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
         jda.addEventListener(new eventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
