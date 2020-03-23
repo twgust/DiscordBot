@@ -2,10 +2,12 @@ package Main;
 
 import Commands.*;
 import ModerationModule.BanCommand;
+import ModerationModule.KickCommand;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
@@ -16,7 +18,7 @@ import javax.security.auth.login.LoginException;
 public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
-    private GuildChannel logChannel;
+    private TextChannel logChannel;
 
     public Controller() throws LoginException {
         addCommands();
@@ -50,13 +52,14 @@ public class Controller {
         cmdMap.put("Ping", new PingCommand());
         cmdMap.put("Weather", new WeatherCommand());
         cmdMap.put("Ban", new BanCommand(this));
+        cmdMap.put("Kick", new KickCommand(this));
     }
 
-    public GuildChannel getLogChannel() {
+    public TextChannel getLogChannel() {
         return logChannel;
     }
 
-    public void setLogChannel(GuildChannel logChannel) {
+    public void setLogChannel(TextChannel logChannel) {
         this.logChannel = logChannel;
     }
 }
