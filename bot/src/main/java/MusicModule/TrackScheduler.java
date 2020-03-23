@@ -6,14 +6,18 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import java.util.Queue;
+//TODO skapa en lista/kö för musikmodulen, skriva queue metoden
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
 
+
     public TrackScheduler(AudioPlayer player){
+
         this.player = player;
+
     }
     public void queue(AudioTrack track){
-
 
     }
     @Override
@@ -29,6 +33,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         // A track started playing
+
     }
 
     @Override

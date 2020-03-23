@@ -5,7 +5,7 @@ package Main;
  */
 public class Bot {
     public static void main(String[] args) throws Exception{
-        controller ctrl = new controller();
+        Controller ctrl = new Controller();
     }
 }
 
