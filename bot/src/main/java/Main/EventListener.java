@@ -1,7 +1,6 @@
 package Main;
 
 import Commands.ErrorCommand;
-import LastfmModule.LastFmCommandOld;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
