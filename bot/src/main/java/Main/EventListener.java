@@ -4,16 +4,16 @@ import Commands.ErrorCommand;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class eventListener extends ListenerAdapter {
+public class EventListener extends ListenerAdapter {
     public char getPrefix() {
         return prefix;
     }
 
     private char prefix = '%';
-    private controller ctrl;
+    private Controller ctrl;
     private ErrorCommand error = new ErrorCommand();
 
-    public eventListener(controller ctrl) {
+    public EventListener(Controller ctrl) {
         this.ctrl = ctrl;
     }
 

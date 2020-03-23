@@ -1,9 +1,11 @@
 package Main;
 
 import Commands.*;
+import ModerationModule.BanCommand;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
@@ -11,16 +13,17 @@ import javax.security.auth.login.LoginException;
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
  */
-public class controller {
+public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
+    private GuildChannel logChannel;
 
-    public controller() throws LoginException {
+    public Controller() throws LoginException {
         addCommands();
 
         JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XnMmBg.IcdqgV4zHDMHDGesLh2m-XY6X2U").build();
 
-        jda.addEventListener(new eventListener(this));
+        jda.addEventListener(new EventListener(this));
     }
 
     /**
@@ -46,5 +49,14 @@ public class controller {
         cmdMap.put("GoodBye", new GoodbyeCommand());
         cmdMap.put("Ping", new PingCommand());
         cmdMap.put("Weather", new WeatherCommand());
+        cmdMap.put("Ban", new BanCommand(this));
+    }
+
+    public GuildChannel getLogChannel() {
+        return logChannel;
+    }
+
+    public void setLogChannel(GuildChannel logChannel) {
+        this.logChannel = logChannel;
     }
 }
