@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.ErrorCommand;
+import MusicModule.Music;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -12,6 +13,7 @@ public class eventListener extends ListenerAdapter {
     private char prefix = '%';
     private controller ctrl;
     private ErrorCommand error = new ErrorCommand();
+    private Music music;
 
     public eventListener(controller ctrl) {
         this.ctrl = ctrl;

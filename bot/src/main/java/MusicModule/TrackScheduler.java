@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
-//TODO skapa en lista/kö för musikmodulen, skriva queue metoden
+//TODO skapa en lista/kö för musikmodulen, skriva addToQueue metoden
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final Queue<MusicInfo> queue;
@@ -27,19 +27,24 @@ public class TrackScheduler extends AudioEventAdapter {
         this.queue = new LinkedBlockingQueue<>(); //FIFO principle, first in first out
 
     }
-    public void queue(AudioTrack track, Member user){
+    public void addToQueue(AudioTrack track, Member user){
         MusicInfo info = new MusicInfo(track, user);
         queue.add(info);
         if(player.getPlayingTrack() == null){
             player.playTrack(track);
+
+            //debugging
+            System.out.println("IDENTIFIER: " + track.getIdentifier() + "\n");
+            System.out.println("INFO: " + track.getInfo() + "\n");
+            System.out.println("TRACK STATE: " + track.getState() + "\n");
+            System.out.println("TRACK DURATION: " + track.getDuration());
+
         }
     }
-    //@Override
-    public void onPlayerPause(GuildMessageReceivedEvent event, AudioPlayer player) {
+
+    @Override
+    public void onPlayerPause(AudioPlayer player) {
         player.setPaused(true);
-        event.getChannel().sendMessage("Music has been paused");
-
-
         // Player was paused
     }
 
@@ -73,16 +78,19 @@ public class TrackScheduler extends AudioEventAdapter {
         // endReason == STOPPED: The player was stopped.
         // endReason == REPLACED: Another track started playing while this had not finished
         // endReason == CLEANUP: Player hasn't been queried for a while, if you want you can put a
-        //                       clone of this back to your queue
+        //                       clone of this back to your addToQueue
     }
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        // An already playing track threw an exception (track end event will still be received separately)
+        System.out.println("onTrackException");
     }
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-        // Audio track has been unable to provide us any audio, might want to just start a new track
+        System.out.println("onTrackStuck TrackScheduler");
+    }
+    public MusicInfo getTrackInfo(AudioTrack track){
+        return queue.stream().filter(musicInfo -> musicInfo.getTrack().equals(track)).findFirst().orElse(null);
     }
 }
