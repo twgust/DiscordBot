@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.ErrorCommand;
+import LastfmModule.LastFmCommandOld;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -9,10 +10,9 @@ public class EventListener extends ListenerAdapter {
         return prefix;
     }
 
-    private char prefix = '%';
+    public static char prefix = '%';
     private Controller ctrl;
     private ErrorCommand error = new ErrorCommand();
-
     public EventListener(Controller ctrl) {
         this.ctrl = ctrl;
     }
@@ -32,4 +32,9 @@ public class EventListener extends ListenerAdapter {
         } catch (Exception e){
         }
     }
+
+    public static void setPrefix(char inprefix) {
+        prefix = inprefix;
+    }
+
 }

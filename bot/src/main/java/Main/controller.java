@@ -3,6 +3,7 @@ package Main;
 import Commands.*;
 import ModerationModule.BanCommand;
 import ModerationModule.KickCommand;
+import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -12,20 +13,36 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
 
+import LastfmModule.LastFmCommand;
+import LastfmModule.LastFmCommandOldv2;
+import LastfmModule.TestingClass;
+import WeatherModule.WeatherCommand;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
  */
 public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
+    private EventWaiter waiter;
+    private Token token;
     private TextChannel logChannel;
 
-    public Controller() throws LoginException {
-        addCommands();
-
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XnMmBg.IcdqgV4zHDMHDGesLh2m-XY6X2U").build();
-
+    public Controller() throws LoginException, IOException {
+        token = new Token();
+        JDA jda = new JDABuilder(token.getToken()).build();
+        waiter = new EventWaiter();
         jda.addEventListener(new EventListener(this));
+        jda.addEventListener(new LastFmCommand(waiter));
+        jda.addEventListener(waiter);
+        addCommands();
     }
 
     /**
@@ -37,22 +54,25 @@ public class Controller {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
-            arguments[0] = arguments[0].substring(0, 1).toUpperCase() + arguments[0].substring(1);
+            arguments[0] = arguments[0].toLowerCase();
             if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
                 ((Command) cmdMap.get(arguments[0])).execute(event);
             else error.throwMissingCommand(event);
-        }catch (Exception e){
+        } catch (Exception e) {
             error.throwFailedMessageProcessing(event);
         }
     }
 
     private void addCommands() {
-        cmdMap.put("Hello", new HelloCommand());
-        cmdMap.put("GoodBye", new GoodbyeCommand());
-        cmdMap.put("Ping", new PingCommand());
-        cmdMap.put("Weather", new WeatherCommand());
-        cmdMap.put("Ban", new BanCommand(this));
-        cmdMap.put("Kick", new KickCommand(this));
+        cmdMap.put("hello", new HelloCommand());
+        cmdMap.put("goodBye", new GoodbyeCommand());
+        cmdMap.put("ping", new PingCommand());
+        cmdMap.put("weather", new WeatherCommand());
+        cmdMap.put("ban", new BanCommand(this));
+        cmdMap.put("kick", new KickCommand(this));
+        cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
+        cmdMap.put("prefix", new PrefixCommand());
+        cmdMap.put("fm", new LastFmCommand(waiter));
     }
 
     public TextChannel getLogChannel() {
