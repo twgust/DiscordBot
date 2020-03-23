@@ -125,7 +125,8 @@ public class LastFmSQL {
                 ps.setString(2, username);
                 ps.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+                updateUsername(discordID, username);
+                //e.printStackTrace();
             }
         }
         else updateUsername(discordID, username);
@@ -289,21 +290,26 @@ public class LastFmSQL {
 
     public boolean checkQuery(String query) {
         String discordID = "";
+        String usernameDB = "";
         try {
             this.state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM fmUsers");
+            ResultSet rs = state.executeQuery("SELECT fmUsername,discordID FROM fmUsers WHERE discordID = '"+query+"';");
             while (rs.next()) {
-                discordID += rs.getString("discordID") + " ";
+                discordID = rs.getString("discordID");
+                usernameDB = rs.getString("fmUsername");
+                //System.out.println(discordID);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println("discordID not found in database (SQLException)");
             return false;
         }
         //System.out.println(discordID);
-        if (!discordID.equals("")){
-            return discordID.contains(query);
+        //System.out.println(discordID.contains(query));
+        if(discordID.equals("")){
+            return false;
         }
-        else return false;
+        else return usernameDB != null;
 
     }
 
@@ -321,7 +327,7 @@ public class LastFmSQL {
     }
 
     public void deleteQuery(String discordID, String username){
-        String query = "DELETE FROM fmUsers WHERE fmUsername = '" + username + "' AND discordID = '"+discordID+"';";
+        String query = "UPDATE fmUsers SET fmUsername = "+null+" WHERE discordID = '"+discordID+"';";
         try {
             this.state = conn.createStatement();
             state.executeUpdate(query);
@@ -336,11 +342,12 @@ public class LastFmSQL {
         String test = "test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n ";
         LastFmSQL sql = new LastFmSQL();
         sql.checkQuery("110372734118174720");
-        sql.setUsername("test", "test");
-        sql.updateUsername("test", "dab");
+        sql.deleteQuery("110372734118174720", test);
+        ////sql.updateUsername("test", "dab");
         String test1 = "dab";
         sql.getUsername("110372734118174720");
         sql.getUsername("110372734118174720");
+        System.out.println();
 
 
 

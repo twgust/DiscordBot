@@ -27,15 +27,24 @@ public class LastFmTopArtistProfileParser {
         JSONObject artistinfo = new JSONObject(responsebody);
         JSONObject topartist = artistinfo.getJSONObject("topartists");
         JSONArray tracks = topartist.getJSONArray("artist");
-        String[][] result = new String[tracks.length()][4];
+        String[][] result = new String[1][4];
         //System.out.println(tracks);
 
 
-        JSONObject json = tracks.getJSONObject(0);
-        String artistname = json.getString("name");
-        String playcount = json.getString("playcount");
-        String artistlink = json.getString("url");
-        String rank = json.getJSONObject("@attr").getString("rank");
+        String artistname = "";
+        String playcount = "";
+        String artistlink = "";
+        String rank = "";
+        try {
+            JSONObject json = tracks.getJSONObject(0);
+            artistname = json.getString("name");
+            playcount = json.getString("playcount");
+            artistlink = json.getString("url");
+            rank = json.getJSONObject("@attr").getString("rank");
+        }catch (Exception e){
+
+        }
+
 
         result[0][0] = rank;
         result[0][1] = artistname;

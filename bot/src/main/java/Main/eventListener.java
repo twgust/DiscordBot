@@ -10,7 +10,7 @@ public class eventListener extends ListenerAdapter {
         return prefix;
     }
 
-    private static char prefix = '%';
+    public static char prefix = '%';
     private controller ctrl;
 
     public eventListener(controller ctrl){

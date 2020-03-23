@@ -472,6 +472,7 @@ public class LastFmCommandOldv2 extends Command {
         return periodSQL;
     }
 
+    /*
     @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
         if (event.getReactionEmote().getName().equals("➡") && !event.getMember().getUser().equals(event.getJDA().getSelfUser()) && !event.getMember().getUser().isBot() && event.getChannel().retrieveMessageById(event.getMessageId()).complete().getAuthor().getId().equals("678037870531051531")) {
@@ -513,6 +514,7 @@ public class LastFmCommandOldv2 extends Command {
                     System.out.println("totalpages = " + totalPages);
                     System.out.println("total tracks = " + amountOfTracks);
                      */
+    /*
                     LastFmSQL sql = new LastFmSQL();
                     System.out.println(username);
                     String periodSQL = periodForSQL(period);
@@ -550,7 +552,7 @@ public class LastFmCommandOldv2 extends Command {
                         decimalFormat.setGroupingUsed(true);
                         */
 
-                        EmbedBuilder topTracksBuilder = new EmbedBuilder();
+   /*                     EmbedBuilder topTracksBuilder = new EmbedBuilder();
                         topTracksBuilder.setAuthor("🎶 " + username + "'s Top tracks", authorURL);
                         topTracksBuilder.setThumbnail(thumbnail);
                         topTracksBuilder.setTitle("Last week top " + amountOfTracks);
@@ -574,5 +576,8 @@ public class LastFmCommandOldv2 extends Command {
             else event.getReaction().removeReaction(event.getUser()).queue();
         }
     }
+
+    */
+
 }
 

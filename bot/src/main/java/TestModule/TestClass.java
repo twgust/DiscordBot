@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import javax.annotation.Nonnull;
 
 public class TestClass extends Command {
-
+/*
 
     @Override
     public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event) {
@@ -20,4 +20,6 @@ public class TestClass extends Command {
             //nextPageOfTopTracks();
         }
     }
+
+ */
 }

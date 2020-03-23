@@ -23,8 +23,7 @@ public class controller {
     public controller() throws LoginException {
 
 
-        JDA jda = new JDABuilder(/*"Njg3MjMxNTc3MDAwMTE2MjI0.Xmi1Qw.YWg2zrgmgaPk-hcnD1q93a3Ot1E"*/
-        "Njc4MDM3ODcwNTMxMDUxNTMx.XnPejA.xLQuDmGNgypXPC1gu54_D-D2N-s").build();
+        JDA jda = new JDABuilder().build();
         waiter = new EventWaiter();
         jda.addEventListener(new eventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));

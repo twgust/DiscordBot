@@ -76,15 +76,18 @@ public class LastFmProfileParser {
         if(tracks[0][4].equalsIgnoreCase("1")){
             playsTrack = "play";
         }
-        int artistCount = Integer.parseInt(artists[0][3]);
-        int trackCount = Integer.parseInt(tracks[0][4]);
-        String artistPlaycount = decimalFormat.format(artistCount);
-        String trackPlaycount = decimalFormat.format(trackCount);
+        String topArtist = "Artist not found";
+        String topTrack = "Track not found";
+        try {
+            int artistCount = Integer.parseInt(artists[0][3]);
+            int trackCount = Integer.parseInt(tracks[0][4]);
+            String artistPlaycount = decimalFormat.format(artistCount);
+            String trackPlaycount = decimalFormat.format(trackCount);
+            topArtist =  "["+artists[0][1] +"]("+artists[0][2]+") ("+artistPlaycount+" " + playsArtist + ")";
+            topTrack = "["+tracks[0][2] + "]("+tracks[0][3]+") ("+trackPlaycount+" " + playsTrack + ")";
+        } catch (Exception e){
 
-
-        String topArtist = "["+artists[0][1] +"]("+artists[0][2]+") ("+artistPlaycount+" " + playsArtist + ")";
-        String topTrack = "["+tracks[0][2] + "]("+tracks[0][3]+") ("+trackPlaycount+" " + playsTrack + ")";
-
+        }
 
         results[0] = playcount;
         results[1] = country;

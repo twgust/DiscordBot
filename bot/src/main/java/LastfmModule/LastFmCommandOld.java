@@ -504,7 +504,7 @@ public class LastFmCommandOld extends Command {
             return Period.OVERALL;
         } else return Period.WEEK;
     }
-
+    /*
     @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
         if (event.getReactionEmote().getName().equals("➡") && !event.getMember().getUser().equals(event.getJDA().getSelfUser()) && !event.getMember().getUser().isBot() && event.getChannel().retrieveMessageById(event.getMessageId()).complete().getAuthor().getId().equals("678037870531051531")) {
@@ -612,6 +612,8 @@ public class LastFmCommandOld extends Command {
         //event.getChannel().retrieveMessageById(event.getMessageId()).complete().editMessage(nextPage.build()).queue();
         //nextPageOfTopTracks();
     }
+
+     */
 
 
     public void readTextFileHashMap() {
