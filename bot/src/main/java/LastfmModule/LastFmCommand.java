@@ -103,6 +103,16 @@ public class LastFmCommand extends Command {
                     sql1.closeConnection();
                 }
             }
+            else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    getRecentTracks(getDiscordID(),10, event);
+                }
+                else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            }
             else  {
                 if (checkIfUserExist(getMessageReceivedArr()[1])){
                     getProfile(getMessageReceivedArr()[1], event);
@@ -217,6 +227,21 @@ public class LastFmCommand extends Command {
                     }
                 }
                 else event.getChannel().sendMessage(noUsernameMessage).queue();
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")){
+                if ((sql1.checkQuery(getDiscordID()))){
+                    sql1.closeConnection();
+                    try {
+                        setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
+                        getRecentTracks(getDiscordID(), getMaxTrackAmount(), event);
+                    }catch (NumberFormatException e){
+                        event.getChannel().sendMessage(wrongFormatMessage).queue();
+                    }
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
             }
 
             else {
@@ -422,7 +447,10 @@ public class LastFmCommand extends Command {
                 String[] pages = new String[trackAmountTemp.get()];
                 int pagetemp = 0;
 
-
+                int totalPlaycount = 0;
+                for (String[] strings : tracks) {
+                    totalPlaycount += Integer.parseInt(strings[4]);
+                }
                 for (int i = 0; i < trackAmountTemp.get(); i++) {
                     if (i == 0) {
                         pages[pagetemp] = "";
@@ -439,12 +467,35 @@ public class LastFmCommand extends Command {
                     if (track.contains("*")) {
                         track = track.replace("*", "\\*");
                     }
-                    if (playcount == 1) {
-                        pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                    } else
-                        pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    if(i == 0){
+                        if(playcount == 1){
+                            pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
 
-                    if (pages[pagetemp].length() > 1800) {
+                        }
+                        else pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else if(i==1){
+                        if(playcount == 1){
+                            pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        }
+                        else pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else if (i == 2){
+                        if(playcount == 1){
+                            pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        }
+                        else pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else {
+
+                        if (playcount == 1) {
+                            pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        }
+                        else pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+
+                    }
+
+                    if (pages[pagetemp].length() > 1800 && tracks.length-1 != i) {
                         pagetemp++;
                         pages[pagetemp] = "";
                     }
@@ -479,6 +530,7 @@ public class LastFmCommand extends Command {
 
                 } catch (NullPointerException | IOException | SAXException e) {
                     thumbnail = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png";
+                    System.out.println("could not load image");
                     e.printStackTrace();
                 }
                 int page = 1;
@@ -503,22 +555,24 @@ public class LastFmCommand extends Command {
                 pbuilder.addItems(pagesReal);
                 pbuilder.setAuthorText("🎶" + username + "'s top tracks");
                 pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/tracks?date_preset=" + periodforURL);
+                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
                 pbuilder.setThumbnail(thumbnail);
                 pbuilder.setTitle(getPeriodForBuilder(periodStr));
+                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlaycount));
                 Paginator p = pbuilder.setColor(Color.RED)
                         .setText("")
                         .build();
                 message.editMessage("\u200B").queue();
                 p.paginate(message, page);
             } catch (ArrayIndexOutOfBoundsException e) {
-                message.editMessage("No tracks found for your account❗❗❗").queue();
+                message.editMessage("```❌ No tracks found for your account ❌```").queue();
             }
         });
     }
 
+
     public void topArtists(String discordID, int artistAmount, String periodStr, GuildMessageReceivedEvent event){
         AtomicInteger artistAmountTemp = new AtomicInteger(artistAmount);
-
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
             LastFmSQL sql = new LastFmSQL();
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
@@ -541,6 +595,10 @@ public class LastFmCommand extends Command {
                 int pagetemp = 0;
 
 
+                int totalPlayount = 0;
+                for (String[] strings : artists) {
+                    totalPlayount += Integer.parseInt(strings[3]);
+                }
                 for (int i = 0; i < artistAmountTemp.get(); i++) {
                     if (i == 0) {
                         pages[pagetemp] = "";
@@ -550,6 +608,7 @@ public class LastFmCommand extends Command {
                     String artist = artists[i][1];
                     String artistlink = artists[i][2];
                     int playcount = Integer.parseInt(artists[i][3]);
+
                     /*if (artist.contains("*")) {
                         artist = artist.replace("*", "\\*");
                     }
@@ -558,12 +617,32 @@ public class LastFmCommand extends Command {
                     }
 
                      */
-                    if (playcount == 1) {
-                        pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                    } else
-                        pages[pagetemp] += "#" + rank + " [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    if(i == 0){
+                        if (playcount == 1) {
+                            pages[pagetemp] += "🥇 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        } else
+                            pages[pagetemp] += "🥇 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else if(i == 1){
+                        if (playcount == 1) {
+                            pages[pagetemp] += "🥈 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        } else
+                            pages[pagetemp] += "🥈 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else if(i == 2){
+                        if (playcount == 1) {
+                            pages[pagetemp] += "🥉 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        } else
+                            pages[pagetemp] += "🥉 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    else {
 
-                    if (pages[pagetemp].length() > 1800) {
+                        if (playcount == 1) {
+                            pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                        }
+                        else pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                    }
+                    if (pages[pagetemp].length() > 1800 && artists.length-1  != i) {
                         pagetemp++;
                         pages[pagetemp] = "";
                     }
@@ -622,7 +701,9 @@ public class LastFmCommand extends Command {
                 pbuilder.addItems(pagesReal);
                 pbuilder.setAuthorText("🎤" + username + "'s top artists");
                 pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/artists?date_preset=" + periodforURL);
+                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
                 pbuilder.setThumbnail(thumbnail);
+                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlayount));
                 pbuilder.setTitle(getPeriodForBuilder(periodStr));
                 Paginator p = pbuilder.setColor(Color.RED)
                         .setText("")
@@ -630,7 +711,7 @@ public class LastFmCommand extends Command {
                 message.editMessage("\u200B").queue();
                 p.paginate(message, page);
             } catch (ArrayIndexOutOfBoundsException e) {
-                message.editMessage("No tracks found for your account❗❗❗").queue();
+                message.editMessage("```❌ No artists found for your account ❌```").queue();
             }
         });
     }
@@ -654,7 +735,7 @@ public class LastFmCommand extends Command {
 
                 EmbedBuilder account = new EmbedBuilder();
                 account.setColor(0xFF0000);
-                account.setAuthor(username + "'s Last.FM Account", usernameURL);
+                account.setAuthor("\uD83D\uDEC8 "+username + "'s Last.FM Account", usernameURL);
                 account.setThumbnail(thumbnail);
                 account.addField("Scrobbles", scrobbles, false);
                 account.addField("Country", country, false);
@@ -692,6 +773,116 @@ public class LastFmCommand extends Command {
         event.getChannel().sendMessage(account.build()).queue();
 
          */
+    }
+
+    public void getRecentTracks(String discordID, int trackamount, GuildMessageReceivedEvent event){
+        AtomicInteger trackAmount = new AtomicInteger(trackamount);
+
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
+            LastFmSQL sql = new LastFmSQL();
+            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+            formatSymbols.setDecimalSeparator('.');
+            formatSymbols.setGroupingSeparator(',');
+            DecimalFormat decimalFormat = new DecimalFormat("#.##", formatSymbols);
+            decimalFormat.setGroupingSize(3);
+            decimalFormat.setGroupingUsed(true);
+            String thumbnail = "";
+            String username = sql.getUsername(discordID);
+            LastFmRecentTracksParser rt = new LastFmRecentTracksParser(apikey, username, trackamount);
+            String[][] recentTracks = LastFmRecentTracksParser.getResultsRecents();
+            if(trackAmount.get() > recentTracks.length){
+                trackAmount.set(recentTracks.length);
+            }
+            try {
+
+                String[] pages = new String[trackAmount.get()];
+                int pagetemp = 0;
+
+
+                int totalPlayount = 0;
+                totalPlayount += Integer.parseInt(recentTracks[0][5]);
+
+                for (int i = 0; i < trackAmount.get(); i++) {
+                    if (i == 0) {
+                        pages[pagetemp] = "";
+                    }
+
+                    String rank = recentTracks[i][0];
+                    String artist = recentTracks[i][1];
+                    String trackname = recentTracks[i][2];
+                    String tracklink = recentTracks[i][3];
+                    String timeAgo = recentTracks[i][4];
+                    if (artist.contains("*")) {
+                        artist = artist.replace("*", "\\*");
+                    }
+                    if (artist.contains("*")) {
+                        artist = artist.replace("*", "\\*");
+                    }
+
+                    if(timeAgo.equalsIgnoreCase("now")){
+                        pages[pagetemp] += "🎧 #" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo+ ") 🎧\n";
+                    }
+                    else {
+                        pages[pagetemp] += "#" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo + ")\n";
+                    }
+
+                    if (pages[pagetemp].length() > 1800 && recentTracks.length-1 != i) {
+                        pagetemp++;
+                        pages[pagetemp] = "";
+                    }
+                }
+
+
+                String[] pagesReal = new String[pagetemp + 1];
+                for (int j = 0; j <= pagetemp; j++) {
+                    pagesReal[j] = "";
+                    pagesReal[j] = pages[j];
+                }
+
+                thumbnail = recentTracks[0][6];
+
+                sql.closeConnection();
+
+
+
+                int page = 1;
+                //String periodforURL = checkPeriodforURL(periodStr);
+                pbuilder = new Paginator.Builder()
+                        .setColumns(1)
+                        .setBulkSkipNumber(2000)
+                        .setItemsPerPage(1)
+                        .showPageNumbers(true)
+                        .waitOnSinglePage(false)
+                        .useNumberedItems(false)
+                        .setFinalAction(m -> {
+                            try {
+                                m.clearReactions().queue();
+                            } catch (PermissionException e) {
+                                m.delete().queue();
+                            }
+                        })
+                        .setEventWaiter(waiter)
+                        .setTimeout(2, TimeUnit.MINUTES);
+                pbuilder.clearItems();
+                pbuilder.addItems(pagesReal);
+                pbuilder.setAuthorText("💽 " + username + "'s recent tracks");
+                pbuilder.setAuthorURL("https://www.last.fm/user/" + username);
+                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
+                pbuilder.setThumbnail(thumbnail);
+                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlayount));
+                pbuilder.setTitle("Recent tracks");//getPeriodForBuilder(periodStr));
+                Paginator p = pbuilder.setColor(Color.RED)
+                        .setText("")
+                        .build();
+                message.editMessage("\u200B").queue();
+                p.paginate(message, page);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                message.editMessage("```❌ No tracks found for your account ❌```").queue();
+                e.printStackTrace();
+            }
+
+
+        });
     }
 
     public boolean checkIfUserExist(String username){

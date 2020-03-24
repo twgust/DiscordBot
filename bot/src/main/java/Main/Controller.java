@@ -8,6 +8,7 @@ import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
@@ -21,6 +22,7 @@ public class Controller {
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
     private Token token;
+    private TextChannel logChannel;
 
     public Controller() throws LoginException, IOException {
         token = new Token();
@@ -54,6 +56,14 @@ public class Controller {
         cmdMap.put("Weather", new WeatherCommand());
         cmdMap.put("Prefix", new PrefixCommand());
         cmdMap.put("Fm", new LastFmCommand(waiter));
+    }
+
+    public TextChannel getLogChannel() {
+        return logChannel;
+    }
+
+    public void setLogChannel(TextChannel logChannel) {
+        this.logChannel = logChannel;
     }
 }
 

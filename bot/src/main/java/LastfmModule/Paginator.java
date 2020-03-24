@@ -77,6 +77,8 @@ public class Paginator extends Menu
     private final String authorURL;
     private final String thumbnail;
     private final String title;
+    private final String footer;
+    private final String authorIconURL;
 
     public static final String BIG_LEFT = "\u23EA";
     public static final String LEFT = "\u25C0";
@@ -88,7 +90,7 @@ public class Paginator extends Menu
               BiFunction<Integer,Integer,Color> color, BiFunction<Integer,Integer,String> text,
               Consumer<Message> finalAction, int columns, int itemsPerPage, boolean showPageNumbers,
               boolean numberItems, List<String> items, boolean waitOnSinglePage, int bulkSkipNumber,
-              boolean wrapPageEnds, String leftText, String rightText, boolean allowTextInput, String authorText, String authorURL, String thumbnail, String title)
+              boolean wrapPageEnds, String leftText, String rightText, boolean allowTextInput, String authorText, String authorURL, String thumbnail, String title, String footer, String authorIconURL)
     {
         super(waiter, users, roles, timeout, unit);
         this.color = color;
@@ -110,6 +112,8 @@ public class Paginator extends Menu
         this.authorText = authorText;
         this.authorURL = authorURL;
         this.title = title;
+        this.footer = footer;
+        this.authorIconURL = authorIconURL;
     }
 
     /**
@@ -389,12 +393,12 @@ public class Paginator extends Menu
                 ebuilder.addField("", strbuilder.toString(), true);
             }
         }
-        ebuilder.setAuthor(authorText,authorURL);
+        ebuilder.setAuthor(authorText,authorURL, authorIconURL);
         ebuilder.setThumbnail(thumbnail);
         ebuilder.setColor(color.apply(pageNum, pages));
         ebuilder.setTitle(title);
         if(showPageNumbers)
-            ebuilder.setFooter("Page "+pageNum+"/"+pages, null);
+            ebuilder.setFooter("Page "+pageNum+"/"+pages + footer, null);
         mbuilder.setEmbed(ebuilder.build());
         if(text!=null)
             mbuilder.append(text.apply(pageNum, pages));
@@ -426,6 +430,8 @@ public class Paginator extends Menu
         private String authorURL = "";
         private String thumbnail = "";
         private String title = "";
+        private String footer = "";
+        private String authorIconURL;
 
         private final List<String> strings = new LinkedList<>();
 
@@ -450,7 +456,7 @@ public class Paginator extends Menu
 
             return new Paginator(waiter, users, roles, timeout, unit, color, text, finalAction,
                 columns, itemsPerPage, showPageNumbers, numberItems, strings, waitOnSinglePage,
-                bulkSkipNumber, wrapPageEnds, textToLeft, textToRight, allowTextInput, authorText, authorURL, thumbnail, title);
+                bulkSkipNumber, wrapPageEnds, textToLeft, textToRight, allowTextInput, authorText, authorURL, thumbnail, title, footer, authorIconURL);
         }
 
         /**
@@ -484,6 +490,16 @@ public class Paginator extends Menu
 
         public Builder setTitle (String title){
             this.title = title;
+            return this;
+        }
+
+        public Builder setFooter(String footer){
+            this.footer = footer;
+            return this;
+        }
+
+        public Builder setAuthorIconURL(String iconURL){
+            this.authorIconURL = iconURL;
             return this;
         }
 
