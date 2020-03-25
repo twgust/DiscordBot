@@ -2,8 +2,8 @@ package Main;
 
 import Commands.*;
 import ModerationModule.*;
-import MusicModule.MusicCommands.PlayCommand;
 import MusicModule.Music;
+import MusicModule.MusicCommands.*;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

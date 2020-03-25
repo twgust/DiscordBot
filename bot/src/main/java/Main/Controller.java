@@ -1,9 +1,9 @@
 package Main;
 
 import Commands.*;
-import ModerationModule.BanCommand;
-import ModerationModule.KickCommand;
-import ModerationModule.SetLogChannelCommand;
+import ModerationModule.*;
+import MusicModule.Music;
+import MusicModule.MusicCommands.*;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -73,6 +73,8 @@ public class Controller {
         cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
+        cmdMap.put("play", new PlayCommand());
+
     }
 
     public TextChannel getLogChannel() {
