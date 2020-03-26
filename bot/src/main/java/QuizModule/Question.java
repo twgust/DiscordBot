@@ -3,10 +3,14 @@ package QuizModule;
 import QuizModule.enums.QuizDifficulty;
 import QuizModule.enums.QuizType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Question {
     private QuizDifficulty difficulty;
     private String question;
-    private Boolean correctAnswer;
+    private ArrayList<String> alternatives;
+    private String correctAnswer;
     private String category;
     private QuizType type;
 
@@ -31,11 +35,11 @@ public class Question {
         this.question = question;
     }
 
-    public Boolean getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(Boolean correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
@@ -54,4 +58,14 @@ public class Question {
     public void setType(QuizType type) {
         this.type = type;
     }
+
+    public void setAlternatives(ArrayList<String> alternatives){
+        this.alternatives = alternatives;
+        Collections.shuffle(this.alternatives); //Shuffle the order of the alternatives, otherwise the correct answer will always be placed first
+    }
+
+    public ArrayList<String> getAlternatives(){
+        return alternatives;
+    }
+
 }
