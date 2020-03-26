@@ -28,7 +28,7 @@ public class QuizCommand extends Command {
 
             if (secondCommand.equals("start") && !quiz.isAlive()) {
                 quiz.start();
-            } else if (secondCommand.equals("stop") && quiz.isAlive()) {
+            } else if (secondCommand.equals("stop") && quiz.isAlive()) { //Not working
                 postMessage("The Quiz session has been stopped!");
                 quiz.interrupt();
             }
