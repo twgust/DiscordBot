@@ -1,64 +1,97 @@
 package MusicModule;
-
+//git
 import Commands.Command;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.managers.AudioManager;
 
-import javax.sound.midi.Track;
-import java.util.ArrayList;
-//test commit
+/**
+ * TODO sendhelpmessage
+ * TODO forceskipping, timestamp, reset, gettrackmanager, loadtrack
+ */
 public class Music extends Command {
-    AudioPlayerManager playerManager;
-    TrackScheduler trackScheduler;
-    AudioPlayer player;
 
-    public Music(){
-        playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
+    private final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+    private TrackScheduler scheduler;
+    private AudioPlayer player;
+
+    public Music(Guild server) {
         player = playerManager.createPlayer();
-        trackScheduler = new TrackScheduler(player);
-    }
-    /** Takes string "identifier" passes it into the load item method parameter. This can be url or a song title
-    e.g Dancing in the dark - Bruce Springsteen
-     */
-    public void loadTrack(GuildMessageReceivedEvent event, String identifier){
-        identifier = event.getMessage().getContentRaw();
+        server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player));
+        scheduler = new TrackScheduler(player);
+        player.addListener(scheduler);
+        AudioSourceManagers.registerRemoteSources(playerManager);
 
-        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+    }
+
+    public Music() {
+
+    }
+
+    public AudioPlayer getPlayer(){
+        return player;
+    }
+    public void playerClosed(Guild server, GuildVoiceLeaveEvent event){
+
+    }
+
+    //bot only joins voice channels named "General" as of now. Will fix later TODO
+    private void connectToFirstVoiceChannel(AudioManager audioManager){
+        if(!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
+            for(VoiceChannel voiceChannel: audioManager.getGuild().getVoiceChannels()){
+                if("General".equals(voiceChannel.getName())){
+                    audioManager.openAudioConnection(voiceChannel);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void loadMusic(String identifier, Member user){
+        if(user.getVoiceState().getChannel() == null){
+            System.out.println("you are not in a voice channel");
+        }
+        else {
+            System.out.println("you are in a voice channel");
+        }
+
+        //checks to see if user is a member of guild
+        Guild server = user.getGuild();
+
+        playerManager.loadItemOrdered(server, identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                trackScheduler.queue(track);
+                connectToFirstVoiceChannel(server.getAudioManager());
+                player.setVolume(100);
+                scheduler.addToQueue(track, user);
+
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                for(AudioTrack track: playlist.getTracks()){
-                    trackScheduler.queue(track);
-                }
+                System.out.println("playlist loaded successfully");
             }
-            //error messages can be put in the ErrorCommand Class
+
             @Override
             public void noMatches() {
-                event.getChannel().sendMessage("We've got nothing, try again");
+                System.out.println("no matches");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                event.getChannel().sendMessage("Something exploded, load failed.");
-
+                System.out.println("load failed" + exception.getMessage());
             }
         });
     }
-
 }
+

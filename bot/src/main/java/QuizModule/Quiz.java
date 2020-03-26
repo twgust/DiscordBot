@@ -37,9 +37,10 @@ public class Quiz extends Thread{
         //Session begins
         while(!Thread.interrupted()) {
             if (currentQuestion != null) {
-                command.postMessage(getQuestion()); //The first question is automatically polled from the question list before its presented
-                checker.start(); //Starting inner thread to check for answers, for 30 seconds per question
                 try {
+                    Thread.sleep(10000);
+                    command.postMessage(getQuestion()); //The first question in line is automatically polled from the Question list before its presented
+                    checker.start(); //Starting inner thread to check for answers for 30 seconds per question
                     Thread.sleep(30000);
                     checker.interrupt();
                 } catch (InterruptedException e) {
@@ -49,6 +50,7 @@ public class Quiz extends Thread{
             else {
                 command.postMessage("Out of questions! Session will end shortly");
                 Thread.interrupted();
+                break;
             }
         }
     }

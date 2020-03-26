@@ -4,6 +4,7 @@ import Commands.Command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 //ToDo
+//ToDo - Check if command is typed in the correct channel for ease of use during run
 public class QuizCommand extends Command {
     private GuildMessageReceivedEvent event;
     private Quiz quiz;
