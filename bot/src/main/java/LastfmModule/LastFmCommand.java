@@ -885,6 +885,10 @@ public class LastFmCommand extends Command {
         });
     }
 
+    public void getNowPlaying(String discordID, GuildMessageReceivedEvent event){
+        
+    }
+
     public boolean checkIfUserExist(String username){
         User testuser = null;
         try{
