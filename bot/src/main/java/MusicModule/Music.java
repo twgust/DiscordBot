@@ -46,7 +46,7 @@ public class Music extends Command {
     }
 
     //bot only joins voice channels named "General" as of now. Will fix later TODO
-    private void connectToFirstVoiceChannel(AudioManager audioManager){
+    private void connectToVoiceChannel(AudioManager audioManager){
         if(!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
             for(VoiceChannel voiceChannel: audioManager.getGuild().getVoiceChannels()){
                 if("General".equals(voiceChannel.getName())){
@@ -56,7 +56,9 @@ public class Music extends Command {
             }
         }
     }
-
+    /*
+        LoadMusic tar in en låt från användare (identifier)
+     */
     public void loadMusic(String identifier, Member user){
         if(user.getVoiceState().getChannel() == null){
             System.out.println("you are not in a voice channel");
@@ -69,10 +71,14 @@ public class Music extends Command {
         Guild server = user.getGuild();
 
         playerManager.loadItemOrdered(server, identifier, new AudioLoadResultHandler() {
+
+             /*
+
+              */
             @Override
             public void trackLoaded(AudioTrack track) {
-                connectToFirstVoiceChannel(server.getAudioManager());
-                player.setVolume(100);
+                connectToVoiceChannel(server.getAudioManager());
+                player.setVolume(25);
                 scheduler.addToQueue(track, user);
 
             }

@@ -38,7 +38,14 @@ public class TrackScheduler extends AudioEventAdapter {
             System.out.println("INFO: " + track.getInfo() + "\n");
             System.out.println("TRACK STATE: " + track.getState() + "\n");
             System.out.println("TRACK DURATION: " + track.getDuration());
-
+            try {
+                while (true) {
+                    System.out.println("Track state after 1 minute: " + track.getState());
+                    Thread.sleep(5 * 1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

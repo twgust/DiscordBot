@@ -2,34 +2,38 @@ package MusicModule;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 //git
 /**
- * JDA integration with lavaplayer requires this AudioPlayerSendHandler class.
+ * JDA integration with lavaplayer requires  AudioPlayerSendHandler.
  * Taken from:
  * https://github.com/sedmelluq/lavaplayer
  */
 public class AudioPlayerSendHandler implements AudioSendHandler {
     private final AudioPlayer audioPlayer;
-    private AudioFrame lastFrame;
+    private final ByteBuffer buffer;
+    private final MutableAudioFrame frame;
 
     public AudioPlayerSendHandler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
+        this.buffer = ByteBuffer.allocate(1024);
+        this.frame = new MutableAudioFrame();
+        this.frame.setBuffer(buffer);
     }
 
     @Override
     public boolean canProvide() {
-        if(lastFrame == null){
-            lastFrame = audioPlayer.provide();
-        }
-        return lastFrame != null;
+        return audioPlayer.provide(frame);
     }
 
     @Override
     public ByteBuffer provide20MsAudio() {
-        return ByteBuffer.wrap(lastFrame.getData());
+        ((Buffer) buffer).flip();
+        return buffer;
     }
 
     @Override
