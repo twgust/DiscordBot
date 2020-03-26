@@ -5,6 +5,9 @@ import Main.Controller;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BanCommand extends Command {
     private Controller ctrl;
 
@@ -14,6 +17,7 @@ public class BanCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        System.out.println("im in");
         String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
         int delDays = 0;
@@ -31,11 +35,20 @@ public class BanCommand extends Command {
         } catch (Exception e) {
         }
 
-        Member banTarget = event.getGuild().getMemberByTag(arguments[1]);
-        event.getChannel().sendMessage("Member " + banTarget.getEffectiveName() + " was banned.").queue();
-        try{ctrl.getLogChannel().sendMessage("Member " + banTarget.getEffectiveName() + " was banned by " + event.getMessage().getAuthor().getName()
-                + "\nReason: " + reason).queue();}
-        catch (Exception e){}
-        banTarget.ban(delDays, reason).queue();
+        List<Member> banTargets = event.getGuild().getMembersByName(arguments[1], false);
+        if(banTargets.size() > 1){
+            String msg = "There are more then one user by that name";
+            event.getChannel().sendMessage(msg).queue();
+        } else{
+            event.getChannel().sendMessage("Member " + banTargets.get(0).getEffectiveName() + " was banned.").queue();
+
+            try{ctrl.getLogChannel().sendMessage("Member " + banTargets.get(0).getEffectiveName() + " was banned by " + event.getMessage().getAuthor().getName()
+                    + "\nReason: " + reason).queue();}
+            catch (Exception e){}
+
+            banTargets.get(0).ban(delDays, reason).queue();
+        }
+        /*
+        */
     }
 }

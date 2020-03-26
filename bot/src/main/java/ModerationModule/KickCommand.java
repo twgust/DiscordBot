@@ -5,6 +5,8 @@ import Main.Controller;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.List;
+
 public class KickCommand extends Command {
     private Controller ctrl;
 
@@ -25,11 +27,19 @@ public class KickCommand extends Command {
             }
         } catch (Exception e) {}
 
-        Member kickTarget = event.getGuild().getMemberByTag(arguments[1]);
-        event.getChannel().sendMessage("Member " + kickTarget.getEffectiveName() + " was kicked.").queue();
-        try{ctrl.getLogChannel().sendMessage("Member " + kickTarget.getEffectiveName() + " was kicked by " + event.getMessage().getAuthor().getName()
-                + "\nReason: " + reason).queue();}
-        catch (Exception e){}
-        kickTarget.kick(reason).queue();
+        List<Member> KickTargets = event.getGuild().getMembersByName(arguments[1], false);
+
+        if(KickTargets.size() > 1){
+            String msg = "There are more then one user by that name";
+            event.getChannel().sendMessage(msg).queue();
+        } else{
+            event.getChannel().sendMessage("Member " + KickTargets.get(0).getEffectiveName() + " was kicked.").queue();
+
+            try{ctrl.getLogChannel().sendMessage("Member " + KickTargets.get(0).getEffectiveName() + " was kicked by " + event.getMessage().getAuthor().getName()
+                    + "\nReason: " + reason).queue();}
+            catch (Exception e){}
+
+            KickTargets.get(0).kick(reason).queue();
+        }
     }
 }
