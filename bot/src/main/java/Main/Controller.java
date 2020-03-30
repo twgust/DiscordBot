@@ -4,14 +4,17 @@ import Commands.*;
 import ModerationModule.*;
 import MusicModule.Music;
 import MusicModule.MusicCommands.*;
+
+import LastfmModule.LastFmCommand;
 import WeatherModule.WeatherCommand;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 import LastfmModule.LastFmCommand;
 import LastfmModule.LastFmCommandOldv2;
@@ -45,6 +48,7 @@ public class Controller {
         addCommands();
     }
 
+
     /**
      * Denna metod skall söka och exekvera vilket kommando det är som är kallat på från användaren.
      *
@@ -74,7 +78,6 @@ public class Controller {
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
         cmdMap.put("play", new PlayCommand());
-
     }
 
     public TextChannel getLogChannel() {
@@ -85,3 +88,4 @@ public class Controller {
         this.logChannel = logChannel;
     }
 }
+
