@@ -255,7 +255,7 @@ public class LastFmCommand extends Command {
                     if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
                         setPeriodStr("7day");
                         try {
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[4]));
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
                         } catch (NumberFormatException e){
