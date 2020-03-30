@@ -2,31 +2,18 @@ package Main;
 
 import Commands.*;
 import ModerationModule.*;
-import MusicModule.Music;
 import MusicModule.MusicCommands.*;
-
 import LastfmModule.LastFmCommand;
+import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
-import LastfmModule.LastFmCommand;
-import LastfmModule.LastFmCommandOldv2;
-import LastfmModule.TestingClass;
-import WeatherModule.WeatherCommand;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
-import javax.security.auth.login.LoginException;
-import java.io.IOException;
 
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
@@ -35,6 +22,7 @@ public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
+    private QuizCommand quizCommand;
     private Token token;
     private TextChannel logChannel;
 
@@ -42,9 +30,11 @@ public class Controller {
         token = new Token();
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
+        quizCommand = new QuizCommand();
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
+        jda.addEventListener(quizCommand);
         addCommands();
     }
 
@@ -78,6 +68,8 @@ public class Controller {
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
         cmdMap.put("play", new PlayCommand());
+        cmdMap.put("quiz", quizCommand);
+
     }
 
     public TextChannel getLogChannel() {

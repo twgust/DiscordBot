@@ -20,14 +20,14 @@ public class QuizParser {
     private int responseCode = -1;
     private ArrayList<Question> parsedQuestions = new ArrayList<Question>();
 
+    //Constructor
     public QuizParser(String url){
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
 
         try {
-            HttpResponse response = client.execute(request);
+            HttpResponse response = client.execute(request); //Retrieves json-file containing questions, from Open Trivia DB
             json = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            //json = json.replace("&quot;","\""); Not working for the moment
             jQuiz = new JSONObject(json);
             responseCode = jQuiz.getInt("response_code");
         } catch (ClientProtocolException e) {
@@ -53,23 +53,42 @@ public class QuizParser {
             }
         }
 
-
+    //Return an ArrayList containing all the Question objects created from parsing the quiz database's json-file
     public ArrayList<Question> getQuestions(){
         return parsedQuestions;
     }
 
-    public Question createQuestion(Object o) {
+    //Create a new Question object
+    public Question createQuestion(Object object) {
         Question question = new Question();
 
-        if (o instanceof JSONObject) {
-            JSONObject jObj = (JSONObject)o;
+        if (object instanceof JSONObject) {
+            JSONObject jObj = (JSONObject)object;
+            JSONArray inCorrectAnswers = jObj.getJSONArray("incorrect_answers"); //Create an JSONArray that contains string values of the incorrect answers
+            ArrayList<String> alternatives = new ArrayList<String>(); //ArrayList containing all alternatives
+            alternatives.add(fixFormat(jObj.getString("correct_answer"))); //Adding the correct answer to the alternatives
+            for(Object o: inCorrectAnswers){ //Adding all the incorrect answers to the alternatives
+                if(o instanceof String){
+                    String wrongAnswer = (String)o;
+                    alternatives.add(fixFormat(wrongAnswer));
+                }
+            }
+
+            //Adding all the data to the Question object
             question.setDifficulty(QuizDifficulty.valueOf(jObj.get("difficulty").toString().toUpperCase()));
-            question.setQuestion(jObj.getString("question"));
-            question.setCorrectAnswer(jObj.getBoolean("correct_answer"));
-            question.setCategory(jObj.getString("category"));
+            question.setQuestion(fixFormat(fixFormat(jObj.getString("question"))));
+            question.setCorrectAnswer(fixFormat(jObj.getString("correct_answer")));
+            question.setAlternatives(alternatives);
+            question.setCategory(fixFormat(jObj.getString("category")));
             question.setType(QuizType.valueOf(jObj.get("type").toString().toUpperCase()));
         }
 
         return question;
+    }
+
+    //Fixing formatting issues with json -> String
+    public String fixFormat(String unfixed){
+        String fixed = unfixed.replace("&amp;", "&").replace("&quot;", "\"").replace("&#039;","'");
+        return fixed;
     }
 }
