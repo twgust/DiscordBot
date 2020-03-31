@@ -29,7 +29,7 @@ public class PruneCommand extends Command {
             return;
         }
         List<Message> messages = event.getChannel().getIterableHistory().complete();
-        if (messages.size() < delAmount) delAmount = messages.size();
+        if (messages.size()-1 < delAmount) delAmount = messages.size();
         for (int i = 0; i < delAmount+1; i++) {
             messages.get(i).delete().queue();
         }
