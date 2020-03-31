@@ -17,29 +17,35 @@ public class KickCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
-
+        //Variables
         String reason = "";
-
+        Member member;
+        //Gets member by tag or id
+        try {
+            member = event.getGuild().getMemberById(Long.parseLong(arguments[1]));
+        } catch (Exception e) {
+            try {
+                member = event.getGuild().getMemberById(arguments[1].substring(3, arguments[1].length() - 1));
+            } catch (Exception e2) {
+                event.getChannel().sendMessage("Invalid target user").queue();
+                return;
+            }
+        }
+        //Gets reason
         try {
             for (int i = 2; i < arguments.length; i++) {
                 reason += arguments[i];
                 if (i < arguments.length - 1) reason += " ";
             }
-        } catch (Exception e) {}
-
-        List<Member> KickTargets = event.getGuild().getMembersByName(arguments[1], false);
-
-        if(KickTargets.size() > 1){
-            String msg = "There are more then one user by that name";
-            event.getChannel().sendMessage(msg).queue();
-        } else{
-            event.getChannel().sendMessage("Member " + KickTargets.get(0).getEffectiveName() + " was kicked.").queue();
-
-            try{ctrl.getLogChannel().sendMessage("Member " + KickTargets.get(0).getEffectiveName() + " was kicked by " + event.getMessage().getAuthor().getName()
-                    + "\nReason: " + reason).queue();}
-            catch (Exception e){}
-
-            KickTargets.get(0).kick(reason).queue();
+        } catch (Exception e2) {
         }
+        //Notifies the server and kicks the member
+        event.getChannel().sendMessage("Member " + member.getEffectiveName() + " was kicked.").queue();
+        try {
+            ctrl.getLogChannel().sendMessage("Member " + member.getEffectiveName() + " was kicked by " + event.getMessage().getAuthor().getName()
+                    + "\nReason: " + reason).queue();
+        } catch (Exception e) {
+        }
+        member.kick(reason).queue();
     }
 }

@@ -19,36 +19,50 @@ public class BanCommand extends Command {
     public void execute(GuildMessageReceivedEvent event) {
         System.out.println("im in");
         String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
-
+        //Variables
         int delDays = 0;
         String reason = "";
-
+        Member member;
+        //Gets member from tag or id
+        try {
+            member = event.getGuild().getMemberById(Long.parseLong(arguments[1]));
+        } catch (Exception e) {
+            try {
+                member = event.getGuild().getMemberById(arguments[1].substring(3, arguments[1].length() - 1));
+            } catch (Exception e2) {
+                event.getChannel().sendMessage("Invalid target user").queue();
+                return;
+            }
+        }
+        //Gets delDays and reason
         try {
             delDays = Integer.parseInt(arguments[2]);
-        } catch (Exception e) {
-        }
-        try {
-            for (int i = 3; i < arguments.length; i++) {
-                reason += arguments[i];
-                if (i < arguments.length-1) reason += " ";
+            try {
+                for (int i = 3; i < arguments.length; i++) {
+                    reason += arguments[i];
+                    if (i < arguments.length - 1) reason += " ";
+                }
+            } catch (Exception e) {
             }
+
+        } catch (Exception e) {
+            //Gets reason if there was no delDays
+            try {
+                for (int i = 2; i < arguments.length; i++) {
+                    reason += arguments[i];
+                    if (i < arguments.length - 1) reason += " ";
+                }
+            } catch (Exception e2) {
+            }
+        }
+
+        //Notifies the server and bans the member
+        event.getChannel().sendMessage("Member " + member.getEffectiveName() + " was banned.").queue();
+        try {
+            ctrl.getLogChannel().sendMessage("Member " + member.getEffectiveName() + " was banned by " + event.getMessage().getAuthor().getName()
+                    + "\nReason: " + reason).queue();
         } catch (Exception e) {
         }
-
-        List<Member> banTargets = event.getGuild().getMembersByName(arguments[1], false);
-        if(banTargets.size() > 1){
-            String msg = "There are more then one user by that name";
-            event.getChannel().sendMessage(msg).queue();
-        } else{
-            event.getChannel().sendMessage("Member " + banTargets.get(0).getEffectiveName() + " was banned.").queue();
-
-            try{ctrl.getLogChannel().sendMessage("Member " + banTargets.get(0).getEffectiveName() + " was banned by " + event.getMessage().getAuthor().getName()
-                    + "\nReason: " + reason).queue();}
-            catch (Exception e){}
-
-            banTargets.get(0).ban(delDays, reason).queue();
-        }
-        /*
-        */
+        member.ban(delDays, reason).queue();
     }
 }

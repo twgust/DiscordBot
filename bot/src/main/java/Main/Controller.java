@@ -5,6 +5,10 @@ import ModerationModule.*;
 import MusicModule.MusicCommands.*;
 import LastfmModule.LastFmCommand;
 import QuizModule.QuizCommand;
+import ModerationModule.BanCommand;
+import ModerationModule.KickCommand;
+import ModerationModule.PruneCommand;
+import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
@@ -69,7 +73,7 @@ public class Controller {
         cmdMap.put("fm", new LastFmCommand(waiter));
         cmdMap.put("play", new PlayCommand());
         cmdMap.put("quiz", quizCommand);
-
+        cmdMap.put("prune", new PruneCommand(this));
     }
 
     public TextChannel getLogChannel() {
