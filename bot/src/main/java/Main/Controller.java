@@ -3,6 +3,8 @@ package Main;
 import Commands.*;
 import ModerationModule.BanCommand;
 import ModerationModule.KickCommand;
+import ModerationModule.PruneCommand;
+import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -23,7 +25,7 @@ public class Controller {
     public Controller() throws LoginException {
         addCommands();
 
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XnMmBg.IcdqgV4zHDMHDGesLh2m-XY6X2U").build();
+        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XoJ49w.7N-69zC_Z1baAatgex-DdrF_iys").build();
 
         jda.addEventListener(new EventListener(this));
     }
@@ -37,7 +39,7 @@ public class Controller {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
-            arguments[0] = arguments[0].substring(0, 1).toUpperCase() + arguments[0].substring(1);
+            arguments[0] = arguments[0].toLowerCase();
             if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
                 ((Command) cmdMap.get(arguments[0])).execute(event);
             else error.throwMissingCommand(event);
@@ -47,12 +49,14 @@ public class Controller {
     }
 
     private void addCommands() {
-        cmdMap.put("Hello", new HelloCommand());
-        cmdMap.put("GoodBye", new GoodbyeCommand());
-        cmdMap.put("Ping", new PingCommand());
-        cmdMap.put("Weather", new WeatherCommand());
-        cmdMap.put("Ban", new BanCommand(this));
-        cmdMap.put("Kick", new KickCommand(this));
+        cmdMap.put("hello", new HelloCommand());
+        cmdMap.put("goodBye", new GoodbyeCommand());
+        cmdMap.put("ping", new PingCommand());
+        cmdMap.put("weather", new WeatherCommand());
+        cmdMap.put("ban", new BanCommand(this));
+        cmdMap.put("kick", new KickCommand(this));
+        cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
+        cmdMap.put("prune", new PruneCommand(this));
     }
 
     public TextChannel getLogChannel() {
