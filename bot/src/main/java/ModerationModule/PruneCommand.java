@@ -28,12 +28,15 @@ public class PruneCommand extends Command {
         } catch (NumberFormatException e) {
             return;
         }
-
         List<Message> messages = event.getChannel().getIterableHistory().complete();
+        if (messages.size() < delAmount) delAmount = messages.size();
         for (int i = 0; i < delAmount+1; i++) {
             messages.get(i).delete().queue();
         }
 
-        ctrl.getLogChannel().sendMessage(event.getAuthor().getName() + " has pruned " + delAmount + " messages in " + event.getChannel().getName()).queue();
+        try{
+            ctrl.getLogChannel().sendMessage(event.getAuthor().getName() + " has pruned " + delAmount + " messages in " + event.getChannel().getName()).queue();
+        }catch (Exception e){
+        }
     }
 }
