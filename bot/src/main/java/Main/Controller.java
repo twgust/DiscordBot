@@ -2,6 +2,7 @@ package Main;
 
 import Commands.*;
 import ModerationModule.*;
+
 import MusicModule.MusicCommands.*;
 import LastfmModule.LastFmCommand;
 import QuizModule.QuizCommand;
@@ -30,11 +31,16 @@ public class Controller {
     private Token token;
     private TextChannel logChannel;
 
+
+
+
     public Controller() throws LoginException, IOException {
+
         token = new Token();
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XoMNvg.xoULgV6IGprq9Cm_XJiiKRP548U").build();
+        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XoRfwA.Y4ZHrqnt9JSlXjdtHYvgmwFxL5g").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
+
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
@@ -75,6 +81,8 @@ public class Controller {
         cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("prune", new PruneCommand(this));
+        cmdMap.put("skip", new SkipCommand());
+
     }
 
     public TextChannel getLogChannel() {
