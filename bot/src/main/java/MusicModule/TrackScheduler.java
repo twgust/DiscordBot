@@ -39,26 +39,30 @@ public class TrackScheduler extends AudioEventAdapter {
         System.out.println("ELEMENTS: + " + queue.size()+ "\nTrack: + " + queue.element());
     }
 
+    /**
+     * Function "addToQueue" is invoked every time a user types "%play + identifier"
+     * It adds the identifier sent as a track to a queue. It is placed first in the queue.
+     * If no track is currently being played the nextTrack function is invoked.
+     *
+     * If a song is already playing it simply adds it to the last position of the queue.
+     * @param track
+     * @param user
+     */
     public void addToQueue(AudioTrack track, Member user) {
-        MusicInfo info = new MusicInfo(track,user);
-        queue.push(track);
+        queue.addLast(track);
         printelements();
 
         if (player.getPlayingTrack() == null) {
-            player.playTrack(track);
-
+            nextTrack(true);
         }
-
     }
 
     public void nextTrack(boolean noInterrupt) {
 
-            //MusicInfo info = new MusicInfo(queue.pollFirst().getTrack(), queue.poll().getUser());
-        AudioTrack track = queue.pop();
-
+        AudioTrack track = queue.pollFirst();
         if(track != null){
             if(!player.startTrack(track, noInterrupt)){
-                queue.addFirst(track);
+               player.playTrack(track);
             }
         }else{
             player.stopTrack();
