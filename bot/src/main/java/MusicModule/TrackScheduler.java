@@ -2,27 +2,20 @@ package MusicModule;
 //git
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackState;
 import net.dv8tion.jda.api.entities.Member;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 
 //todo fånga lite errors
 //TODO skapa en lista/kö för musikmodulen, skriva addToQueue metoden
 public class TrackScheduler extends AudioEventAdapter {
     private  AudioPlayer player;
-    private  BlockingDeque<MusicInfo> queue;
+    private  BlockingDeque<AudioTrack> queue;
 
     public TrackScheduler(AudioPlayer player) {
 
@@ -43,27 +36,34 @@ public class TrackScheduler extends AudioEventAdapter {
 //        return drainedQueue;
 //    }
     public void printelements(){
-        System.out.println("ELEMENTS: + " + queue.size()+ "\nTrack: + " + queue.element().getTrack()
-                + "\n\n" + "User: " + queue.element().getUser());
+        System.out.println("ELEMENTS: + " + queue.size()+ "\nTrack: + " + queue.element());
     }
 
     public void addToQueue(AudioTrack track, Member user) {
         MusicInfo info = new MusicInfo(track,user);
-        queue.addLast(info);
+        queue.push(track);
         printelements();
 
         if (player.getPlayingTrack() == null) {
             player.playTrack(track);
+            System.out.println("----QUEUE OVER-----" + "\nSize of queue " + queue.size());
         }
 
     }
 
     public void nextTrack(boolean noInterrupt) {
 
-        MusicInfo info = new MusicInfo(queue.pollFirst().getTrack(), queue.element().getUser());
-        AudioTrack track = info.getTrack();
-        Member user = info.getUser();
-        player.playTrack(queue.pollFirst().getTrack());
+            //MusicInfo info = new MusicInfo(queue.pollFirst().getTrack(), queue.poll().getUser());
+        AudioTrack track = queue.pop();
+
+        if(track != null){
+            if(!player.startTrack(track, noInterrupt)){
+                queue.addFirst(track);
+            }
+        }else{
+            player.stopTrack();
+            System.out.println("Track stopped");
+        }
 
     }
 
@@ -71,8 +71,8 @@ public class TrackScheduler extends AudioEventAdapter {
         if (clearQueue) {
             queue.clear();
         }
-        queue.add((MusicInfo) track);
-        nextTrack(false);
+        queue.add(track);
+        nextTrack(true);
     }
 
     public void skip(Member user) {
@@ -83,7 +83,7 @@ public class TrackScheduler extends AudioEventAdapter {
         if(queue.peek().equals(info)){
             queue.poll();
             if(player.getPlayingTrack() == null){
-                player.playTrack(queue.poll().getTrack());
+                player.playTrack(queue.poll());
             }
         }}catch (NullPointerException e){
             System.out.println("Nullpointer exception in trackScheduler skip function");
@@ -105,7 +105,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-           track = queue.element().getTrack();
+           track = queue.element();
            System.out.println(track.getIdentifier());
 
 
@@ -146,6 +146,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         System.out.println("onTrackStuck TrackScheduler");
+
     }
 }
 
