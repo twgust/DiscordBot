@@ -46,7 +46,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
         if (player.getPlayingTrack() == null) {
             player.playTrack(track);
-            System.out.println("----QUEUE OVER-----" + "\nSize of queue " + queue.size());
+
         }
 
     }
@@ -63,6 +63,9 @@ public class TrackScheduler extends AudioEventAdapter {
         }else{
             player.stopTrack();
             System.out.println("Track stopped");
+        }
+        if(queue.isEmpty()){
+            System.out.println("----QUEUE OVER-----" + "\nSize of queue " + queue.size());
         }
 
     }
@@ -119,7 +122,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
         }
         if(AudioTrackEndReason.FINISHED.mayStartNext){
-            nextTrack(true);
+            //nextTrack(true);
             System.out.println("FINISHED");
         }
         if(AudioTrackEndReason.REPLACED.mayStartNext){
