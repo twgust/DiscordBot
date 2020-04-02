@@ -68,9 +68,7 @@ public class PlayCommand extends Command {
 
         //checks to see if user is a member of guild
         Guild server = user.getGuild();
-
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
-
             /*
 
              */
@@ -105,7 +103,6 @@ public class PlayCommand extends Command {
         server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player));
 
         String[] array = message.split(" ", 2);
-
         loadMusic(array[1],user);
     }
 }
