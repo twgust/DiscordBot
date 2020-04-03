@@ -12,13 +12,16 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.managers.GuildManager;
 
 //git
 public class PlayCommand extends Command {
@@ -26,16 +29,19 @@ public class PlayCommand extends Command {
     private TrackScheduler scheduler;
     private AudioPlayer player;
     private  Guild server;
-
+    private GuildMessageReceivedEvent event;
     public PlayCommand() {
 
         playerManager = new DefaultAudioPlayerManager();
         player = playerManager.createPlayer();
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
-
     }
 
+
+    public void sendMessages(GuildMessageReceivedEvent e){
+        e.getChannel().sendMessage("");
+    }
 
     public AudioPlayer getPlayer(){
         return player;
@@ -58,39 +64,47 @@ public class PlayCommand extends Command {
     /*
         LoadMusic tar in en låt från användare (identifier)
      */
-    public void loadMusic(String identifier, Member user){
+    public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event){
         if(user.getVoiceState().getChannel() == null){
             System.out.println("you are not in a voice channel");
         }
         else {
-            System.out.println("you are in a voice channel");
+
         }
 
         //checks to see if user is a member of guild
         Guild server = user.getGuild();
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
-            /*
 
-             */
             @Override
             public void trackLoaded(AudioTrack track) {
                 connectToVoiceChannel(server.getAudioManager());
                 player.setVolume(100);
-                scheduler.addToQueue(track, user);
+
+                if(player.getPlayingTrack() == null){
+                    scheduler.addToQueue(track, user);
+                    event.getChannel().sendMessage(user.getNickname() + " your song is now playing").queue();
+                }
+                else if (player.getPlayingTrack() != null){
+                    scheduler.addToQueue(track, user);
+                    event.getChannel().sendMessage("Track is queued, current position --> " + scheduler.getQueue().size()).queue();
+                }
             }
+
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                System.out.println("playlist loaded successfully");
+                for (AudioTrack track : playlist.getTracks()) {
+                    scheduler.addToQueue(track, user);
+                }
             }
 
             @Override
             public void noMatches() {
-                System.out.println("no matches");
+                event.getChannel().sendMessage("no matches, try again");
             }
-
             @Override
             public void loadFailed(FriendlyException exception) {
-                System.out.println("load failed" + exception.getMessage());
+                event.getChannel().sendMessage(exception.getMessage());
             }
         });
     }
@@ -98,11 +112,17 @@ public class PlayCommand extends Command {
         String message = event.getMessage().getContentRaw();
         Member user = event.getMember();
         Guild server = event.getGuild();
-
         AudioSourceManagers.registerRemoteSources(playerManager);
         server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player));
 
         String[] array = message.split(" ", 2);
-        loadMusic(array[1],user);
+
+        /**
+         *  Element one in the array is the identifier that we are passing to the loadMusic function
+         */
+
+        loadMusic(array[1],user, event);
+
+
     }
 }

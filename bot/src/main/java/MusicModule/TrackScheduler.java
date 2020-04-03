@@ -4,10 +4,12 @@ package MusicModule;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Member;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -28,9 +30,11 @@ public class TrackScheduler extends AudioEventAdapter {
 
     }
 
+    public BlockingDeque<AudioTrack> getQueue() {
+        return queue;
+    }
 
-
-//    public List<AudioTrack> drainQueue() {
+    //    public List<AudioTrack> drainQueue() {
 //        List<AudioTrack> drainedQueue = new ArrayList<>();
 //        queue.drainTo(drainedQueue);
 //        return drainedQueue;
@@ -56,6 +60,11 @@ public class TrackScheduler extends AudioEventAdapter {
             nextTrack(true);
         }
     }
+    public void addPlaylistToQueue(AudioPlaylist playlist, Member user){
+        queue.addAll(playlist.getTracks());
+        System.out.println("Queue has now added"+ playlist.getTracks());
+        }
+
 
     public void nextTrack(boolean noInterrupt) {
 
