@@ -1,7 +1,7 @@
 package LastfmModule;
 
 import Commands.Command;
-import Main.eventListener;
+import Main.EventListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,7 +18,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,8 +43,8 @@ public class LastFmCommand extends Command {
     private User user;
     private EventWaiter waiter;
     private Paginator.Builder pbuilder;
-    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type "+eventListener.prefix+"fm set <username>. Type "+eventListener.prefix+"help for more help noob. ❌```";
-    private String wrongFormatMessage = "```❌ Invalid format, try again. Type "+ eventListener.prefix +"help for more help noob ❌```";
+    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type "+EventListener.prefix+"fm set <username>. Type "+EventListener.prefix+"help for more help noob. ❌```";
+    private String wrongFormatMessage = "```❌ Invalid format, try again. Type "+ EventListener.prefix +"help for more help noob ❌```";
 
     public LastFmCommand(EventWaiter waiter) {
         this.waiter = waiter;
