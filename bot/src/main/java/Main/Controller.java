@@ -3,8 +3,9 @@ package Main;
 import Commands.*;
 import ModerationModule.*;
 
-import MusicModule.MusicCommands.*;
 import LastfmModule.LastFmCommand;
+import MusicModule.MusicCommands.*;
+import MusicModule.MusicController;
 import QuizModule.QuizCommand;
 import ModerationModule.BanCommand;
 import ModerationModule.KickCommand;
@@ -30,6 +31,7 @@ public class Controller {
     private QuizCommand quizCommand;
     private Token token;
     private TextChannel logChannel;
+    private MusicController musicController;
 
 
 
@@ -40,6 +42,7 @@ public class Controller {
         JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XoRfwA.Y4ZHrqnt9JSlXjdtHYvgmwFxL5g").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
+        musicController = new MusicController();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
@@ -77,12 +80,14 @@ public class Controller {
         cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
-        cmdMap.put("play", new PlayCommand());
+        cmdMap.put("queue", new MusicQueueCommand(musicController));
+        cmdMap.put("skip", new MusicSkipCommand(musicController));
+        cmdMap.put("pause", new MusicPauseCommand(musicController));
+        cmdMap.put("resume", new MusicResumeCommand(musicController));
+        cmdMap.put("play", new MusicPlayCommand(musicController));
         cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("prune", new PruneCommand(this));
-        cmdMap.put("skip", new SkipCommand());
-
     }
 
     public TextChannel getLogChannel() {

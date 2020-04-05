@@ -8,47 +8,51 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-import java.util.ArrayList;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 //todo fånga lite errors
 //TODO skapa en lista/kö för musikmodulen, skriva addToQueue metoden
 public class TrackScheduler extends AudioEventAdapter {
-    private  AudioPlayer player;
-    private  BlockingDeque<AudioTrack> queue;
-
+    private AudioPlayer player;
+    private BlockingDeque<AudioTrack> queue;
     public TrackScheduler(AudioPlayer player) {
-
 
         this.player = player;
         this.queue = new LinkedBlockingDeque<>(); //FIFO principle, first in first out
 
     }
-    public TrackScheduler(){
 
+    public TrackScheduler() {
+
+    }
+
+    public AudioPlayer getPlayer() {
+        return player;
+    }
+
+    public void onNextSong(GuildMessageReceivedEvent event, AudioTrack track) {
+        event.getChannel().sendMessage("Now plaing:" + track.getInfo().title);
     }
 
     public BlockingDeque<AudioTrack> getQueue() {
         return queue;
     }
 
-    //    public List<AudioTrack> drainQueue() {
-//        List<AudioTrack> drainedQueue = new ArrayList<>();
-//        queue.drainTo(drainedQueue);
-//        return drainedQueue;
-//    }
-    public void printelements(){
-        System.out.println("ELEMENTS: + " + queue.size()+ "\nTrack: + " + queue.element());
+
+    public void printelements() {
+        System.out.println("ELEMENTS: + " + queue.size() + "Track: + " + queue.element());
     }
 
     /**
      * Function "addToQueue" is invoked every time a user types "%play + identifier"
      * It adds the identifier sent as a track to a queue. It is placed first in the queue.
      * If no track is currently being played the nextTrack function is invoked.
-     *
+     * <p>
      * If a song is already playing it simply adds it to the last position of the queue.
+     *
      * @param track
      * @param user
      */
@@ -57,30 +61,18 @@ public class TrackScheduler extends AudioEventAdapter {
         printelements();
 
         if (player.getPlayingTrack() == null) {
-            nextTrack(true);
+            nextTrack();
         }
     }
-    public void addPlaylistToQueue(AudioPlaylist playlist, Member user){
+
+    public void addPlaylistToQueue(AudioPlaylist playlist, Member user) {
         queue.addAll(playlist.getTracks());
-        System.out.println("Queue has now added"+ playlist.getTracks());
-        }
+        System.out.println("Queue has now added" + playlist.getTracks());
+    }
 
 
-    public void nextTrack(boolean noInterrupt) {
-
-        AudioTrack track = queue.pollFirst();
-        if(track != null){
-            if(!player.startTrack(track, noInterrupt)){
-               player.playTrack(track);
-            }
-        }else{
-            player.stopTrack();
-            System.out.println("Track stopped");
-        }
-        if(queue.isEmpty()){
-            System.out.println("----QUEUE OVER-----" + "\nSize of queue " + queue.size());
-        }
-
+    public void nextTrack(){
+        player.startTrack(queue.pollLast(), false);
     }
 
     public void play(AudioTrack track, boolean clearQueue) {
@@ -88,29 +80,16 @@ public class TrackScheduler extends AudioEventAdapter {
             queue.clear();
         }
         queue.add(track);
-        nextTrack(true);
+        nextTrack();
     }
 
-    public void skip(Member user) {
-        AudioTrack track = player.getPlayingTrack();
-
-        MusicInfo info = new MusicInfo(track, user);
-        try {
-        if(queue.peek().equals(info)){
-            queue.poll();
-            if(player.getPlayingTrack() == null){
-                player.playTrack(queue.poll());
-            }
-        }}catch (NullPointerException e){
-            System.out.println("Nullpointer exception in trackScheduler skip function");
-        }
+    public void skip(AudioTrack track){
+        player.playTrack(queue.pollFirst());
     }
-
 
     @Override
     public void onPlayerPause(AudioPlayer player) {
         player.setPaused(true);
-        // Player was paused
     }
 
     @Override
@@ -121,8 +100,8 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-           track = queue.element();
-           System.out.println(track.getIdentifier());
+        track = queue.element();
+        System.out.println(track.getIdentifier());
 
 
     }
@@ -130,21 +109,21 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
-            nextTrack(true);
-
+            nextTrack();
 
         }
-        if(AudioTrackEndReason.FINISHED.mayStartNext){
+        if (AudioTrackEndReason.FINISHED.mayStartNext) {
             //nextTrack(true);
             System.out.println("FINISHED");
-        }
-        if(AudioTrackEndReason.REPLACED.mayStartNext){
+
+        }//here in light mie a problem
+        if (AudioTrackEndReason.REPLACED.mayStartNext) {
             System.out.println("REPLACED");
-            nextTrack(false);
+            nextTrack();
         }
-        if(AudioTrackEndReason.CLEANUP.mayStartNext){
+        if (AudioTrackEndReason.CLEANUP.mayStartNext) {
             System.out.println("CLEANUP");
-            nextTrack(false);
+            nextTrack();
         }
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
         // endReason == LOAD_FAILED: Loading of a track failed (mayStartNext = true).
