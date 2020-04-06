@@ -2,28 +2,24 @@ package Main;
 
 import Commands.*;
 import ModerationModule.*;
-import MusicModule.Music;
-import MusicModule.MusicCommands.*;
-import QuizModule.QuizCommand;
-import WeatherModule.WeatherCommand;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.channel.text.update.TextChannelUpdateSlowmodeEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.security.auth.login.LoginException;
+
 import LastfmModule.LastFmCommand;
-import LastfmModule.LastFmCommandOldv2;
-import LastfmModule.TestingClass;
+import MusicModule.MusicCommands.*;
+import MusicModule.MusicController;
+import QuizModule.QuizCommand;
+import ModerationModule.BanCommand;
+import ModerationModule.KickCommand;
+import ModerationModule.PruneCommand;
+import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+
 
 /**
  * Controller klass, JDA Buildern tar in ett token. Detta token är bottens ID..
@@ -35,18 +31,26 @@ public class Controller {
     private QuizCommand quizCommand;
     private Token token;
     private TextChannel logChannel;
+    private MusicController musicController;
+
+
+
 
     public Controller() throws LoginException, IOException {
+
         token = new Token();
-        JDA jda = new JDABuilder(token.getToken()).build();
+        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XoRfwA.Y4ZHrqnt9JSlXjdtHYvgmwFxL5g").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
+        musicController = new MusicController();
+
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
         addCommands();
     }
+
 
     /**
      * Denna metod skall söka och exekvera vilket kommando det är som är kallat på från användaren.
@@ -76,8 +80,14 @@ public class Controller {
         cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
-        cmdMap.put("play", new PlayCommand());
+        cmdMap.put("queue", new MusicQueueCommand(musicController));
+        cmdMap.put("skip", new MusicSkipCommand(musicController));
+        cmdMap.put("pause", new MusicPauseCommand(musicController));
+        cmdMap.put("resume", new MusicResumeCommand(musicController));
+        cmdMap.put("play", new MusicPlayCommand(musicController));
+        cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
+        cmdMap.put("prune", new PruneCommand(this));
     }
 
     public TextChannel getLogChannel() {
@@ -88,3 +98,4 @@ public class Controller {
         this.logChannel = logChannel;
     }
 }
+
