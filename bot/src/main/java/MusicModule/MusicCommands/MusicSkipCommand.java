@@ -18,7 +18,7 @@ public class MusicSkipCommand extends Command {
         String songTitle = controller.getPlayer().getPlayingTrack().getInfo().title;
         String songURI = controller.getPlayer().getPlayingTrack().getInfo().uri;
         String formatedSongTitle = ("```Song: " + songTitle + " has beeen skipped```");
-        event.getChannel().sendMessage(formatedSongTitle);
+        event.getChannel().sendMessage(formatedSongTitle).queue();
 
         controller.getScheduler().nextTrack();
     }
