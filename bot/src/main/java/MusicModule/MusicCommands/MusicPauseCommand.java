@@ -15,7 +15,7 @@ public class MusicPauseCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event){
         controller.getPlayer().setPaused(true);
-        event.getChannel().sendMessage("Player has been paused");
+        event.getChannel().sendMessage("```Music has been paused \n%resume to start playing again```").queue();
 
     }
 }

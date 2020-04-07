@@ -13,8 +13,8 @@ public class MusicQueueCommand extends Command {
 
   @Override
     public void execute(GuildMessageReceivedEvent event){
-      event.getChannel().sendMessage("Current queue: " + controller.getScheduler().getQueue().size()
-      + "... More commands related to queue coming").queue();
+      event.getChannel().sendMessage("```Current queue: " + controller.getScheduler().getQueue().size()
+      + "``` ... More commands related to queue coming").queue();
 
   }
 

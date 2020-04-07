@@ -39,7 +39,7 @@ public class Controller {
     public Controller() throws LoginException, IOException {
 
         token = new Token();
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XoRfwA.Y4ZHrqnt9JSlXjdtHYvgmwFxL5g").build();
+        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XotC8g.uN_UUJe3wcmzx7kKeMC7IktCAZI").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
         musicController = new MusicController();
@@ -85,6 +85,9 @@ public class Controller {
         cmdMap.put("pause", new MusicPauseCommand(musicController));
         cmdMap.put("resume", new MusicResumeCommand(musicController));
         cmdMap.put("play", new MusicPlayCommand(musicController));
+        cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
+        cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
+        cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("prune", new PruneCommand(this));

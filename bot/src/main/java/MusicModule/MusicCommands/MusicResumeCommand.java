@@ -13,7 +13,7 @@ public class MusicResumeCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event){
         controller.getPlayer().setPaused(false);
-        event.getChannel().sendMessage("Player has been unpaused");
+        event.getChannel().sendMessage("```Music has been resumed!```").queue();
     }
 
 }

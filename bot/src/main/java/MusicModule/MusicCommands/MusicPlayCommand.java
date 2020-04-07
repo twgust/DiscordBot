@@ -4,6 +4,7 @@ import Commands.Command;
 import MusicModule.AudioPlayerSendHandler;
 import MusicModule.MusicController;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -20,17 +21,23 @@ public class MusicPlayCommand extends Command {
 
 
         Guild server = event.getGuild();
-        Message messageTrue = event.getMessage();
-        Member user = messageTrue.getMember();
-        String message = messageTrue.getContentRaw();
-        String[] array = message.split(" ", 2);
+        Message message = event.getMessage();
+        Member user = message.getMember();
+        String messageRaw = message.getContentRaw();
+
+
+        String[] array = messageRaw.split(" ", 2);
+
+        String substring = messageRaw.substring(6);
+        System.out.println(substring);
 
 
         AudioSourceManagers.registerRemoteSources(controller.getPlayerManager());
 
         server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(controller.getPlayer()));
 
-        controller.loadMusic(array[1], user, event);
+        controller.loadMusic("ytsearch:" + substring, user, event);
+        //controller.loadMusic(array[1], user, event);
 
     }
 }

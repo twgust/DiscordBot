@@ -1,10 +1,7 @@
 package MusicModule;
 
 import Commands.Command;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.*;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -63,7 +60,7 @@ public class MusicController extends Command {
     private void connectToVoiceChannel(AudioManager audioManager) {
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
             for (VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
-                if ("test".equals(voiceChannel.getName())) {
+                if ("General".equals(voiceChannel.getName())) {
                     audioManager.openAudioConnection(voiceChannel);
                     return;
                 }
@@ -92,21 +89,32 @@ public class MusicController extends Command {
 
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, user);
-                    event.getChannel().sendMessage("Now playing: " + track.getInfo().title + " !\n").queue();
+                    event.getChannel().sendMessage("```Now playing: " + track.getInfo().title + " ```\n").queue();
                 } else if (player.getPlayingTrack() != null) {
                     scheduler.addToQueue(track, user);
-                    event.getChannel().sendMessage(track.getInfo().title + " Queue position(" + scheduler.getQueue().size() + ")").queue();
+                    event.getChannel().sendMessage("```"+track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
 
                 }
             }
 
+            /**
+             * This method is invoked with the ytsearch identifier, unsure why.
+             * For now it  will only load the first track of the search results,
+             * if "AudioTrack track = playlist.getTracks().get(0);" is not there it will load and queue
+             * 30~ of the same tracks when the user uses the command %play "I'm on fire"
+             */
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                for (AudioTrack track : playlist.getTracks()) {
+                connectToVoiceChannel(server.getAudioManager());
+                AudioTrack track = playlist.getTracks().get(0);
+                if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, user);
+                    event.getChannel().sendMessage("```Now playing: " + track.getInfo().title + " ```\n").queue();
+                } else if (player.getPlayingTrack() != null) {
+                    scheduler.addToQueue(track, user);
+                    event.getChannel().sendMessage("```"+track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
                 }
             }
-
             @Override
             public void noMatches() {
                 event.getChannel().sendMessage("current syntax: %play <youtube-url>").queue();
