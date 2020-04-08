@@ -32,7 +32,7 @@ public class Controller {
 
     public Controller() throws LoginException, IOException {
         token = new Token();
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.Xo0h_Q.p6q4OV0KARXjs8cQhAmTA2-iQS4").build();
+        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.Xo0ixA.7Zpjm668A9C3HYG4BQJQhVLc5ro").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
         jda.addEventListener(new EventListener(this));
@@ -73,8 +73,12 @@ public class Controller {
         cmdMap.put("fm", new LastFmCommand(waiter));
         cmdMap.put("play", new PlayCommand());
         cmdMap.put("lock", new LockCommand());
+        cmdMap.put("unlock", new UnlockCommand());
+        cmdMap.put("info", new InfoCommand());
+        cmdMap.put("mute", new MuteCommand());
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("prune", new PruneCommand(this));
+
     }
 
     public TextChannel getLogChannel() {
