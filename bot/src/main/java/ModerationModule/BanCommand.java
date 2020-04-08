@@ -5,9 +5,6 @@ import Main.Controller;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BanCommand extends Command {
     private Controller ctrl;
 
@@ -17,22 +14,16 @@ public class BanCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        System.out.println("im in");
         String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
         //Variables
         int delDays = 0;
         String reason = "";
         Member member;
         //Gets member from tag or id
-        try {
-            member = event.getGuild().getMemberById(Long.parseLong(arguments[1]));
-        } catch (Exception e) {
-            try {
-                member = event.getGuild().getMemberById(arguments[1].substring(3, arguments[1].length() - 1));
-            } catch (Exception e2) {
-                event.getChannel().sendMessage("Invalid target user").queue();
-                return;
-            }
+        member = GetMember.get(event);
+        if (member == null){
+            event.getChannel().sendMessage("Invalid target user").queue();
+            return;
         }
         //Gets delDays and reason
         try {

@@ -32,7 +32,7 @@ public class Controller {
 
     public Controller() throws LoginException, IOException {
         token = new Token();
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XoMNvg.xoULgV6IGprq9Cm_XJiiKRP548U").build();
+        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.Xo0h_Q.p6q4OV0KARXjs8cQhAmTA2-iQS4").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
         jda.addEventListener(new EventListener(this));

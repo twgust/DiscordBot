@@ -2,6 +2,7 @@ package ModerationModule;
 
 import Commands.Command;
 import Main.Controller;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -23,20 +24,30 @@ public class PruneCommand extends Command {
         String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
         int delAmount = 0;
 
-        try{
+        try {
             delAmount = Integer.parseInt(arguments[1]);
         } catch (NumberFormatException e) {
             return;
         }
-        List<Message> messages = event.getChannel().getIterableHistory().complete();
-        if (messages.size()-1 < delAmount) delAmount = messages.size();
-        for (int i = 0; i < delAmount+1; i++) {
-            messages.get(i).delete().queue();
+        Member member = GetMember.get(event);
+        if (member == null) {
+            List<Message> messages = event.getChannel().getIterableHistory().complete();
+            if (messages.size() - 1 < delAmount) delAmount = messages.size();
+            for (int i = 0; i < delAmount + 1; i++) {
+                messages.get(i).delete().queue();
+            }
+        } else {
+            List<Message> messages = event.getChannel().getIterableHistory().complete();
+            if (messages.size() - 1 < delAmount) delAmount = messages.size();
+            int j = 0;
+            for (int i = 0; i < delAmount + 1; j++) {
+                if (messages.get(i).getMember().equals(member)) messages.get(i).delete().queue();
+            }
         }
 
-        try{
+        try {
             ctrl.getLogChannel().sendMessage(event.getAuthor().getName() + " has pruned " + delAmount + " messages in " + event.getChannel().getName()).queue();
-        }catch (Exception e){
+        } catch (Exception e) {
         }
     }
 }
