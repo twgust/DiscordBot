@@ -38,6 +38,7 @@ public class QuizCommand extends Command {
         }
     }
 
+
     //Listens to user activity in the chat "quiz"
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {

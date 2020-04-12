@@ -21,6 +21,7 @@ public class QuizParser {
     private int responseCode = -1;
     private LinkedList<Question> parsedQuestions = new LinkedList<Question>();
 
+
     //Constructor
     public QuizParser(String url){
         HttpClient client = HttpClientBuilder.create().build();
@@ -54,10 +55,12 @@ public class QuizParser {
             }
         }
 
+
     //Return an ArrayList containing all the Question objects created from parsing the quiz database's json-file
     public LinkedList<Question> getQuestions(){
         return parsedQuestions;
     }
+
 
     //Create a new Question object
     public Question createQuestion(Object object) {
@@ -86,6 +89,7 @@ public class QuizParser {
 
         return question;
     }
+
 
     //Fixing formatting issues with json -> String
     public String fixFormat(String unfixed){

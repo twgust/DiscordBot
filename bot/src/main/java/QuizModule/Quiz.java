@@ -118,7 +118,6 @@ public class Quiz implements Runnable{
     Methods used by the thread
      */
 
-
     //Retrieves the current question if there is one
     public String getQuestion(){
         pollQuestion();
