@@ -12,32 +12,30 @@ import java.util.List;
 
 //A command to start a trivia game
 public class QuizCommand extends Command {
-    private Quiz quiz = new Quiz(this);
-    private TextChannel quizChannel;
-    private final String channelName = "quiz";
+    private final String channelName = "quiz"; //The name of the designated quiz text-channel
+    private Quiz quiz;
 
-    //Executes the user command, starting or stopping a quiz session
+
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-
         if (event.getChannel().getName().equals(channelName)) {
-            quizChannel = event.getChannel();
-            String receivedMessage = event.getMessage().getContentRaw();
-            String secondCommand = receivedMessage.substring(6);
 
+            String command = event.getMessage().getContentRaw().substring(6);
 
-            if (secondCommand.equals("start") && !quiz.isAlive()) {
-                quiz.start();
-            } else if (secondCommand.equals("stop") && quiz.isAlive()) { //Not working
-                postMessage("The Quiz session has been stopped!");
-                quiz.interrupt();
+            switch(command){
+                case "start":
+                    quiz = new Quiz(event.getChannel());
+                    quiz.start();
+                    break;
+                case "stop":
+                    quiz.stop();
+                    break;
+                default:
+                    System.out.println("Test - Please enter start after the quiz command to start and " +
+                            "new session \n or stop to interrupt an ongoing session");
+                    break;
             }
         }
-    }
-
-    //Posts messages in the chat "quiz"
-    public void postMessage(String message) {
-        quizChannel.sendMessage(message).queue();
     }
 
     //Listens to user activity in the chat "quiz"
@@ -51,29 +49,4 @@ public class QuizCommand extends Command {
             }
         }
     }
-
-    //Deletes messages in the chat "quiz"
-    public void deleteMessages(){
-        List<Message> messages = quizChannel.getHistory().retrievePast(100).complete();
-        if(!messages.isEmpty() && messages.size() > 2){
-            quizChannel.deleteMessages(messages).complete();
-        }
-
-    }
-
-    //ToDo
-    public void lockQuizChannel(){
-
-    }
-
-    //ToDo
-    public void unlockQuizChannel(){
-
-    }
-
-    //ToDo
-    public void limitChat(int limit){
-        quizChannel.getManager().setSlowmode(limit); //Not working
-    }
-
 }

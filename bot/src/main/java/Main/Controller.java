@@ -39,7 +39,7 @@ public class Controller {
     public Controller() throws LoginException, IOException {
 
         token = new Token();
-        JDA jda = new JDABuilder("Njg3MjMxNTc3MDAwMTE2MjI0.XoRfwA.Y4ZHrqnt9JSlXjdtHYvgmwFxL5g").build();
+        JDA jda = new JDABuilder("NjkyNzQ1NTQzMTg4ODczMzA2.XpHuLw.K747Ruh6dPz_xEpeqXbnqWKYMQQ").build();
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
         musicController = new MusicController();
