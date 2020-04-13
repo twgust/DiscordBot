@@ -116,10 +116,11 @@ hs_err_pid*
 
 # End of https://www.gitignore.io/api/java,intellij
 
-/token.txt
-/LastFm_DB.sqlite
-
+/bot/token.txt
+/bot/LastFm_DB.sqlite
+/bot/
 *.class
 /bot/.idea/*
 
 /bot/.idea
+/bot/db
