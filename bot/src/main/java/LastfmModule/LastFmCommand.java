@@ -36,11 +36,9 @@ public class LastFmCommand extends Command {
     private String username;
     private String messageReceived;
     private String[] messageReceivedArr;
-    private EmbedBuilder embedMessage;
     private String messageTosend;
     private int maxTrackAmount = 10;
     private String periodStr;
-    private MessageEmbed messageEmbed;
     private User user;
     private EventWaiter waiter;
     private Paginator.Builder pbuilder;
@@ -107,6 +105,16 @@ public class LastFmCommand extends Command {
                 if(sql1.checkQuery(getDiscordID())){
                     sql1.closeConnection();
                     getRecentTracks(getDiscordID(),10, event);
+                }
+                else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("nowplaying") || getMessageReceivedArr()[1].equalsIgnoreCase("np")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    getNowPlaying(getDiscordID(), event);
                 }
                 else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
@@ -815,8 +823,8 @@ public class LastFmCommand extends Command {
                     if (artist.contains("*")) {
                         artist = artist.replace("*", "\\*");
                     }
-                    if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
+                    if (trackname.contains("*")) {
+                        trackname= trackname.replace("*", "\\*");
                     }
 
                     if(timeAgo.equalsIgnoreCase("now")){
@@ -886,7 +894,60 @@ public class LastFmCommand extends Command {
     }
 
     public void getNowPlaying(String discordID, GuildMessageReceivedEvent event){
-        
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
+            LastFmSQL sql = new LastFmSQL();
+            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+            formatSymbols.setDecimalSeparator('.');
+            formatSymbols.setGroupingSeparator(',');
+            DecimalFormat decimalFormat = new DecimalFormat("#.##", formatSymbols);
+            decimalFormat.setGroupingSize(3);
+            decimalFormat.setGroupingUsed(true);
+
+            String username = sql.getUsername(discordID);
+            sql.closeConnection();
+            LastFmNowPlayingParser np = new LastFmNowPlayingParser(apikey, username);
+            String[][] nowPlayingInfo = LastFmNowPlayingParser.getNowplayingInfo();
+            String[][] embedInfo = new String[2][8];
+            String fieldPlaying = "Last played";
+            String userLink = "https://www.last.fm/user/" + username;
+            String authormessage = username + " recent plays";
+
+            for(int i = 0; i < 2; i++) {
+
+                if (nowPlayingInfo[i][1].contains("*")) {
+                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
+                }
+                if (nowPlayingInfo[i][2].contains("*")) {
+                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
+                }
+
+                if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
+                    fieldPlaying = "Now playing";
+                }
+                else authormessage = "Last listened to";
+            }
+
+            String artistName = nowPlayingInfo[0][1];
+            String trackName = nowPlayingInfo[0][2];
+            String trackLink = nowPlayingInfo[0][3];
+            String totalScrobbles = nowPlayingInfo[0][5];
+            String thumbnail = nowPlayingInfo[0][6];
+            String trackScrobbles = nowPlayingInfo[0][7];
+
+            String artistNamePrevious = nowPlayingInfo[1][1];
+            String trackNamePrevious = nowPlayingInfo[1][2];
+            String trackLinkPrevious = nowPlayingInfo[1][3];
+            message.editMessage("\u200B").queue();
+            EmbedBuilder nowPlaying = new EmbedBuilder();
+            nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+            nowPlaying.addField(fieldPlaying, "["+ trackName + "]("+trackLink+") - " + artistName, false);
+            nowPlaying.addField("Listened to previously", "["+trackNamePrevious+"]("+trackLinkPrevious+") - " + artistNamePrevious, false);
+            nowPlaying.setThumbnail(thumbnail);
+            nowPlaying.setFooter("Total trackplays: " + trackScrobbles + "      |       Total scrobbles: "+totalScrobbles);
+            nowPlaying.setColor(0xFF0000);
+
+            message.editMessage(nowPlaying.build()).queue();
+        });
     }
 
     public boolean checkIfUserExist(String username){
@@ -902,7 +963,7 @@ public class LastFmCommand extends Command {
 
     public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event){
         LastFmSQL sql = new LastFmSQL();
-        sql.deleteQuery(discordID, sql.getUsername(discordID));
+        sql.deleteQuery(discordID);
         sql.closeConnection();
         event.getChannel().sendMessage("```Removed your Last.FM account ✅```").queue();
 
@@ -995,14 +1056,6 @@ public class LastFmCommand extends Command {
         this.messageReceivedArr = messageReceivedArr;
     }
 
-    public EmbedBuilder getEmbedMessage() {
-        return embedMessage;
-    }
-
-    public void setEmbedMessage(EmbedBuilder embedMessage) {
-        this.embedMessage = embedMessage;
-    }
-
     public String getMessageTosend() {
         return messageTosend;
     }
@@ -1025,14 +1078,6 @@ public class LastFmCommand extends Command {
 
     public void setPeriodStr(String periodStr) {
         this.periodStr = periodStr;
-    }
-
-    public MessageEmbed getMessageEmbed() {
-        return messageEmbed;
-    }
-
-    public void setMessageEmbed(MessageEmbed messageEmbed) {
-        this.messageEmbed = messageEmbed;
     }
 
     public User getUser() {

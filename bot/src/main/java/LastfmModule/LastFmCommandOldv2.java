@@ -216,7 +216,7 @@ public class LastFmCommandOldv2 extends Command {
         }
         System.out.println(pages);
         //System.out.println(dbInfo);
-        sql.updateTopTracks(username, dbInfo, periodStr);
+        //sql.updateTopTracks(username, dbInfo, periodStr);
         sql.closeConnection();
 
         try {

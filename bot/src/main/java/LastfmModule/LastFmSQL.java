@@ -145,6 +145,7 @@ public class LastFmSQL {
         }
     }
 
+    /*
     public void updateTopTracks(String username, String toptracks, String period){
 
         if (period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("week"))
@@ -217,6 +218,8 @@ public class LastFmSQL {
 
     }
 
+     */
+/*
     public void updateTopArtists(String username, String topartists, String period){
         if (period.equalsIgnoreCase("week"))
         {
@@ -287,6 +290,8 @@ public class LastFmSQL {
 
     }
 
+ */
+
 
     public boolean checkQuery(String query) {
         String discordID = "";
@@ -326,7 +331,7 @@ public class LastFmSQL {
         return username;
     }
 
-    public void deleteQuery(String discordID, String username){
+    public void deleteQuery(String discordID){
         String query = "UPDATE fmUsers SET fmUsername = "+null+" WHERE discordID = '"+discordID+"';";
         try {
             this.state = conn.createStatement();
@@ -341,15 +346,13 @@ public class LastFmSQL {
     public static void main(String[] args) {
         String test = "test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n ";
         LastFmSQL sql = new LastFmSQL();
+        //sql.setUsername("110372734118174720", " robi874");
         sql.checkQuery("110372734118174720");
-        sql.deleteQuery("110372734118174720", test);
-        ////sql.updateUsername("test", "dab");
+        sql.deleteQuery("110372734118174720");
         String test1 = "dab";
-        sql.getUsername("110372734118174720");
-        sql.getUsername("110372734118174720");
+        //sql.getUsername("110372734118174720");
+        //sql.getUsername("110372734118174720");
         System.out.println();
-
-
 
         sql.closeConnection();
     }
