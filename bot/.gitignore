@@ -121,3 +121,5 @@ hs_err_pid*
 
 git rm *.class
 git rm .idea/*
+
+git rm -rf .idea
