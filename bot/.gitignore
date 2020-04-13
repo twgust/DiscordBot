@@ -118,3 +118,6 @@ hs_err_pid*
 
 /token.txt
 /LastFm_DB.sqlite
+
+git rm *.class
+git rm .idea/*
