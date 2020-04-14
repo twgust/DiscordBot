@@ -12,7 +12,7 @@ import java.util.List;
 
 //A command to start a trivia game
 public class QuizCommand extends Command {
-    private final String channelName = "quiz"; //The name of the designated quiz text-channel
+    private final String channelName = "quiztest"; //The name of the designated quiz text-channel
     private Quiz quiz;
 
 
