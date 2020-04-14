@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.sourceforge.htmlunit.cyberneko.HTMLElements;
+import org.apache.html.dom.HTMLBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.xerces.parsers.DOMParser;
@@ -26,6 +27,7 @@ import org.xml.sax.SAXException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -163,33 +165,14 @@ public class TestingClass extends Command {
         bufferedImages[3] = ImageIO.read(new URL("https://lastfm.freetls.fastly.net/i/u/300x300/bc85d77d2746baca88059f32c12395ec.jpg"));
         BufferedImage c = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
         try {
-            for (int i = 0; i < 4; i++){
-                String testing = "testing xd";
-                Font font = new Font("Serif", Font.BOLD, 20);
-                BufferedImage test = bufferedImages[i];
-                Graphics2D g = (Graphics2D) test.getGraphics();
-                FontRenderContext frc = g.getFontRenderContext();
-                g.setColor(Color.WHITE);
-                TextLayout textLayout = new TextLayout(testing, font, frc );
-                AffineTransform affineTransform = new AffineTransform();
-                Shape outline = textLayout.getOutline(null);
-                Rectangle outlineBounds = outline.getBounds();
-                affineTransform = g.getTransform();
-                //affineTransform.translate();
-                g.transform(affineTransform);
-                g.draw(outline);
-                g.setClip(outline);
-                //g.setFont(new Font("Serif", Font.BOLD, 20));
-                //g.drawString("testing xd", 100,100 );
+            String htmlString = "`<html>\n`, +<head>\n, +`    <meta charset=UTF-8>\n`, +`</head>\n\n`, +`<style>\n`, +`${css}\n`,`</style>\n\n`,`<body>\n`,`${htmlString}\n`,`</body>\n\n`,`</html>\n`";
+            for (int i = 0; i < 4; i++) {
 
-                bufferedImages[i] = test;
+
+
             }
-            Graphics graphics = c.getGraphics();
 
-            graphics.drawImage(bufferedImages[0], 0,0, null);
-            graphics.drawImage(bufferedImages[1], 300,0, null);
-            graphics.drawImage(bufferedImages[2], 0,300, null);
-            graphics.drawImage(bufferedImages[3], 300,300, null);
+
             File outputFile = new File("saved.png");
             ImageIO.write(c, "png", outputFile);
         } catch (Exception e){
@@ -241,8 +224,8 @@ public class TestingClass extends Command {
 
     public static void main(String[] args) throws IOException {
         TestingClass test = new TestingClass();
-        //test.testChart();
+        test.testChart();
         //test.testGettingImages();
-        test.testAPI();
+        //test.testAPI();
     }
 }
