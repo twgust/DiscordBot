@@ -15,13 +15,12 @@ public class MusicPauseCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event){
-<<<<<<< Updated upstream
-        controller.getPlayer().setPaused(true);
+
+        musicController.getPlayer().setPaused(true);
         event.getChannel().sendMessage("```Music has been paused \n%resume to start playing again```").queue();
-=======
+
         musicController.getPlayer().setPaused(true);
         event.getChannel().sendMessage("Player has been paused");
->>>>>>> Stashed changes
 
     }
 }
