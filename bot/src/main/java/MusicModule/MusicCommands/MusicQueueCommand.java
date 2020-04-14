@@ -1,11 +1,13 @@
 package MusicModule.MusicCommands;
 
 import Commands.Command;
-import MusicModule.MusicController;
+import MusicModule.*;
+
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class MusicQueueCommand extends Command {
   private MusicController controller;
+
 
   public MusicQueueCommand(MusicController controller){
       this.controller = controller;

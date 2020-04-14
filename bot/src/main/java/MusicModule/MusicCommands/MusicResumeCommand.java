@@ -1,7 +1,8 @@
 package MusicModule.MusicCommands;
 
 import Commands.Command;
-import MusicModule.MusicController;
+import MusicModule.*;
+
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class MusicResumeCommand extends Command {

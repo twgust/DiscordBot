@@ -2,7 +2,8 @@ package MusicModule.MusicCommands;
 
 import Commands.Command;
 import MusicModule.AudioPlayerSendHandler;
-import MusicModule.MusicController;
+import MusicModule.*;
+
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import net.dv8tion.jda.api.entities.Guild;

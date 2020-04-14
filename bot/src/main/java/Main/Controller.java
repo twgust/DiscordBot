@@ -1,22 +1,18 @@
 package Main;
 
 import Commands.*;
-import ModerationModule.*;
-
 import LastfmModule.LastFmCommand;
+import ModerationModule.*;
 import MusicModule.MusicCommands.*;
-import MusicModule.MusicController;
+import MusicModule.*;
 import QuizModule.QuizCommand;
-import ModerationModule.BanCommand;
-import ModerationModule.KickCommand;
-import ModerationModule.PruneCommand;
-import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
@@ -36,6 +32,7 @@ public class Controller {
 
 
 
+
     public Controller() throws LoginException, IOException {
 
         token = new Token();
@@ -43,6 +40,7 @@ public class Controller {
         waiter = new EventWaiter();
         quizCommand = new QuizCommand();
         musicController = new MusicController();
+
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
