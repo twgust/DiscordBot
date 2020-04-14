@@ -40,15 +40,6 @@ public class EventListener extends ListenerAdapter {
         }
     }
 
-    public void onGuildJoin(GuildJoinEvent joinEvent){
-        joinEvent.getGuild().createRole().setName("%BotMuted").queue();
-    }
-
-    public void onRoleCreate(RoleCreateEvent roleCreateEvent){
-        System.out.println("hi");
-        if (roleCreateEvent.getRole().getName().equals("%BotMuted")) roleCreateEvent.getRole().getManager().revokePermissions(Permission.MESSAGE_WRITE, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK).queue();
-    }
-
     public static void setPrefix(char inprefix) {
         prefix = inprefix;
     }
