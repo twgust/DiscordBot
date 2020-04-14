@@ -173,7 +173,7 @@ public class LastFmCommandOldv2 extends Command {
         String embedInfo = "";
         String dbInfo = "";
         LastFmTopTracksParser tt = new LastFmTopTracksParser(apikey, username, periodStr);
-        String[][] tracks = LastFmTopTracksParser.getResultTracks();
+        String[][] tracks = tt.getResultTracks();
         String tracksForEmbed = "";
         for (int i = 0; i < tracks.length; i++ ){
             String rank = tracks[i][0];

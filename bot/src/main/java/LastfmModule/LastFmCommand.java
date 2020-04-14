@@ -445,7 +445,7 @@ public class LastFmCommand extends Command {
             String thumbnail = "";
             String username = sql.getUsername(discordID);
             LastFmTopTracksParser tt = new LastFmTopTracksParser(apikey, username, periodStr);
-            String[][] tracks = LastFmTopTracksParser.getResultTracks();
+            String[][] tracks = tt.getResultTracks();
             try {
 
                 if (trackAmountTemp.get() > tracks.length) {
@@ -592,7 +592,7 @@ public class LastFmCommand extends Command {
             String thumbnail = "";
             String username = sql.getUsername(discordID);
             LastFmTopArtistParser ta = new LastFmTopArtistParser(apikey, username, periodStr);
-            String[][] artists = LastFmTopArtistParser.getResultArtists();
+            String[][] artists = ta.getResultArtists();
             try {
 
                 if (artistAmountTemp.get() > artists.length) {
@@ -730,7 +730,7 @@ public class LastFmCommand extends Command {
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
             if(username != null) {
                 LastFmProfileParser pp = new LastFmProfileParser(username, apikey);
-                String[] profile = LastFmProfileParser.getStrings();
+                String[] profile = pp.getStrings();
 
                 String scrobbles = profile[0];
                 String country = profile[1];
@@ -906,11 +906,10 @@ public class LastFmCommand extends Command {
             String username = sql.getUsername(discordID);
             sql.closeConnection();
             LastFmNowPlayingParser np = new LastFmNowPlayingParser(apikey, username);
-            String[][] nowPlayingInfo = LastFmNowPlayingParser.getNowplayingInfo();
-            String[][] embedInfo = new String[2][8];
+            String[][] nowPlayingInfo = np.getNowplayingInfo();
+            //String[][] embedInfo = new String[2][8];
             String fieldPlaying = "Last played";
             String userLink = "https://www.last.fm/user/" + username;
-            String authormessage = username + " recent plays";
 
             for(int i = 0; i < 2; i++) {
 
@@ -921,12 +920,10 @@ public class LastFmCommand extends Command {
                     nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
                 }
 
-                if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
-                    fieldPlaying = "Now playing";
-                }
-                else authormessage = "Last listened to";
             }
-
+            if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
+                fieldPlaying = "Now playing";
+            }
             String artistName = nowPlayingInfo[0][1];
             String trackName = nowPlayingInfo[0][2];
             String trackLink = nowPlayingInfo[0][3];

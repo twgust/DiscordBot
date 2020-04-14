@@ -11,18 +11,20 @@ import java.util.Arrays;
 
 public class LastFmTopArtistParser {
 
-    private static String [][] resultArtists;
+    private String [][] resultArtists;
+    private int limit = 1000;
 
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
     public LastFmTopArtistParser(String apikey, String username, String period){
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&period="+period+"&user="+username+"&limit=1000&api_key="+apikey+"&format=json")).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&period="+period+"&user="+username+"&limit="+limit+"&api_key="+apikey+"&format=json")).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(LastFmTopArtistParser::parse)
+                .thenAccept(this::parse)
                 .join();
     }
 
-    public static void parse(String responsebody) {
+    public void parse(String responsebody) {
 
         JSONObject artistinfo = new JSONObject(responsebody);
         JSONObject topartist = artistinfo.getJSONObject("topartists");
@@ -56,13 +58,16 @@ public class LastFmTopArtistParser {
         resultArtists = result;
     }
 
-    public static String[][] getResultArtists() {
+    public String[][] getResultArtists() {
         return resultArtists;
     }
 
     public static void main(String[] args) {
         LastFmTopArtistParser ta = new LastFmTopArtistParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874", "overall");
-        System.out.println(Arrays.deepToString(LastFmTopArtistParser.getResultArtists()));
+        System.out.println(Arrays.deepToString(ta.getResultArtists()));
+        LastFmTopArtistParser ta2 = new LastFmTopArtistParser("c806a80470bbd773b00c2b46b3a1fd75", "abhi_sama", "overall");
+        System.out.println(Arrays.deepToString(ta2.getResultArtists()));
+        System.out.println();
     }
 
 }

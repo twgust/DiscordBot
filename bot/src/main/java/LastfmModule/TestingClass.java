@@ -9,7 +9,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.sourceforge.htmlunit.cyberneko.HTMLElements;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.xerces.parsers.DOMParser;
+import org.eclipse.jetty.io.ssl.ALPNProcessor;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -19,9 +23,23 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class TestingClass extends Command {
@@ -53,6 +71,8 @@ public class TestingClass extends Command {
                 .setTimeout(2, TimeUnit.MINUTES);
 
          */
+
+
     }
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -135,8 +155,94 @@ public class TestingClass extends Command {
         System.out.println(thumbnail);
     }
 
-    public static void main(String[] args) {
+    public void testChart() throws IOException {
+        BufferedImage [] bufferedImages = new BufferedImage[4];
+        bufferedImages[0] = ImageIO.read(new URL("https://lastfm.freetls.fastly.net/i/u/300x300/29a0e7984be76ad9bd0b047f7de2242f.jpg"));
+        bufferedImages[2] = ImageIO.read(new URL("https://lastfm.freetls.fastly.net/i/u/300x300/29a0e7984be76ad9bd0b047f7de2242f.jpg"));
+        bufferedImages[1] = ImageIO.read(new URL("https://lastfm.freetls.fastly.net/i/u/300x300/bc85d77d2746baca88059f32c12395ec.jpg"));
+        bufferedImages[3] = ImageIO.read(new URL("https://lastfm.freetls.fastly.net/i/u/300x300/bc85d77d2746baca88059f32c12395ec.jpg"));
+        BufferedImage c = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
+        try {
+            for (int i = 0; i < 4; i++){
+                String testing = "testing xd";
+                Font font = new Font("Serif", Font.BOLD, 20);
+                BufferedImage test = bufferedImages[i];
+                Graphics2D g = (Graphics2D) test.getGraphics();
+                FontRenderContext frc = g.getFontRenderContext();
+                g.setColor(Color.WHITE);
+                TextLayout textLayout = new TextLayout(testing, font, frc );
+                AffineTransform affineTransform = new AffineTransform();
+                Shape outline = textLayout.getOutline(null);
+                Rectangle outlineBounds = outline.getBounds();
+                affineTransform = g.getTransform();
+                //affineTransform.translate();
+                g.transform(affineTransform);
+                g.draw(outline);
+                g.setClip(outline);
+                //g.setFont(new Font("Serif", Font.BOLD, 20));
+                //g.drawString("testing xd", 100,100 );
+
+                bufferedImages[i] = test;
+            }
+            Graphics graphics = c.getGraphics();
+
+            graphics.drawImage(bufferedImages[0], 0,0, null);
+            graphics.drawImage(bufferedImages[1], 300,0, null);
+            graphics.drawImage(bufferedImages[2], 0,300, null);
+            graphics.drawImage(bufferedImages[3], 300,300, null);
+            File outputFile = new File("saved.png");
+            ImageIO.write(c, "png", outputFile);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void testGettingImages(){
+        String link ="";
+        try {
+            Document doc = Jsoup.connect("https://www.last.fm/user/robi874/library/artists?date_preset=LAST_7_DAYS").userAgent("Chrome").get();
+            Elements images = doc.getElementsByClass("chartlist--with-image");
+            System.out.println();
+            //for(int i = 0; i < 20; i ++0)
+            String imagelink = images.get(0).getElementsByClass("avatar").get(0).getElementsByTag("img").toString();//getElementsByTag("img").toString();
+            imagelink = imagelink.replace("/avatar70s/", "/300x300/");
+            imagelink += "</img>";
+
+            InputSource is = new InputSource(new StringReader(imagelink));
+            DOMParser dp = new DOMParser();
+            dp.parse(is);
+            org.w3c.dom.Document document = dp.getDocument();
+            NodeList nl = document.getElementsByTagName("img");
+            Node n = nl.item(0);
+            NamedNodeMap nnm = n.getAttributes();
+            link = nnm.getNamedItem("src").getFirstChild().getTextContent();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(link);
+
+    }
+
+    public void testAPI(){
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=c806a80470bbd773b00c2b46b3a1fd75&artist=Aries&track=CAROUSEL&format=json&autocorrect=1&user=robi874")).build();
+        CompletableFuture<HttpResponse<String>> test = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        test.thenApply(HttpResponse::body).thenApply(this::test).join();
+
+
+    }
+    public String test(String responsebody){
+        JSONObject jsonObject = new JSONObject(responsebody);
+        System.out.println(jsonObject);
+        return null;
+    }
+
+    public static void main(String[] args) throws IOException {
         TestingClass test = new TestingClass();
-        test.testThumbnail();
+        //test.testChart();
+        //test.testGettingImages();
+        test.testAPI();
     }
 }

@@ -20,20 +20,20 @@ import java.util.Locale;
 
 public class LastFmProfileParser {
 
-    private static String [] profile;
+    private String [] profile;
 
-
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
     public LastFmProfileParser(String username, String apikey){
         HttpClient client = HttpClient.newHttpClient();
         //"http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user="+username+"&api_key="+apikey+"&format=json";
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user="+username+"&api_key="+apikey+"&format=json")).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(LastFmProfileParser::parse)
+                .thenAccept(this::parse)
                 .join();
     }
 
-    public static void parse(String responsebody) {
+    public void parse(String responsebody) {
 
         String[] results = new String[8];
 
@@ -66,8 +66,8 @@ public class LastFmProfileParser {
         String username = usernameURL.substring(25);
         LastFmTopTracksProfileParser tt = new LastFmTopTracksProfileParser("c806a80470bbd773b00c2b46b3a1fd75", username);
         LastFmTopArtistProfileParser ta = new LastFmTopArtistProfileParser("c806a80470bbd773b00c2b46b3a1fd75", username);
-        String [][] tracks = LastFmTopTracksProfileParser.getResultTracks();
-        String [][] artists = LastFmTopArtistProfileParser.getResultArtists();
+        String [][] tracks = tt.getResultTracks();
+        String [][] artists = ta.getResultArtists();
         String playsArtist = "plays";
         String playsTrack = "plays";
         if(artists[0][3].equalsIgnoreCase("1")){
@@ -113,7 +113,7 @@ public class LastFmProfileParser {
         profile = results;
     }
 
-    public static String[] getStrings() {
+    public String[] getStrings() {
         return profile;
     }
 
