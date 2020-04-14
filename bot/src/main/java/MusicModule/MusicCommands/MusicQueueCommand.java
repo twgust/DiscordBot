@@ -17,5 +17,4 @@ public class MusicQueueCommand extends Command {
       + "``` ... More commands related to queue coming").queue();
 
   }
-
 }

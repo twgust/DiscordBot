@@ -67,6 +67,21 @@ public class MusicController extends Command {
             }
         }
     }
+    private void conncetToAnyVoiceChannel(AudioManager audioManager, Member user){
+        if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
+            for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
+                if(user.getVoiceState().getChannel() != null){
+                    audioManager.openAudioConnection(user.getVoiceState().getChannel());
+                }
+                else if("Music".equals(voiceChannel.getName())){
+                    audioManager.openAudioConnection(voiceChannel);
+                }
+                else if("General".equals(voiceChannel.getName())){
+                    audioManager.openAudioConnection(voiceChannel);
+                }
+            }
+        }
+    }
 
     /*
         LoadMusic tar in en låt från användare (identifier)
@@ -84,7 +99,7 @@ public class MusicController extends Command {
 
             @Override
             public void trackLoaded(AudioTrack track) {
-                connectToVoiceChannel(server.getAudioManager());
+                conncetToAnyVoiceChannel(server.getAudioManager(), user);
                 player.setVolume(100);
 
                 if (player.getPlayingTrack() == null) {
