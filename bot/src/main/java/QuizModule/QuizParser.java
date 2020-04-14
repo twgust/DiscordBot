@@ -13,12 +13,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class QuizParser {
     private String json = null;
     private JSONObject jQuiz = null;
     private int responseCode = -1;
-    private ArrayList<Question> parsedQuestions = new ArrayList<Question>();
+    private LinkedList<Question> parsedQuestions = new LinkedList<Question>();
+
 
     //Constructor
     public QuizParser(String url){
@@ -53,10 +55,12 @@ public class QuizParser {
             }
         }
 
+
     //Return an ArrayList containing all the Question objects created from parsing the quiz database's json-file
-    public ArrayList<Question> getQuestions(){
+    public LinkedList<Question> getQuestions(){
         return parsedQuestions;
     }
+
 
     //Create a new Question object
     public Question createQuestion(Object object) {
@@ -85,6 +89,7 @@ public class QuizParser {
 
         return question;
     }
+
 
     //Fixing formatting issues with json -> String
     public String fixFormat(String unfixed){
