@@ -67,7 +67,7 @@ public class MusicController extends Command {
             }
         }
     }
-    private void conncetToAnyVoiceChannel(AudioManager audioManager, Member user){
+    private void connectToVoiceChannels(AudioManager audioManager, Member user){
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
             for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
                 if(user.getVoiceState().getChannel() != null){
@@ -99,7 +99,7 @@ public class MusicController extends Command {
 
             @Override
             public void trackLoaded(AudioTrack track) {
-                conncetToAnyVoiceChannel(server.getAudioManager(), user);
+                connectToVoiceChannels(server.getAudioManager(), user);
                 player.setVolume(100);
 
                 if (player.getPlayingTrack() == null) {
@@ -120,7 +120,7 @@ public class MusicController extends Command {
              */
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                connectToVoiceChannel(server.getAudioManager());
+                connectToVoiceChannels(server.getAudioManager(), user);
                 AudioTrack track = playlist.getTracks().get(0);
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, user);
