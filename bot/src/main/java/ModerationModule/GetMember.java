@@ -21,7 +21,7 @@ public class GetMember{
                 List<Member> memberList = channel.getGuild().getMembers();
                 List<Member> targetList = new ArrayList<>();
                 for (int i = 0; i < memberList.size(); i++) {
-                    if (memberList.get(i).getEffectiveName().indexOf(text) != -1) {
+                    if (memberList.get(i).getEffectiveName().toLowerCase().indexOf(text.toLowerCase()) != -1) {
                         targetList.add(memberList.get(i));
                     }
                 }
