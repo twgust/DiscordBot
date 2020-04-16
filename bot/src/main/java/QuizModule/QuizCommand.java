@@ -1,53 +1,85 @@
 package QuizModule;
 
 import Commands.Command;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.Event;
+import Main.EventListener;
+import QuizModule.multiChoice.QuizMulti;
+import QuizModule.singleChoice.QuizSingle;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.EventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//A command to start a trivia game
 public class QuizCommand extends Command {
-    private final String channelName = "quiztest"; //The name of the designated quiz text-channel
-    private Quiz quiz;
-
+    private QuizSingle quizS;
+    private QuizMulti quizM;
+    private TextChannel channel;
+    private EmbedBuilder eb = new EmbedBuilder();
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        if (event.getChannel().getName().equals(channelName)) {
-
-            String command = event.getMessage().getContentRaw().substring(6);
-
-            switch(command){
-                case "start":
-                    quiz = new Quiz(event.getChannel());
-                    quiz.start();
+        System.out.println("HEJ");
+        channel = event.getChannel();
+        String command = event.getMessage().getContentRaw().substring(6);
+        switch(command){
+            case "start single":
+                if(quizM.isAlive()){
+                    eb.setTitle("A session of Multi-answer quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Single-answer quiz");
+                    event.getChannel().sendMessage(eb.build()).queue();
+                }
+                else {
+                    quizS = new QuizSingle(channel);
+                    quizS.start(event.getAuthor());
                     break;
-                case "stop":
-                    quiz.stop();
+                }
+            case "stop single":
+                quizS.stop(event.getAuthor());
+                break;
+            case "skip":
+                quizS.skip(event.getAuthor());
+                break;
+            case "start multi":
+                if(quizS.isAlive()){
+                    eb.setTitle("A session of Single-answer quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Multi-answer quiz");
+                    event.getChannel().sendMessage(eb.build()).queue();
+                }
+                else {
+                    quizM = new QuizMulti(channel);
+                    quizM.start(event.getAuthor());
                     break;
-                default:
-                    System.out.println("Test - Please enter start after the quiz command to start and " +
-                            "new session \n or stop to interrupt an ongoing session");
-                    break;
-            }
+                }
+            case "stop multi":
+                quizM.stop(event.getAuthor());
+                break;
+            default:
+                eb.setTitle("To play quiz, you can choose between either Single-answers or Multi-answers\n" +
+                        "Single-answers\n" +
+                        "   To start playing a Single-answers game, type "+EventListener.prefix+"quiz start single\n" +
+                        "   To stop playing a Single-answers game, type  "+EventListener.prefix+"quiz stop single\n" +
+                        "   To skip a question in a Single-answers game, type "+EventListener.prefix+"quiz skip\n" +
+                        "Multi-answers\n" +
+                        "   To start playing a Multi-answers game, type "+EventListener.prefix+"quiz start multi\n" +
+                        "   To stop playing a Multi-answers game, type  "+EventListener.prefix+"quiz stop multi\n");
+                event.getChannel().sendMessage(eb.build()).queue();
+                break;
         }
+
     }
 
-
-    //Listens to user activity in the chat "quiz"
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if(event.getChannel().getName().equals(channelName) && !event.getAuthor().isBot()) {
+        if(event.getChannel().equals(channel) && !event.getAuthor().isBot()) {
             Message msg = event.getMessage();
             User user = event.getAuthor();
-            if(quiz.isAlive()) {
-                quiz.checkAnswer(user, msg);
+            if(quizS.isAlive()) {
+                quizS.checkAnswer(user, msg);
             }
+            else if(quizM.isAlive()){
+                quizM.checkAnswer(user, msg);
         }
     }
+}
 }
