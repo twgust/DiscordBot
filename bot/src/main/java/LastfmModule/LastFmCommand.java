@@ -1016,26 +1016,29 @@ public class LastFmCommand extends Command {
             String username = sql.getUsername(discordID);
             sql.closeConnection();
             LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, getPeriodForAPICall(period), amountOfAlbums);
-            String[][] albumsInfo = ap.getTopAlbums();
-            int amountAlbums = Integer.parseInt(amountOfAlbums);
-            if(amountAlbums > albumsInfo.length){
-                amountAlbums = albumsInfo.length;
-            }
-            int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
-            int rowSize = rowColSize;
-            if (albumsInfo.length > rowColSize*rowColSize && rowColSize < 10){
-                rowSize++;
-            }
+            if(ap.isLoaded()) {
+                String[][] albumsInfo = ap.getTopAlbums();
+                int amountAlbums = Integer.parseInt(amountOfAlbums);
+                if (amountAlbums > albumsInfo.length) {
+                    amountAlbums = albumsInfo.length;
+                }
+                int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
+                int rowSize = rowColSize;
+                if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
+                    rowSize++;
+                }
 
 
-            int dimensionHeight = rowColSize*300;
-            int dimensionWidth = rowSize*300;
-            LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
-            albumHTML.createHTMLfile(albumsInfo, rowColSize,rowSize);
-            albumHTML.createJSFile(dimensionHeight, dimensionWidth);
-            albumHTML.runJSFile();
-            message.delete().queue();
-            event.getChannel().sendMessage(username+"'s top albums " + getPeriodForBuilder(period)).addFile(new File("testimages/image.jpg")).queue();
+                int dimensionHeight = rowColSize * 300;
+                int dimensionWidth = rowSize * 300;
+                LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
+                albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
+                albumHTML.createJSFile(dimensionHeight, dimensionWidth);
+                albumHTML.runJSFile();
+                message.delete().queue();
+                event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
+            }
+            else message.editMessage("```Failed to load, try again please```").queue();
         });
     }
 
@@ -1076,9 +1079,9 @@ public class LastFmCommand extends Command {
         return periodforURL;
     }
     public String getPeriodForAPICall(String period){
-        String periodAPI = "7days";
-        if (period.equalsIgnoreCase("week") || period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("w")) {
-            periodAPI = "7days";
+        String periodAPI = "7day";
+        if (period.equalsIgnoreCase("week") || period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("w") || period.equalsIgnoreCase("7days")) {
+            periodAPI = "7day";
         } else if (period.equalsIgnoreCase("1month") || period.equalsIgnoreCase("m") || period.equalsIgnoreCase("month")) {
             periodAPI = "1month";
         } else if (period.equalsIgnoreCase("3month") || period.equalsIgnoreCase("3m")) {
