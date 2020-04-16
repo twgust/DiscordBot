@@ -947,6 +947,36 @@ public class LastFmCommand extends Command {
         });
     }
 
+    public void getChartAlbum(String discordID, String size, String period, GuildMessageReceivedEvent event){
+        String [] arraySize = size.split("x");
+        //KANSKE EN TRY CATCH IFALL FEL FORMAT?
+        int x = Integer.parseInt(arraySize[0]);
+        int y = Integer.parseInt(arraySize[1]);
+        int result = (int) Math.round(Math.sqrt(x*y));
+        if(result >10){
+            result = 10;
+        }
+        String amountOfAlbums = Integer.toString(result*result);
+
+        event.getChannel().sendMessage("```Loading data```").queue(message -> {
+
+            LastFmSQL sql = new LastFmSQL();
+            String username = sql.getUsername(discordID);
+            sql.closeConnection();
+            LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, period, amountOfAlbums);
+            String[][] albumsInfo = ap.getTopAlbums();
+            int amountAlbums = Integer.parseInt(amountOfAlbums);
+            if(amountAlbums > albumsInfo.length){
+                amountAlbums = albumsInfo.length;
+            }
+            int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
+            int dimension = rowColSize*300;
+
+
+
+        });
+    }
+
     public boolean checkIfUserExist(String username){
         User testuser = null;
         try{
