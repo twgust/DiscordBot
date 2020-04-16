@@ -1,7 +1,7 @@
-package QuizModule;
+package QuizModule.QuizMulti;
 
-import QuizModule.enums.QuizDifficulty;
-import QuizModule.enums.QuizType;
+import QuizModule.QuizMulti.enums.QuizDifficulty;
+import QuizModule.QuizMulti.enums.QuizType;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -13,15 +13,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class QuizParser {
+public class QuizMultiParser {
     private String json = null;
     private JSONObject jQuiz = null;
     private int responseCode = -1;
-    private ArrayList<Question> parsedQuestions = new ArrayList<Question>();
+    private LinkedList<QuestionMulti> parsedQuestions = new LinkedList<QuestionMulti>();
+
 
     //Constructor
-    public QuizParser(String url){
+    public QuizMultiParser(String url){
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
 
@@ -38,29 +40,30 @@ public class QuizParser {
 
         //Code 0: Success Returned results successfully.
         if(json != null && responseCode == 0){
-            System.out.println("Code " + responseCode + ": Success Returned results successfully."); //Temp code
-                try{
-                   JSONArray arr = jQuiz.getJSONArray("results"); //Getting the JSONArray containing each JSONObject of questions
-                   for(Object obj : arr){
-                       if(obj != null) {
-                          parsedQuestions.add(createQuestion(obj));
-                       }
-                   }
-                }
-                catch(JSONException e){
-                    e.printStackTrace();
+            try{
+                JSONArray arr = jQuiz.getJSONArray("results"); //Getting the JSONArray containing each JSONObject of questions
+                for(Object obj : arr){
+                    if(obj != null) {
+                        parsedQuestions.add(createQuestion(obj));
+                    }
                 }
             }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
         }
+    }
+
 
     //Return an ArrayList containing all the Question objects created from parsing the quiz database's json-file
-    public ArrayList<Question> getQuestions(){
+    public LinkedList<QuestionMulti> getQuestions(){
         return parsedQuestions;
     }
 
+
     //Create a new Question object
-    public Question createQuestion(Object object) {
-        Question question = new Question();
+    public QuestionMulti createQuestion(Object object) {
+        QuestionMulti question = new QuestionMulti();
 
         if (object instanceof JSONObject) {
             JSONObject jObj = (JSONObject)object;
@@ -85,6 +88,7 @@ public class QuizParser {
 
         return question;
     }
+
 
     //Fixing formatting issues with json -> String
     public String fixFormat(String unfixed){

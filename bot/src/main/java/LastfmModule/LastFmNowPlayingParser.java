@@ -1,0 +1,183 @@
+package LastfmModule;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Date;
+import java.util.Locale;
+
+public class LastFmNowPlayingParser {
+
+    private String[][] nowplayingInfo;
+    private String username = "";
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
+    public LastFmNowPlayingParser(String apikey, String username){
+
+        setUsername(username);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&period=overall&api_key="+apikey+"&format=json")).build();
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenAccept(this::parse)
+                .join();
+
+    }
+
+    public void parse(String responsebody) {
+
+        JSONObject recenttracksinfo = new JSONObject(responsebody);
+        JSONObject recentracks = recenttracksinfo.getJSONObject("recenttracks");
+        JSONArray tracks = recentracks.getJSONArray("track");
+
+        String[][] result = new String[2][8];
+        JSONObject attr = recentracks.getJSONObject("@attr");
+        String playcount = attr.getString("total");
+
+        for (int i = 0; i < 2; i++) {
+            JSONObject json = tracks.getJSONObject(i);
+            JSONObject artistJS;
+            String artistname = "";
+            String tracklink = "";
+            String trackname = "";
+            String timeAgo = "";
+            JSONObject date;
+            JSONArray albumJS;
+            String album = "";
+            long time = 0;
+            Date dateTemp;
+
+
+            if(i == 0){
+                try {
+                    artistJS = json.getJSONObject("artist");
+                    artistname = artistJS.getString("#text");
+                    tracklink = json.getString("url");
+                    trackname = json.getString("name");
+                    date = json.getJSONObject("date");
+                    albumJS = json.getJSONArray("image");
+                    for(int x = 0; x < 2; x ++){
+                        JSONObject jsonObject = albumJS.getJSONObject(3);
+                        album = jsonObject.getString("#text");
+                    }
+
+                    time = date.getLong("uts") * 1000;
+                    dateTemp = new Date();
+                    dateTemp.setTime(time);
+                    PrettyTime p = new PrettyTime(new Locale("en"));
+                    timeAgo = p.format(dateTemp);
+                    result[i][0] = Integer.toString(i+1);
+                    result[i][1] = artistname;
+                    result[i][2] = trackname;
+                    result[i][3] = tracklink;
+                    result[i][4] = timeAgo;
+                    result[0][5] = playcount;
+                    result[0][6] = album;
+
+                }catch (Exception e){
+                    artistJS = json.getJSONObject("artist");
+                    artistname = artistJS.getString("#text");
+                    tracklink = json.getString("url");
+                    trackname = json.getString("name");
+                    date = json.getJSONObject("@attr");
+                    String dateStr = date.getString("nowplaying");
+                    albumJS = json.getJSONArray("image");
+                    for(int x = 0; x < 2; x ++){
+                        JSONObject jsonObject = albumJS.getJSONObject(3);
+                        album = jsonObject.getString("#text");
+                    }
+                    if(dateStr.equalsIgnoreCase("true")){
+                        timeAgo = "now";
+                    }
+                    else timeAgo = "N/A";
+                    result[i][0] = Integer.toString(i+1);
+                    result[i][1] = artistname;
+                    result[i][2] = trackname;
+                    result[i][3] = tracklink;
+                    result[i][4] = timeAgo;
+                    result[0][5] = playcount;
+                    result[0][6] = album;
+                }
+            }
+            else {
+                artistJS = json.getJSONObject("artist");
+                artistname = artistJS.getString("#text");
+                tracklink = json.getString("url");
+                trackname = json.getString("name");
+                date = json.getJSONObject("date");
+                /*
+                albumJS = json.getJSONObject("album");
+                album = albumJS.getString("#text");
+
+                 */
+                time = date.getLong("uts") * 1000;
+                dateTemp = new Date();
+                dateTemp.setTime(time);
+                PrettyTime p = new PrettyTime(new Locale("en"));
+                timeAgo = p.format(dateTemp);
+                dateTemp.setTime(time);
+                result[i][0] = Integer.toString(i+1);
+                result[i][1] = artistname;
+                result[i][2] = trackname;
+                result[i][3] = tracklink;
+                result[i][4] = timeAgo;
+            }
+
+        }
+        String artistTemp = result[0][1];
+        String trackTemp = result[0][2];
+        if(artistTemp.contains(" ")){
+            artistTemp = artistTemp.replace(" ", "+");
+        }
+        if(trackTemp.contains(" ")){
+            trackTemp = trackTemp.replace(" ", "+");
+        }
+
+        LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "c806a80470bbd773b00c2b46b3a1fd75");
+        result[0][7] = trackParser.getPlaycount();
+
+        /*
+        System.out.println(result[0][0]);
+        System.out.println(result[0][1]);
+        System.out.println(result[0][2]);
+        System.out.println(result[0][3]);
+        System.out.println(result[0][4]);
+        System.out.println(result[0][5]);
+        System.out.println(result[0][6]);
+        System.out.println(result[0][7]);
+        System.out.println(result[1][1]);
+        System.out.println(result[1][2]);
+        System.out.println(result[1][3]);
+        System.out.println(result[1][4]);
+        System.out.println(result[1][5]);
+        System.out.println(result[1][6]);
+
+         */
+        setNowplayingInfo(result);
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String[][] getNowplayingInfo() {
+        return nowplayingInfo;
+    }
+
+    public void setNowplayingInfo(String[][] nowplayingInfo) {
+        this.nowplayingInfo = nowplayingInfo;
+    }
+
+    public static void main(String[] args) {
+        LastFmNowPlayingParser lastFmNowPlayingParser = new LastFmNowPlayingParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874");
+    }
+}

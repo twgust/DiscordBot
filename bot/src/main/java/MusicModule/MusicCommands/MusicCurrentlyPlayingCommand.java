@@ -14,6 +14,12 @@ public class MusicCurrentlyPlayingCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event) {
        AudioTrack track =  controller.getPlayer().getPlayingTrack();
-       event.getChannel().sendMessage("```Currently playing: " + track.getInfo().title + "\nSource: " + track.getInfo().uri + "```").queue();
+       long length = track.getInfo().length;
+       length = length / 1000;
+       length = length / 60;
+       if (track != null) {
+           event.getChannel().sendMessage("```Currently playing: " + track.getInfo().title + "\nSource: " + track.getInfo().uri + "\nTrack length: " + length + " minutes ```" ).queue();
+       }
+       else event.getChannel().sendMessage("```no song currently playing```").queue();
     }
 }

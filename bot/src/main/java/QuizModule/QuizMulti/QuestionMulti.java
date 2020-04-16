@@ -1,12 +1,12 @@
-package QuizModule;
+package QuizModule.QuizMulti;
 
-import QuizModule.enums.QuizDifficulty;
-import QuizModule.enums.QuizType;
+import QuizModule.QuizMulti.enums.QuizDifficulty;
+import QuizModule.QuizMulti.enums.QuizType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Question {
+public class QuestionMulti {
     private QuizDifficulty difficulty;
     private String question;
     private ArrayList<String> alternatives;
@@ -15,7 +15,7 @@ public class Question {
     private QuizType type;
 
 
-    public Question(){
+    public QuestionMulti(){
 
     }
 

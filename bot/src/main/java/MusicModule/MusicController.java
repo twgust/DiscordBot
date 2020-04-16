@@ -67,6 +67,21 @@ public class MusicController extends Command {
             }
         }
     }
+    private void connectToVoiceChannels(AudioManager audioManager, Member user){
+        if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
+            for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
+                if(user.getVoiceState().getChannel() != null){
+                    audioManager.openAudioConnection(user.getVoiceState().getChannel());
+                }
+                else if("Music".equals(voiceChannel.getName())){
+                    audioManager.openAudioConnection(voiceChannel);
+                }
+                else if("General".equals(voiceChannel.getName())){
+                    audioManager.openAudioConnection(voiceChannel);
+                }
+            }
+        }
+    }
 
     /*
         LoadMusic tar in en låt från användare (identifier)
@@ -84,7 +99,7 @@ public class MusicController extends Command {
 
             @Override
             public void trackLoaded(AudioTrack track) {
-                connectToVoiceChannel(server.getAudioManager());
+                connectToVoiceChannels(server.getAudioManager(), user);
                 player.setVolume(100);
 
                 if (player.getPlayingTrack() == null) {
@@ -105,7 +120,7 @@ public class MusicController extends Command {
              */
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                connectToVoiceChannel(server.getAudioManager());
+                connectToVoiceChannels(server.getAudioManager(), user);
                 AudioTrack track = playlist.getTracks().get(0);
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, user);

@@ -1,4 +1,4 @@
-package QuizModule.enums;
+package QuizModule.QuizMulti.enums;
 
 public enum QuizType {
     BOOLEAN("boolean"),

@@ -1,22 +1,26 @@
 package Main;
 
 import Commands.*;
-import ModerationModule.*;
-
 import LastfmModule.LastFmCommand;
+import ModerationModule.*;
+import ModerationModule.BanKickModule.BanCommand;
+import ModerationModule.BanKickModule.KickCommand;
+import ModerationModule.BanKickModule.UnBanCommand;
+import ModerationModule.InfoModule.HelpCommand;
+import ModerationModule.InfoModule.InfoCommand;
+import ModerationModule.MessageControlModule.LockCommand;
+import ModerationModule.MessageControlModule.MuteCommand;
+import ModerationModule.MessageControlModule.PruneCommand;
+import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.MusicCommands.*;
-import MusicModule.MusicController;
+import MusicModule.*;
 import QuizModule.QuizCommand;
-import ModerationModule.BanCommand;
-import ModerationModule.KickCommand;
-import ModerationModule.PruneCommand;
-import ModerationModule.SetLogChannelCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
@@ -28,21 +32,18 @@ public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
-    private QuizCommand quizCommand;
     private Token token;
-    private TextChannel logChannel;
     private MusicController musicController;
-
-
-
+    private QuizCommand quizCommand;
+    private ModerationController modCtrl = new ModerationController(this);
 
     public Controller() throws LoginException, IOException {
 
         token = new Token();
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
-        quizCommand = new QuizCommand();
         musicController = new MusicController();
+        quizCommand = new QuizCommand();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
@@ -60,13 +61,26 @@ public class Controller {
     public void processMessage(GuildMessageReceivedEvent event) {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
-
+            int needHelp = event.getMessage().getContentRaw().indexOf(" ");
+            if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
+                    && !arguments[0].equalsIgnoreCase("unlock")&& !arguments[0].equalsIgnoreCase("goodbye")
+                    && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("fm")
+                    && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
+                    && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
+                    && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
+                    && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")){
+                if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0])) {
+                    event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
+                    return;
+                }
+            }
             arguments[0] = arguments[0].toLowerCase();
-            if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
+            if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0]))
                 ((Command) cmdMap.get(arguments[0])).execute(event);
             else error.throwMissingCommand(event);
         } catch (Exception e) {
             error.throwFailedMessageProcessing(event);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -75,9 +89,6 @@ public class Controller {
         cmdMap.put("goodBye", new GoodbyeCommand());
         cmdMap.put("ping", new PingCommand());
         cmdMap.put("weather", new WeatherCommand());
-        cmdMap.put("ban", new BanCommand(this));
-        cmdMap.put("kick", new KickCommand(this));
-        cmdMap.put("setlogchannel", new SetLogChannelCommand(this));
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter));
         cmdMap.put("queue", new MusicQueueCommand(musicController));
@@ -88,17 +99,22 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
-        cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
-        cmdMap.put("prune", new PruneCommand(this));
+
+        //Moderation commands
+        cmdMap.put("lock", new LockCommand(modCtrl));
+        cmdMap.put("unlock", new UnlockCommand(modCtrl));
+        cmdMap.put("info", new InfoCommand(modCtrl));
+        cmdMap.put("mute", new MuteCommand(modCtrl));
+        cmdMap.put("prune", new PruneCommand(modCtrl));
+        cmdMap.put("ban", new BanCommand(modCtrl));
+        cmdMap.put("unban", new UnBanCommand(modCtrl));
+        cmdMap.put("kick", new KickCommand(modCtrl));
+        cmdMap.put("help", new HelpCommand(modCtrl, this));
     }
 
-    public TextChannel getLogChannel() {
-        return logChannel;
+    public CommandMap getCmdMap() {
+        return cmdMap;
     }
 
-    public void setLogChannel(TextChannel logChannel) {
-        this.logChannel = logChannel;
-    }
 }
-
