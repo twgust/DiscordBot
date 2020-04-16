@@ -305,7 +305,6 @@ public class LastFmSQL {
                 //System.out.println(discordID);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("discordID not found in database (SQLException)");
             return false;
         }

@@ -149,9 +149,8 @@ public class LastFmCommand extends Command {
             if (getMessageReceivedArr()[1].equalsIgnoreCase("set")) {
                 setUsername(getMessageReceivedArr()[2]);
                 if (setUsernameInDatabase(getMessageReceivedArr()[2])) {
-                    sql1.closeConnection();
                     sql1.setUsername(getDiscordID(), getUsername());
-
+                    sql1.closeConnection();
                 }
                 event.getChannel().sendMessage(messageTosend).queue();
             }
