@@ -26,6 +26,7 @@ public class ModerationController {
     }
 
     public void execute(GuildMessageReceivedEvent event) {
+        System.out.println(event.getMessage().getContentRaw());
         int startIndex = event.getMessage().getContentRaw().indexOf(" ");
         String key;
         if (startIndex == -1) {
@@ -45,7 +46,7 @@ public class ModerationController {
         String[] msgContent = event.getMessage().getContentRaw().substring(startIndex).trim().split("\\s+");
         String text = "";
         int textStartIndex = 0;
-
+        System.out.println(text);
         if (!checkPerms(member, ((Command)ctrl.getCmdMap().get(key)).getPerm())){
             channel.sendMessage("You do not have the permission to use that command.").queue();
             return;
