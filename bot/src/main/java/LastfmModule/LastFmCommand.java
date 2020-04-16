@@ -60,8 +60,8 @@ public class LastFmCommand extends Command {
         LastFmSQL sql1 = new LastFmSQL();
         if (getMessageReceivedArr().length == 1) {
             if (sql1.checkQuery(getDiscordID())) {
-                getProfile(sql1.getUsername(getDiscordID()), event);
                 sql1.closeConnection();
+                getProfile(sql1.getUsername(getDiscordID()), event);
             } else event.getChannel().sendMessage(noUsernameMessage).queue();
         }
         else if (getMessageReceivedArr().length == 2) {
@@ -149,9 +149,8 @@ public class LastFmCommand extends Command {
             if (getMessageReceivedArr()[1].equalsIgnoreCase("set")) {
                 setUsername(getMessageReceivedArr()[2]);
                 if (setUsernameInDatabase(getMessageReceivedArr()[2])) {
-                    sql1.closeConnection();
                     sql1.setUsername(getDiscordID(), getUsername());
-
+                    sql1.closeConnection();
                 }
                 event.getChannel().sendMessage(messageTosend).queue();
             }
