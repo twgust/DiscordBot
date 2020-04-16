@@ -5,6 +5,8 @@ import Main.EventListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -20,6 +22,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DecimalFormat;
@@ -115,6 +118,16 @@ public class LastFmCommand extends Command {
                 if(sql1.checkQuery(getDiscordID())){
                     sql1.closeConnection();
                     getNowPlaying(getDiscordID(), event);
+                }
+                else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    getChartAlbum(getDiscordID(),"3x3", "7day", event);
                 }
                 else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
@@ -245,6 +258,24 @@ public class LastFmCommand extends Command {
                     }catch (NumberFormatException e){
                         event.getChannel().sendMessage(wrongFormatMessage).queue();
                     }
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if (sql1.checkQuery(getDiscordID())){
+                    if (getMessageReceivedArr()[2].contains("x")){
+                        String size = getMessageReceivedArr()[2];
+                        sql1.closeConnection();
+                        getChartAlbum(getDiscordID(), size, "7day", event);
+                    }
+                    else {
+                        sql1.closeConnection();
+                        event.getChannel().sendMessage(wrongFormatMessage).queue();
+                    }
+
                 }
                 else {
                     sql1.closeConnection();
@@ -422,6 +453,18 @@ public class LastFmCommand extends Command {
                 } else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    String size = getMessageReceivedArr()[2];
+                    String period = getMessageReceivedArr()[3];
+                    getChartAlbum(getDiscordID(),size,period,event);
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
             }
 
@@ -950,30 +993,49 @@ public class LastFmCommand extends Command {
     public void getChartAlbum(String discordID, String size, String period, GuildMessageReceivedEvent event){
         String [] arraySize = size.split("x");
         //KANSKE EN TRY CATCH IFALL FEL FORMAT?
-        int x = Integer.parseInt(arraySize[0]);
-        int y = Integer.parseInt(arraySize[1]);
+        int x = 0;
+        int y = 0;
+        try {
+            x = Integer.parseInt(arraySize[0]);
+            y = Integer.parseInt(arraySize[1]);
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+            event.getChannel().sendMessage(wrongFormatMessage).queue();
+            return;
+        }
+
         int result = (int) Math.round(Math.sqrt(x*y));
         if(result >10){
             result = 10;
         }
         String amountOfAlbums = Integer.toString(result*result);
 
-        event.getChannel().sendMessage("```Loading data```").queue(message -> {
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
 
             LastFmSQL sql = new LastFmSQL();
             String username = sql.getUsername(discordID);
             sql.closeConnection();
-            LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, period, amountOfAlbums);
+            LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, getPeriodForAPICall(period), amountOfAlbums);
             String[][] albumsInfo = ap.getTopAlbums();
             int amountAlbums = Integer.parseInt(amountOfAlbums);
             if(amountAlbums > albumsInfo.length){
                 amountAlbums = albumsInfo.length;
             }
             int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
-            int dimension = rowColSize*300;
+            int rowSize = rowColSize;
+            if (albumsInfo.length > rowColSize*rowColSize && rowColSize < 10){
+                rowSize++;
+            }
 
 
-
+            int dimensionHeight = rowColSize*300;
+            int dimensionWidth = rowSize*300;
+            LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
+            albumHTML.createHTMLfile(albumsInfo, rowColSize,rowSize);
+            albumHTML.createJSFile(dimensionHeight, dimensionWidth);
+            albumHTML.runJSFile();
+            message.delete().queue();
+            event.getChannel().sendMessage(username+"'s top albums " + getPeriodForBuilder(period)).addFile(new File("testimages/image.jpg")).queue();
         });
     }
 
@@ -1012,6 +1074,24 @@ public class LastFmCommand extends Command {
             periodforURL = "ALL";
         }
         return periodforURL;
+    }
+    public String getPeriodForAPICall(String period){
+        String periodAPI = "7days";
+        if (period.equalsIgnoreCase("week") || period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("w")) {
+            periodAPI = "7days";
+        } else if (period.equalsIgnoreCase("1month") || period.equalsIgnoreCase("m") || period.equalsIgnoreCase("month")) {
+            periodAPI = "1month";
+        } else if (period.equalsIgnoreCase("3month") || period.equalsIgnoreCase("3m")) {
+            periodAPI = "3month";
+        } else if (period.equalsIgnoreCase("6month") || period.equalsIgnoreCase("6m")) {
+            periodAPI = "6month";
+        } else if (period.equalsIgnoreCase("12month") || period.equalsIgnoreCase("12m") || period.equalsIgnoreCase("year") || period.equalsIgnoreCase("y")) {
+            periodAPI = "12month";
+        } else if (period.equalsIgnoreCase("overall") || period.equalsIgnoreCase("alltime") || period.equalsIgnoreCase("at")) {
+            periodAPI = "overall";
+        }
+        return periodAPI;
+
     }
 
     public String getPeriodForBuilder(String periodStr) {
