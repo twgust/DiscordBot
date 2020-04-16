@@ -1,5 +1,6 @@
 package Commands;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -13,7 +14,12 @@ public class Command extends ListenerAdapter implements ICommand {
 
     @Override
     public String getHelp() {
-        return null;
+        return helpText;
+    }
+
+    @Override
+    public Permission getPerm() {
+        return Permission.MESSAGE_READ;
     }
 
 

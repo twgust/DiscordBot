@@ -21,7 +21,7 @@ public class HelpCommand extends ModCommand {
     public void execute(TextChannel channel, Member member, String text, int num) {
         channel.sendMessage(((Command)ctrl.getCmdMap().get(text.toLowerCase())).getHelp()).queue();
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

@@ -11,6 +11,7 @@ import ModerationModule.MessageControlModule.LockCommand;
 import ModerationModule.MessageControlModule.MuteCommand;
 import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -26,17 +27,29 @@ public class ModerationController {
 
     public void execute(GuildMessageReceivedEvent event) {
         int startIndex = event.getMessage().getContentRaw().indexOf(" ");
+        String key;
         if (startIndex == -1) {
+            key = event.getMessage().getContentRaw().substring(1).trim().toLowerCase();
+            if (!checkPerms(event.getMember(), ((Command)ctrl.getCmdMap().get(key)).getPerm())){
+                event.getChannel().sendMessage("You do not have the permission to use that command.").queue();
+                return;
+            }
+            event.getChannel().sendMessage(((Command)ctrl.getCmdMap().get(key)).getHelp()).queue();
             return;
         }
-        String key = event.getMessage().getContentRaw().substring(1,startIndex).trim();
+
+        key = event.getMessage().getContentRaw().substring(1,startIndex).trim();
+        TextChannel channel = event.getChannel();
+        Member member = null;
+        Guild guild = event.getGuild();
         String[] msgContent = event.getMessage().getContentRaw().substring(startIndex).trim().split("\\s+");
         String text = "";
         int textStartIndex = 0;
 
-        TextChannel channel = event.getChannel();
-        Member member = null;
-        Guild guild = event.getGuild();
+        if (!checkPerms(member, ((Command)ctrl.getCmdMap().get(key)).getPerm())){
+            channel.sendMessage("You do not have the permission to use that command.").queue();
+            return;
+        }
 
         if (key.equalsIgnoreCase("setLogChannel")) {
             setLogChannel(channel);
@@ -76,4 +89,7 @@ public class ModerationController {
         logChannel = newLogChannel;
     }
 
+    private boolean checkPerms(Member member, Permission perm){
+        return member.hasPermission(perm);
+    }
 }

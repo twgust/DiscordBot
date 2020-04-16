@@ -23,7 +23,7 @@ public class BanCommand extends ModCommand {
         member.ban(num, text).queue();
 
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }
