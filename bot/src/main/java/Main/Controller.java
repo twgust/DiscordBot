@@ -14,6 +14,7 @@ import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
+import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
@@ -33,6 +34,7 @@ public class Controller {
     private EventWaiter waiter;
     private Token token;
     private MusicController musicController;
+    private QuizCommand quizCommand;
     private ModerationController modCtrl = new ModerationController(this);
 
     public Controller() throws LoginException, IOException {
@@ -41,11 +43,12 @@ public class Controller {
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
         musicController = new MusicController();
-
+        quizCommand = new QuizCommand();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
+        jda.addEventListener(quizCommand);
         addCommands();
     }
 
@@ -96,6 +99,7 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
+        cmdMap.put("quiz", quizCommand);
 
         //Moderation commands
         cmdMap.put("lock", new LockCommand(modCtrl));

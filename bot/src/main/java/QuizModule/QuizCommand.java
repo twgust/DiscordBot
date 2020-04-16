@@ -33,8 +33,8 @@ public class QuizCommand extends Command {
         switch(subCommand){
             case "start single":
                 if(quizM.isAlive()){
-                    eb.setTitle("A session of Multi-answer quiz is currently running\n" +
-                            "Please wait for it to finish before starting an new session of Single-answer quiz");
+                    eb.setTitle("A session of Multi-answer Quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Single-answer Quiz");
                     eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
@@ -51,8 +51,8 @@ public class QuizCommand extends Command {
                 break;
             case "start multi":
                 if(quizS.isAlive()){
-                    eb.setTitle("A session of Single-answer quiz is currently running\n" +
-                            "Please wait for it to finish before starting an new session of Multi-answer quiz");
+                    eb.setTitle("A session of Single-answer Quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Multi-answer Quiz");
                     eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
