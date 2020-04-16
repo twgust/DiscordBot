@@ -11,18 +11,18 @@ import java.util.Arrays;
 
 public class LastFmTopArtistProfileParser {
 
-    private static String[][] resultArtists;
-
+    private String[][] resultArtists;
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
     public LastFmTopArtistProfileParser(String apikey, String username) {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&period=overall&user=" + username + "&limit=1000&api_key=" + apikey + "&format=json")).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&period=overall&user=" + username + "&limit=1&api_key=" + apikey + "&format=json")).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(LastFmTopArtistProfileParser::parse)
+                .thenAccept(this::parse)
                 .join();
     }
 
-    public static void parse(String responsebody) {
+    public void parse(String responsebody) {
 
         JSONObject artistinfo = new JSONObject(responsebody);
         JSONObject topartist = artistinfo.getJSONObject("topartists");
@@ -65,13 +65,13 @@ public class LastFmTopArtistProfileParser {
         resultArtists = result;
     }
 
-    public static String[][] getResultArtists() {
+    public String[][] getResultArtists() {
         return resultArtists;
     }
 
     public static void main(String[] args) {
         LastFmTopArtistProfileParser ta = new LastFmTopArtistProfileParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874");
-        System.out.println(Arrays.deepToString(LastFmTopArtistProfileParser.getResultArtists()));
+        System.out.println(Arrays.deepToString(ta.getResultArtists()));
     }
 
 }

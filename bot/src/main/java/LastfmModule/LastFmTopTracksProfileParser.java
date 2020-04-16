@@ -11,19 +11,19 @@ import java.util.Arrays;
 
 public class LastFmTopTracksProfileParser {
 
-    private static String[][] resultTracks;
-
+    private String[][] resultTracks;
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
     public LastFmTopTracksProfileParser(String apikey, String username) {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&period=overall&user=" + username + "&limit=1000&api_key=" + apikey + "&format=json")).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&period=overall&user=" + username + "&limit=1&api_key=" + apikey + "&format=json")).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(LastFmTopTracksProfileParser::parse)
+                .thenAccept(this::parse)
                 .join();
     }
 
 
-    public static void parse(String responsebody) {
+    public void parse(String responsebody) {
 
         JSONObject trackinfo = new JSONObject(responsebody);
         JSONObject toptracks = trackinfo.getJSONObject("toptracks");
@@ -68,7 +68,7 @@ public class LastFmTopTracksProfileParser {
         resultTracks = result;
     }
 
-    public static String[][] getResultTracks() {
+    public String[][] getResultTracks() {
         return resultTracks;
     }
 

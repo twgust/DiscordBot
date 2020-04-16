@@ -112,6 +112,27 @@
             <version>2.38.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-transcoder</artifactId>
+            <version>1.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.detro.ghostdriver</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+
+
+
     </dependencies>
 
     <repositories>
@@ -126,8 +147,10 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
-    </repositories>
 
+
+
+    </repositories>
 
 
 </project>
