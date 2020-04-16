@@ -2,8 +2,8 @@ package QuizModule;
 
 import Commands.Command;
 import Main.EventListener;
-import QuizModule.multiChoice.QuizMulti;
-import QuizModule.singleChoice.QuizSingle;
+import QuizModule.QuizMulti.QuizMulti;
+import QuizModule.QuizSingle.QuizSingle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
