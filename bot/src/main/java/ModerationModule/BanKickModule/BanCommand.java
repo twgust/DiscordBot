@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class BanCommand extends ModCommand {
     private Permission perm = Permission.BAN_MEMBERS;
+    private String helpText = "ban [user] reason";
 
     public BanCommand(ModerationController modCTRL) {
         super(modCTRL);
@@ -26,5 +27,10 @@ public class BanCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }
