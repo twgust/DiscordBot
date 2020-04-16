@@ -7,6 +7,16 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 
 public class ModCommand extends Command {
+    private ModerationController modCTRL;
+    public ModCommand(ModerationController modCTRL){
+        this.modCTRL = modCTRL;
+    }
+
+    @Override
+    public void execute(GuildMessageReceivedEvent event) {
+
+    }
+
     public void execute(TextChannel channel, Member member, String text, int num) {
 
     }

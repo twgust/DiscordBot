@@ -1,6 +1,8 @@
 package ModerationModule.MessageControlModule;
 
 import ModerationModule.ModCommand;
+import ModerationModule.ModerationController;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -8,6 +10,11 @@ import static ModerationModule.ModerationController.getLogChannel;
 
 public class MuteCommand extends ModCommand {
     String muteRoleName = "%BotMuted";
+    private Permission perm = Permission.MESSAGE_MANAGE;
+
+    public MuteCommand(ModerationController modCTRL) {
+        super(modCTRL);
+    }
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
@@ -26,5 +33,9 @@ public class MuteCommand extends ModCommand {
             channel.sendMessage(member.getEffectiveName() + " was muted!").queue();
             if(getLogChannel() != null) getLogChannel().sendMessage(member.getEffectiveName() + " was muted.").queue();
         }
+    }
+
+    public Permission getPerm() {
+        return perm;
     }
 }

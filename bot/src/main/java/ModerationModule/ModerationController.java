@@ -1,6 +1,7 @@
 package ModerationModule;
 
 import Commands.Command;
+import Main.Controller;
 import ModerationModule.BanKickModule.BanCommand;
 import ModerationModule.BanKickModule.KickCommand;
 import ModerationModule.BanKickModule.UnBanCommand;
@@ -15,19 +16,17 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-public class ModerationController extends Command {
+public class ModerationController {
     private static TextChannel logChannel;
-    private ModCommandMap modCmdMap = new ModCommandMap();
+    private Controller ctrl;
 
-    public ModerationController(){
-        addCommands();
+    public ModerationController(Controller ctrl) {
+        this.ctrl = ctrl;
     }
 
-    @Override
     public void execute(GuildMessageReceivedEvent event) {
         int startIndex = event.getMessage().getContentRaw().indexOf(" ");
         if (startIndex == -1) {
-            modCmdMap.get("help").execute(event);
             return;
         }
         String key = event.getMessage().getContentRaw().substring(1,startIndex).trim();
@@ -38,6 +37,12 @@ public class ModerationController extends Command {
         TextChannel channel = event.getChannel();
         Member member = null;
         Guild guild = event.getGuild();
+
+        if (key.equalsIgnoreCase("setLogChannel")) {
+            setLogChannel(channel);
+            channel.sendMessage("Log channel set.").queue();
+            return;
+        }
 
         int num = -1;
 
@@ -60,20 +65,7 @@ public class ModerationController extends Command {
             }
         }catch (Exception e){}
 
-        if (key.equalsIgnoreCase("unban"))modCmdMap.get(key).execute(event);
-        else modCmdMap.get(key).execute(channel, member, text, num);
-    }
-
-    private void addCommands() {
-        modCmdMap.put("ban", new BanCommand());
-        modCmdMap.put("info", new InfoCommand());
-        modCmdMap.put("help", new HelpCommand());
-        modCmdMap.put("kick", new KickCommand());
-        modCmdMap.put("lock", new LockCommand());
-        modCmdMap.put("mute", new MuteCommand());
-        modCmdMap.put("prune", new PruneCommand());
-        modCmdMap.put("unban", new UnBanCommand());
-        modCmdMap.put("unlock", new UnlockCommand());
+        ((ModCommand)ctrl.getCmdMap().get(key)).execute(channel, member, text, num);
     }
 
     public static TextChannel getLogChannel() {
@@ -84,7 +76,4 @@ public class ModerationController extends Command {
         logChannel = newLogChannel;
     }
 
-    public ModCommandMap getModCmdMap() {
-        return modCmdMap;
-    }
 }

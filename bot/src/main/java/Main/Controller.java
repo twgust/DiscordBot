@@ -3,6 +3,16 @@ package Main;
 import Commands.*;
 import LastfmModule.LastFmCommand;
 import ModerationModule.*;
+import ModerationModule.BanKickModule.BanCommand;
+import ModerationModule.BanKickModule.KickCommand;
+import ModerationModule.BanKickModule.UnBanCommand;
+import ModerationModule.InfoModule.HelpCommand;
+import ModerationModule.InfoModule.InfoCommand;
+import ModerationModule.InfoModule.SetLogChannelCommand;
+import ModerationModule.MessageControlModule.LockCommand;
+import ModerationModule.MessageControlModule.MuteCommand;
+import ModerationModule.MessageControlModule.PruneCommand;
+import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
 import QuizModule.QuizCommand;
@@ -26,7 +36,7 @@ public class Controller {
     private QuizCommand quizCommand;
     private Token token;
     private MusicController musicController;
-    private ModerationController modCtrl = new ModerationController();
+    private ModerationController modCtrl = new ModerationController(this);
 
     public Controller() throws LoginException, IOException {
 
@@ -82,15 +92,19 @@ public class Controller {
         cmdMap.put("quiz", quizCommand);
 
         //Moderation commands
-        cmdMap.put("lock", modCtrl);
-        cmdMap.put("unlock", modCtrl);
-        cmdMap.put("info", modCtrl);
-        cmdMap.put("mute", modCtrl);
-        cmdMap.put("prune", modCtrl);
-        cmdMap.put("ban", modCtrl);
-        cmdMap.put("unban", modCtrl);
-        cmdMap.put("kick", modCtrl);
-        cmdMap.put("help", modCtrl);
-        cmdMap.put("setlogchannel", modCtrl);
+        cmdMap.put("lock", new LockCommand(modCtrl));
+        cmdMap.put("unlock", new UnlockCommand(modCtrl));
+        cmdMap.put("info", new InfoCommand(modCtrl));
+        cmdMap.put("mute", new MuteCommand(modCtrl));
+        cmdMap.put("prune", new PruneCommand(modCtrl));
+        cmdMap.put("ban", new BanCommand(modCtrl));
+        cmdMap.put("unban", new UnBanCommand(modCtrl));
+        cmdMap.put("kick", new KickCommand(modCtrl));
+        cmdMap.put("help", new HelpCommand(modCtrl, this));
+        cmdMap.put("setlogchannel", new SetLogChannelCommand(modCtrl));
+    }
+
+    public CommandMap getCmdMap() {
+        return cmdMap;
     }
 }

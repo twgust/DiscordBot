@@ -1,6 +1,8 @@
 package ModerationModule.BanKickModule;
 
 import ModerationModule.ModCommand;
+import ModerationModule.ModerationController;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -12,6 +14,10 @@ import java.util.List;
 import static ModerationModule.ModerationController.getLogChannel;
 
 public class UnBanCommand extends ModCommand {
+    private Permission perm = Permission.BAN_MEMBERS;
+    public UnBanCommand(ModerationController modCTRL) {
+        super(modCTRL);
+    }
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -65,5 +71,9 @@ public class UnBanCommand extends ModCommand {
         if (getLogChannel() != null)
             getLogChannel().sendMessage("User " + unBanUser.get(0).getName() + " was unbanned.").queue();
         event.getGuild().unban(unBanUser.get(0)).queue();
+    }
+
+    public Permission getPerm() {
+        return perm;
     }
 }
