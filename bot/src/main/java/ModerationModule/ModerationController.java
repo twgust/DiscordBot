@@ -26,20 +26,8 @@ public class ModerationController {
     }
 
     public void execute(GuildMessageReceivedEvent event) {
-        System.out.println(event.getMessage().getContentRaw());
         int startIndex = event.getMessage().getContentRaw().indexOf(" ");
-        String key;
-        if (startIndex == -1) {
-            key = event.getMessage().getContentRaw().substring(1).trim().toLowerCase();
-            if (!checkPerms(event.getMember(), ((Command)ctrl.getCmdMap().get(key)).getPerm())){
-                event.getChannel().sendMessage("You do not have the permission to use that command.").queue();
-                return;
-            }
-            event.getChannel().sendMessage(((Command)ctrl.getCmdMap().get(key)).getHelp()).queue();
-            return;
-        }
-
-        key = event.getMessage().getContentRaw().substring(1,startIndex).trim();
+        String key = event.getMessage().getContentRaw().substring(1,startIndex).trim();
         TextChannel channel = event.getChannel();
         Member member = null;
         Guild guild = event.getGuild();
@@ -90,7 +78,7 @@ public class ModerationController {
         logChannel = newLogChannel;
     }
 
-    private boolean checkPerms(Member member, Permission perm){
+    public boolean checkPerms(Member member, Permission perm){
         return member.hasPermission(perm);
     }
 }
