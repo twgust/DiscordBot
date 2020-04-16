@@ -8,14 +8,12 @@ import ModerationModule.BanKickModule.KickCommand;
 import ModerationModule.BanKickModule.UnBanCommand;
 import ModerationModule.InfoModule.HelpCommand;
 import ModerationModule.InfoModule.InfoCommand;
-import ModerationModule.InfoModule.SetLogChannelCommand;
 import ModerationModule.MessageControlModule.LockCommand;
 import ModerationModule.MessageControlModule.MuteCommand;
 import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
-import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
@@ -33,7 +31,6 @@ public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
-    private QuizCommand quizCommand;
     private Token token;
     private MusicController musicController;
     private ModerationController modCtrl = new ModerationController(this);
@@ -43,14 +40,12 @@ public class Controller {
         token = new Token();
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
-        quizCommand = new QuizCommand();
         musicController = new MusicController();
 
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
-        jda.addEventListener(quizCommand);
         addCommands();
     }
 
@@ -89,7 +84,6 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
-        cmdMap.put("quiz", quizCommand);
 
         //Moderation commands
         cmdMap.put("lock", new LockCommand(modCtrl));
@@ -101,7 +95,6 @@ public class Controller {
         cmdMap.put("unban", new UnBanCommand(modCtrl));
         cmdMap.put("kick", new KickCommand(modCtrl));
         cmdMap.put("help", new HelpCommand(modCtrl, this));
-        cmdMap.put("setlogchannel", new SetLogChannelCommand(modCtrl));
     }
 
     public CommandMap getCmdMap() {
