@@ -14,7 +14,7 @@ public class ModCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-
+        modCTRL.execute(event);
     }
 
     public void execute(TextChannel channel, Member member, String text, int num) {

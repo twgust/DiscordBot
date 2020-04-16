@@ -16,12 +16,13 @@ public class HelpCommand extends ModCommand {
         super(modCTRL);
         this.ctrl = ctrl;
     }
-
     @Override
-    public void execute(TextChannel channel, Member member, String text, int num) {
-        channel.sendMessage(((Command)ctrl.getCmdMap().get(text.toLowerCase())).getHelp()).queue();
-    }
+    public void execute(GuildMessageReceivedEvent event) {
+        String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
 
+        event.getChannel().sendMessage(((Command)ctrl.getCmdMap().get(arguments[1].toLowerCase())).getHelp()).queue();
+    }
+    @Override
     public Permission getPerm() {
         return perm;
     }

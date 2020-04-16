@@ -34,7 +34,7 @@ public class MuteCommand extends ModCommand {
             if(getLogChannel() != null) getLogChannel().sendMessage(member.getEffectiveName() + " was muted.").queue();
         }
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

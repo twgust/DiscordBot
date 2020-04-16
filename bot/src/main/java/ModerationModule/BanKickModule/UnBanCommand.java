@@ -72,7 +72,7 @@ public class UnBanCommand extends ModCommand {
             getLogChannel().sendMessage("User " + unBanUser.get(0).getName() + " was unbanned.").queue();
         event.getGuild().unban(unBanUser.get(0)).queue();
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

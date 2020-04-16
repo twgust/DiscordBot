@@ -36,7 +36,7 @@ public class PruneCommand extends ModCommand {
         }
         if(getLogChannel() != null) getLogChannel().sendMessage("Pruned " + num + " messages in " + channel.getName()).queue();
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

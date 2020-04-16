@@ -14,7 +14,6 @@ import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
-import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
@@ -32,7 +31,6 @@ public class Controller {
     private CommandMap cmdMap = new CommandMap();
     private ErrorCommand error = new ErrorCommand();
     private EventWaiter waiter;
-    private QuizCommand quizCommand;
     private Token token;
     private MusicController musicController;
     private ModerationController modCtrl = new ModerationController(this);
@@ -42,14 +40,12 @@ public class Controller {
         token = new Token();
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
-        quizCommand = new QuizCommand();
         musicController = new MusicController();
 
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
-        jda.addEventListener(quizCommand);
         addCommands();
     }
 
@@ -62,9 +58,21 @@ public class Controller {
     public void processMessage(GuildMessageReceivedEvent event) {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
-
+            int needHelp = event.getMessage().getContentRaw().indexOf(" ");
+            if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
+                    && !arguments[0].equalsIgnoreCase("unlock")&& !arguments[0].equalsIgnoreCase("goodbye")
+                    && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("fm")
+                    && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
+                    && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
+                    && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
+                    && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")){
+                if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0])) {
+                    event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
+                    return;
+                }
+            }
             arguments[0] = arguments[0].toLowerCase();
-            if (cmdMap.get(arguments[0]) instanceof Command || cmdMap.containsKey(arguments[0]))
+            if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0]))
                 ((Command) cmdMap.get(arguments[0])).execute(event);
             else error.throwMissingCommand(event);
         } catch (Exception e) {
@@ -88,7 +96,6 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
-        cmdMap.put("quiz", quizCommand);
 
         //Moderation commands
         cmdMap.put("lock", new LockCommand(modCtrl));
@@ -105,4 +112,5 @@ public class Controller {
     public CommandMap getCmdMap() {
         return cmdMap;
     }
+
 }

@@ -21,7 +21,7 @@ public class KickCommand extends ModCommand {
         if (getLogChannel() != null) getLogChannel().sendMessage("User " + member.getUser().getName() + "was kicked");
         member.kick(text);
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

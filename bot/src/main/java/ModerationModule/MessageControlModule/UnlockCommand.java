@@ -18,7 +18,7 @@ public class UnlockCommand extends ModCommand {
     public void execute(TextChannel channel, Member member, String text, int num) {
         channel.getManager().putPermissionOverride(channel.getGuild().getRoles().get(channel.getGuild().getRoles().size()-1), 2048, 0).queue();
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }

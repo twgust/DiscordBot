@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class InfoCommand extends ModCommand {
         infoMsg += "\n__**Member joined discord:**__ \n" + member.getTimeCreated();
         channel.sendMessage(infoMsg).queue();
     }
-
+    @Override
     public Permission getPerm() {
         return perm;
     }
