@@ -86,6 +86,8 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
+        cmdMap.put("music", new MusicHelpCommand());
+        cmdMap.put("music module", new MusicHelpCommand());
         cmdMap.put("lock", new LockCommand());
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("prune", new PruneCommand(this));

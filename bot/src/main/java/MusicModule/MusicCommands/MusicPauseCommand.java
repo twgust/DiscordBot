@@ -19,8 +19,8 @@ public class MusicPauseCommand extends Command {
         musicController.getPlayer().setPaused(true);
         event.getChannel().sendMessage("```Music has been paused \n%resume to start playing again```").queue();
 
-        musicController.getPlayer().setPaused(true);
-        event.getChannel().sendMessage("Player has been paused");
+//        musicController.getPlayer().setPaused(true);
+//        event.getChannel().sendMessage("Player has been paused");
 
     }
 }
