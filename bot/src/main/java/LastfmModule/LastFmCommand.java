@@ -68,24 +68,24 @@ public class LastFmCommand extends Command {
             if(getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")){
                 if(sql1.checkQuery(getDiscordID())){
                     setPeriodStr("7day");
-                    topTracks(getDiscordID(),10, getPeriodStr(), event);
                     sql1.closeConnection();
+                    topTracks(getDiscordID(),10, getPeriodStr(), event);
                 }
                 else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
             }
             else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
                 if (sql1.checkQuery(getDiscordID())){
                     setPeriodStr("7day");
-                    topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     sql1.closeConnection();
+                    topArtists(getDiscordID(), 10, getPeriodStr(), event);
                 }
                 else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
             }
             else if (getMessageReceivedArr()[1].contains("<@!")){
                 net.dv8tion.jda.api.entities.User user = event.getMessage().getMentionedUsers().get(0);
                 if (sql1.checkQuery(user.getId())){
-                    getProfile(sql1.getUsername(user.getId()), event);
                     sql1.closeConnection();
+                    getProfile(sql1.getUsername(user.getId()), event);
                 }
                 else {
                     setMessageTosend("```❌ No username linked to discord account. ❌```");
@@ -135,8 +135,8 @@ public class LastFmCommand extends Command {
             }
             else  {
                 if (checkIfUserExist(getMessageReceivedArr()[1])){
-                    getProfile(getMessageReceivedArr()[1], event);
                     sql1.closeConnection();
+                    getProfile(getMessageReceivedArr()[1], event);
                 }
                 else {
                     event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] +"' does not exist ❌```").queue();
