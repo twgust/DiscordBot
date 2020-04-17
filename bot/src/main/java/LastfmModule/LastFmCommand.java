@@ -5,12 +5,8 @@ import Main.EventListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
-import net.dv8tion.jda.internal.requests.Route;
 import org.apache.xerces.parsers.DOMParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,19 +16,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LastFmCommand extends Command {
+    private long start;
+    private String failedToLoad = "```⚠ Failed to load, try again please. ⚠```";
     private static final String apikey = "c806a80470bbd773b00c2b46b3a1fd75";
     private String discordID;
     private String username;
@@ -44,8 +43,8 @@ public class LastFmCommand extends Command {
     private User user;
     private EventWaiter waiter;
     private Paginator.Builder pbuilder;
-    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type "+EventListener.prefix+"fm set <username>. Type "+EventListener.prefix+"help for more help noob. ❌```";
-    private String wrongFormatMessage = "```❌ Invalid format, try again. Type "+ EventListener.prefix +"help for more help noob ❌```";
+    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type " + EventListener.prefix + "fm set <username>. Type " + EventListener.prefix + "help for more help noob. ❌```";
+    private String wrongFormatMessage = "```❌ Invalid format, try again. Type " + EventListener.prefix + "help for more help noob ❌```";
 
     public LastFmCommand(EventWaiter waiter) {
         this.waiter = waiter;
@@ -53,6 +52,7 @@ public class LastFmCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        setStart(System.nanoTime());
         setUsername(null);
         setDiscordID(event.getAuthor().getId());
         setMessageReceived(event.getMessage().getContentRaw());
@@ -60,92 +60,77 @@ public class LastFmCommand extends Command {
         LastFmSQL sql1 = new LastFmSQL();
         if (getMessageReceivedArr().length == 1) {
             if (sql1.checkQuery(getDiscordID())) {
-                sql1.closeConnection();
                 getProfile(sql1.getUsername(getDiscordID()), event);
+                sql1.closeConnection();
             } else event.getChannel().sendMessage(noUsernameMessage).queue();
-        }
-        else if (getMessageReceivedArr().length == 2) {
-            if(getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")){
-                if(sql1.checkQuery(getDiscordID())){
+        } else if (getMessageReceivedArr().length == 2) {
+            if (getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     setPeriodStr("7day");
                     sql1.closeConnection();
-                    topTracks(getDiscordID(),10, getPeriodStr(), event);
-                }
-                else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
-            }
-            else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
-                if (sql1.checkQuery(getDiscordID())){
+                    topTracks(getDiscordID(), 10, getPeriodStr(), event);
+                } else event.getChannel().sendMessage(noUsernameMessage).queue();
+                sql1.closeConnection();
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     setPeriodStr("7day");
                     sql1.closeConnection();
                     topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                }
-                else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
-            }
-            else if (getMessageReceivedArr()[1].contains("<@!")){
+                } else event.getChannel().sendMessage(noUsernameMessage).queue();
+                sql1.closeConnection();
+            } else if (getMessageReceivedArr()[1].contains("<@!")) {
                 net.dv8tion.jda.api.entities.User user = event.getMessage().getMentionedUsers().get(0);
-                if (sql1.checkQuery(user.getId())){
+                if (sql1.checkQuery(user.getId())) {
                     sql1.closeConnection();
                     getProfile(sql1.getUsername(user.getId()), event);
-                }
-                else {
+                } else {
                     setMessageTosend("```❌ No username linked to discord account. ❌```");
                     event.getChannel().sendMessage(getMessageTosend()).queue();
                     sql1.closeConnection();
                 }
-            }
-            else if (getMessageReceivedArr()[1].equalsIgnoreCase("delete") || getMessageReceivedArr()[1].equalsIgnoreCase("del") || getMessageReceivedArr()[1].equalsIgnoreCase("remove")) {
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("delete") || getMessageReceivedArr()[1].equalsIgnoreCase("del") || getMessageReceivedArr()[1].equalsIgnoreCase("remove")) {
                 if (sql1.checkQuery(getDiscordID())) {
                     sql1.closeConnection();
                     deleteUsernameInSQL(getDiscordID(), event);
-                }
-                else {
+                } else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            }
-            else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")){
-                if(sql1.checkQuery(getDiscordID())){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     sql1.closeConnection();
-                    getRecentTracks(getDiscordID(),10, event);
-                }
-                else {
+                    getRecentTracks(getDiscordID(), 10, event);
+                } else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("nowplaying") || getMessageReceivedArr()[1].equalsIgnoreCase("np")){
-                if(sql1.checkQuery(getDiscordID())){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("nowplaying") || getMessageReceivedArr()[1].equalsIgnoreCase("np")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     sql1.closeConnection();
                     getNowPlaying(getDiscordID(), event);
-                }
-                else {
+                } else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
-                if(sql1.checkQuery(getDiscordID())){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     sql1.closeConnection();
-                    getChartAlbum(getDiscordID(),"3x3", "7day", event);
-                }
-                else {
+                    getChartAlbum(getDiscordID(), "3x3", "7day", event);
+                } else {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            }
-            else  {
-                if (checkIfUserExist(getMessageReceivedArr()[1])){
+            } else {
+                if (checkIfUserExist(getMessageReceivedArr()[1])) {
                     sql1.closeConnection();
                     getProfile(getMessageReceivedArr()[1], event);
-                }
-                else {
-                    event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] +"' does not exist ❌```").queue();
+                } else {
+                    event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] + "' does not exist ❌```").queue();
                     sql1.closeConnection();
                 }
             }
 
-        }
-        else if (getMessageReceivedArr().length == 3) {
+        } else if (getMessageReceivedArr().length == 3) {
             if (getMessageReceivedArr()[1].equalsIgnoreCase("set")) {
                 setUsername(getMessageReceivedArr()[2]);
                 if (setUsernameInDatabase(getMessageReceivedArr()[2])) {
@@ -153,308 +138,193 @@ public class LastFmCommand extends Command {
                     sql1.closeConnection();
                 }
                 event.getChannel().sendMessage(messageTosend).queue();
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
-                if(sql1.checkQuery(getDiscordID())){
-                    if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
+                if (sql1.checkQuery(getDiscordID())) {
+                    if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
                         setPeriodStr("7day");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")) {
                         setPeriodStr("1month");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
                         setPeriodStr("3month");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
                         setPeriodStr("6month");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")) {
                         setPeriodStr("12month");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")) {
                         setPeriodStr("overall");
                         sql1.closeConnection();
                         topTracks(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else {
+                    } else {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
                             sql1.closeConnection();
                             topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
-                }
-                else {
+                } else {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
-            }
-            else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
-                if(sql1.checkQuery(getDiscordID())){
-                    if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
+                if (sql1.checkQuery(getDiscordID())) {
+                    if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
                         setPeriodStr("7day");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")) {
                         setPeriodStr("1month");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
                         setPeriodStr("3month");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
                         setPeriodStr("6month");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")) {
                         setPeriodStr("12month");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")) {
                         setPeriodStr("overall");
                         sql1.closeConnection();
                         topArtists(getDiscordID(), 10, getPeriodStr(), event);
-                    }
-                    else {
+                    } else {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
                             sql1.closeConnection();
                             topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
-                }
-                else {
+                } else {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")){
-                if ((sql1.checkQuery(getDiscordID()))){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")) {
+                if ((sql1.checkQuery(getDiscordID()))) {
                     sql1.closeConnection();
                     try {
                         setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
                         getRecentTracks(getDiscordID(), getMaxTrackAmount(), event);
-                    }catch (NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         event.getChannel().sendMessage(wrongFormatMessage).queue();
                     }
-                }
-                else {
+                } else {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
-                if (sql1.checkQuery(getDiscordID())){
-                    if (getMessageReceivedArr()[2].contains("x")){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
+                if (sql1.checkQuery(getDiscordID())) {
+                    if (getMessageReceivedArr()[2].contains("x")) {
                         String size = getMessageReceivedArr()[2];
                         sql1.closeConnection();
                         getChartAlbum(getDiscordID(), size, "7day", event);
-                    }
-                    else {
+                    } else {
                         sql1.closeConnection();
                         event.getChannel().sendMessage(wrongFormatMessage).queue();
                     }
 
-                }
-                else {
+                } else {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
-            }
-
-            else {
+            } else {
                 sql1.closeConnection();
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
 
-        }else if (getMessageReceivedArr().length == 4){
-            if(getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")){
-                if(sql1.checkQuery(getDiscordID())){
-                    if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
+        } else if (getMessageReceivedArr().length == 4) {
+            if (getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
+                if (sql1.checkQuery(getDiscordID())) {
+                    if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")) {
                         setPeriodStr("1month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
                         setPeriodStr("3month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
                         setPeriodStr("6month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")) {
                         setPeriodStr("12month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
                         }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")) {
                         setPeriodStr("overall");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             sql1.closeConnection();
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
-                    }
-                    else {
-                        event.getChannel().sendMessage(wrongFormatMessage).queue();
-                        sql1.closeConnection();
-                    }
-                }else {
-                    event.getChannel().sendMessage(noUsernameMessage).queue();
-                    sql1.closeConnection();
-                }
-            }
-            else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
-                if(sql1.checkQuery(getDiscordID())){
-                    if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
-                        setPeriodStr("7day");
-                        try {
-                            sql1.closeConnection();
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-
-                        } catch (NumberFormatException e){
-                            sql1.closeConnection();
-                            setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                        }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
-                        setPeriodStr("1month");
-                        try {
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            sql1.closeConnection();
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
-                            setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                            sql1.closeConnection();
-                        }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
-                        setPeriodStr("3month");
-                        try {
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            sql1.closeConnection();
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
-                            setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                            sql1.closeConnection();
-                        }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
-                        setPeriodStr("6month");
-                        try {
-                            sql1.closeConnection();
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-
-                        } catch (NumberFormatException e){
-                            setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                            sql1.closeConnection();
-                        }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
-                        setPeriodStr("12month");
-                        try {
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            sql1.closeConnection();
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                        } catch (NumberFormatException e){
-                            setMaxTrackAmount(10);
-                            sql1.closeConnection();
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                        }
-                    }
-                    else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
-                        setPeriodStr("overall");
-                        try {
-                            sql1.closeConnection();
-                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-
-                        } catch (NumberFormatException e){
-                            setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
-                            sql1.closeConnection();
-                        }
-                    }
-                    else {
+                    } else {
                         event.getChannel().sendMessage(wrongFormatMessage).queue();
                         sql1.closeConnection();
                     }
@@ -462,22 +332,98 @@ public class LastFmCommand extends Command {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            }
-            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
-                if(sql1.checkQuery(getDiscordID())){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
+                if (sql1.checkQuery(getDiscordID())) {
+                    if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
+                        setPeriodStr("7day");
+                        try {
+                            sql1.closeConnection();
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+
+                        } catch (NumberFormatException e) {
+                            sql1.closeConnection();
+                            setMaxTrackAmount(10);
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                        }
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")) {
+                        setPeriodStr("1month");
+                        try {
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
+                            setMaxTrackAmount(10);
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                            sql1.closeConnection();
+                        }
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
+                        setPeriodStr("3month");
+                        try {
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
+                            setMaxTrackAmount(10);
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                            sql1.closeConnection();
+                        }
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
+                        setPeriodStr("6month");
+                        try {
+                            sql1.closeConnection();
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+
+                        } catch (NumberFormatException e) {
+                            setMaxTrackAmount(10);
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                            sql1.closeConnection();
+                        }
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")) {
+                        setPeriodStr("12month");
+                        try {
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+                        } catch (NumberFormatException e) {
+                            setMaxTrackAmount(10);
+                            sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                        }
+                    } else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")) {
+                        setPeriodStr("overall");
+                        try {
+                            sql1.closeConnection();
+                            setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
+
+                        } catch (NumberFormatException e) {
+                            setMaxTrackAmount(10);
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
+                            sql1.closeConnection();
+                        }
+                    } else {
+                        event.getChannel().sendMessage(wrongFormatMessage).queue();
+                        sql1.closeConnection();
+                    }
+                } else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
+                if (sql1.checkQuery(getDiscordID())) {
                     sql1.closeConnection();
                     String size = getMessageReceivedArr()[2];
                     String period = getMessageReceivedArr()[3];
-                    getChartAlbum(getDiscordID(),size,period,event);
-                }
-                else {
+                    getChartAlbum(getDiscordID(), size, period, event);
+                } else {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
             }
 
-        }
-        else {
+        } else {
             sql1.closeConnection();
             event.getChannel().sendMessage("Use correct format (HOLDER FOR UPCOMING SHIT POGU)").queue();
         }
@@ -498,142 +444,141 @@ public class LastFmCommand extends Command {
             decimalFormat.setGroupingUsed(true);
             String thumbnail = "";
             String username = sql.getUsername(discordID);
+            sql.closeConnection();
             LastFmTopTracksParser tt = new LastFmTopTracksParser(apikey, username, periodStr);
-            String[][] tracks = tt.getResultTracks();
-            try {
-
-                if (trackAmountTemp.get() > tracks.length) {
-                    trackAmountTemp.set(tracks.length);
-                }
-
-                String[] pages = new String[trackAmountTemp.get()];
-                int pagetemp = 0;
-
-                int totalPlaycount = 0;
-                for (String[] strings : tracks) {
-                    totalPlaycount += Integer.parseInt(strings[4]);
-                }
-                for (int i = 0; i < trackAmountTemp.get(); i++) {
-                    if (i == 0) {
-                        pages[pagetemp] = "";
-                    }
-
-                    String rank = tracks[i][0];
-                    String artist = tracks[i][1];
-                    String track = tracks[i][2];
-                    String tracklink = tracks[i][3];
-                    int playcount = Integer.parseInt(tracks[i][4]);
-                    if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
-                    }
-                    if (track.contains("*")) {
-                        track = track.replace("*", "\\*");
-                    }
-                    if(i == 0){
-                        if(playcount == 1){
-                            pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-
-                        }
-                        else pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else if(i==1){
-                        if(playcount == 1){
-                            pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        }
-                        else pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else if (i == 2){
-                        if(playcount == 1){
-                            pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        }
-                        else pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else {
-
-                        if (playcount == 1) {
-                            pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        }
-                        else pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-
-                    }
-
-                    if (pages[pagetemp].length() > 1800 && tracks.length-1 != i) {
-                        pagetemp++;
-                        pages[pagetemp] = "";
-                    }
-                }
-
-
-                String[] pagesReal = new String[pagetemp + 1];
-                for (int j = 0; j <= pagetemp; j++) {
-                    pagesReal[j] = "";
-                    pagesReal[j] = pages[j];
-                }
-
-
-                String firstArtist = tracks[0][1];
-                sql.closeConnection();
-
+            if (tt.isLoaded()) {
+                String[][] tracks = tt.getResultTracks();
                 try {
-                    Document doc = Jsoup.connect("https://www.last.fm/music/" + firstArtist + "/+images").userAgent("Chrome").get();
-                    Elements images = doc.getElementsByClass("image-list-item-wrapper");
-                    String imagelink = images.get(0).getElementsByTag("img").toString();
-                    imagelink = imagelink.replace("/avatar170s/", "/450x450/");
-                    imagelink += "</img>";
 
-                    InputSource is = new InputSource(new StringReader(imagelink));
-                    DOMParser dp = new DOMParser();
-                    dp.parse(is);
-                    org.w3c.dom.Document document = dp.getDocument();
-                    NodeList nl = document.getElementsByTagName("img");
-                    Node n = nl.item(0);
-                    NamedNodeMap nnm = n.getAttributes();
-                    thumbnail = nnm.getNamedItem("src").getFirstChild().getTextContent();
+                    if (trackAmountTemp.get() > tracks.length) {
+                        trackAmountTemp.set(tracks.length);
+                    }
 
-                } catch (NullPointerException | IOException | SAXException e) {
-                    thumbnail = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png";
-                    System.out.println("could not load image");
-                    e.printStackTrace();
+                    String[] pages = new String[trackAmountTemp.get()];
+                    int pagetemp = 0;
+
+                    int totalPlaycount = 0;
+                    for (String[] strings : tracks) {
+                        totalPlaycount += Integer.parseInt(strings[4]);
+                    }
+                    for (int i = 0; i < trackAmountTemp.get(); i++) {
+                        if (i == 0) {
+                            pages[pagetemp] = "";
+                        }
+
+                        String rank = tracks[i][0];
+                        String artist = tracks[i][1];
+                        String track = tracks[i][2];
+                        String tracklink = tracks[i][3];
+                        int playcount = Integer.parseInt(tracks[i][4]);
+                        if (artist.contains("*")) {
+                            artist = artist.replace("*", "\\*");
+                        }
+                        if (track.contains("*")) {
+                            track = track.replace("*", "\\*");
+                        }
+                        if (i == 0) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+
+                            } else
+                                pages[pagetemp] += "🥇 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else if (i == 1) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "🥈 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else if (i == 2) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "🥉 " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else {
+
+                            if (playcount == 1) {
+                                pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "#" + rank + " " + artist + " - [" + track + "](" + tracklink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+
+                        }
+
+                        if (pages[pagetemp].length() > 1800 && tracks.length - 1 != i) {
+                            pagetemp++;
+                            pages[pagetemp] = "";
+                        }
+                    }
+
+
+                    String[] pagesReal = new String[pagetemp + 1];
+                    for (int j = 0; j <= pagetemp; j++) {
+                        pagesReal[j] = "";
+                        pagesReal[j] = pages[j];
+                    }
+
+
+                    String firstArtist = tracks[0][1];
+
+                    try {
+                        Document doc = Jsoup.connect("https://www.last.fm/music/" + firstArtist + "/+images").userAgent("Chrome").get();
+                        Elements images = doc.getElementsByClass("image-list-item-wrapper");
+                        String imagelink = images.get(0).getElementsByTag("img").toString();
+                        imagelink = imagelink.replace("/avatar170s/", "/450x450/");
+                        imagelink += "</img>";
+
+                        InputSource is = new InputSource(new StringReader(imagelink));
+                        DOMParser dp = new DOMParser();
+                        dp.parse(is);
+                        org.w3c.dom.Document document = dp.getDocument();
+                        NodeList nl = document.getElementsByTagName("img");
+                        Node n = nl.item(0);
+                        NamedNodeMap nnm = n.getAttributes();
+                        thumbnail = nnm.getNamedItem("src").getFirstChild().getTextContent();
+
+                    } catch (NullPointerException | IOException | SAXException e) {
+                        thumbnail = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png";
+                        System.out.println("could not load image");
+                        e.printStackTrace();
+                    }
+                    int page = 1;
+                    String periodforURL = checkPeriodforURL(periodStr);
+                    pbuilder = new Paginator.Builder()
+                            .setColumns(1)
+                            .setBulkSkipNumber(2000)
+                            .setItemsPerPage(1)
+                            .showPageNumbers(true)
+                            .waitOnSinglePage(false)
+                            .useNumberedItems(false)
+                            .setFinalAction(m -> {
+                                try {
+                                    m.clearReactions().queue();
+                                } catch (PermissionException e) {
+                                    m.delete().queue();
+                                }
+                            })
+                            .setEventWaiter(waiter)
+                            .setTimeout(2, TimeUnit.MINUTES);
+                    pbuilder.clearItems();
+                    pbuilder.addItems(pagesReal);
+                    pbuilder.setAuthorText("🎶" + username + "'s top tracks");
+                    pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/tracks?date_preset=" + periodforURL);
+                    pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
+                    pbuilder.setThumbnail(thumbnail);
+                    pbuilder.setTitle(getPeriodForBuilder(periodStr));
+                    pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlaycount));
+                    Paginator p = pbuilder.setColor(Color.RED)
+                            .setText("")
+                            .build();
+                    message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
+                    p.paginate(message, page);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    message.editMessage("```❌ No tracks found for your account ❌```").queue();
                 }
-                int page = 1;
-                String periodforURL = checkPeriodforURL(periodStr);
-                pbuilder = new Paginator.Builder()
-                        .setColumns(1)
-                        .setBulkSkipNumber(2000)
-                        .setItemsPerPage(1)
-                        .showPageNumbers(true)
-                        .waitOnSinglePage(false)
-                        .useNumberedItems(false)
-                        .setFinalAction(m -> {
-                            try {
-                                m.clearReactions().queue();
-                            } catch (PermissionException e) {
-                                m.delete().queue();
-                            }
-                        })
-                        .setEventWaiter(waiter)
-                        .setTimeout(2, TimeUnit.MINUTES);
-                pbuilder.clearItems();
-                pbuilder.addItems(pagesReal);
-                pbuilder.setAuthorText("🎶" + username + "'s top tracks");
-                pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/tracks?date_preset=" + periodforURL);
-                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
-                pbuilder.setThumbnail(thumbnail);
-                pbuilder.setTitle(getPeriodForBuilder(periodStr));
-                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlaycount));
-                Paginator p = pbuilder.setColor(Color.RED)
-                        .setText("")
-                        .build();
-                message.editMessage("\u200B").queue();
-                p.paginate(message, page);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                message.editMessage("```❌ No tracks found for your account ❌```").queue();
-            }
+            } else message.editMessage(failedToLoad).queue();
         });
     }
 
 
-    public void topArtists(String discordID, int artistAmount, String periodStr, GuildMessageReceivedEvent event){
+    public void topArtists(String discordID, int artistAmount, String periodStr, GuildMessageReceivedEvent event) {
         AtomicInteger artistAmountTemp = new AtomicInteger(artistAmount);
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
             LastFmSQL sql = new LastFmSQL();
@@ -645,31 +590,33 @@ public class LastFmCommand extends Command {
             decimalFormat.setGroupingUsed(true);
             String thumbnail = "";
             String username = sql.getUsername(discordID);
+            sql.closeConnection();
             LastFmTopArtistParser ta = new LastFmTopArtistParser(apikey, username, periodStr);
-            String[][] artists = ta.getResultArtists();
-            try {
+            if (ta.isLoaded()) {
+                String[][] artists = ta.getResultArtists();
+                try {
 
-                if (artistAmountTemp.get() > artists.length) {
-                    artistAmountTemp.set(artists.length);
-                }
-
-                String[] pages = new String[artistAmountTemp.get()];
-                int pagetemp = 0;
-
-
-                int totalPlayount = 0;
-                for (String[] strings : artists) {
-                    totalPlayount += Integer.parseInt(strings[3]);
-                }
-                for (int i = 0; i < artistAmountTemp.get(); i++) {
-                    if (i == 0) {
-                        pages[pagetemp] = "";
+                    if (artistAmountTemp.get() > artists.length) {
+                        artistAmountTemp.set(artists.length);
                     }
 
-                    String rank = artists[i][0];
-                    String artist = artists[i][1];
-                    String artistlink = artists[i][2];
-                    int playcount = Integer.parseInt(artists[i][3]);
+                    String[] pages = new String[artistAmountTemp.get()];
+                    int pagetemp = 0;
+
+
+                    int totalPlayount = 0;
+                    for (String[] strings : artists) {
+                        totalPlayount += Integer.parseInt(strings[3]);
+                    }
+                    for (int i = 0; i < artistAmountTemp.get(); i++) {
+                        if (i == 0) {
+                            pages[pagetemp] = "";
+                        }
+
+                        String rank = artists[i][0];
+                        String artist = artists[i][1];
+                        String artistlink = artists[i][2];
+                        int playcount = Integer.parseInt(artists[i][3]);
 
                     /*if (artist.contains("*")) {
                         artist = artist.replace("*", "\\*");
@@ -679,102 +626,99 @@ public class LastFmCommand extends Command {
                     }
 
                      */
-                    if(i == 0){
-                        if (playcount == 1) {
-                            pages[pagetemp] += "🥇 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        } else
-                            pages[pagetemp] += "🥇 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else if(i == 1){
-                        if (playcount == 1) {
-                            pages[pagetemp] += "🥈 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        } else
-                            pages[pagetemp] += "🥈 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else if(i == 2){
-                        if (playcount == 1) {
-                            pages[pagetemp] += "🥉 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
-                        } else
-                            pages[pagetemp] += "🥉 [" + artist+ "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
-                    }
-                    else {
+                        if (i == 0) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥇 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "🥇 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else if (i == 1) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥈 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "🥈 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else if (i == 2) {
+                            if (playcount == 1) {
+                                pages[pagetemp] += "🥉 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "🥉 [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        } else {
 
-                        if (playcount == 1) {
-                            pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            if (playcount == 1) {
+                                pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
+                            } else
+                                pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
                         }
-                        else pages[pagetemp] += "#" + rank + " [" + artist + "](" + artistlink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                        if (pages[pagetemp].length() > 1800 && artists.length - 1 != i) {
+                            pagetemp++;
+                            pages[pagetemp] = "";
+                        }
                     }
-                    if (pages[pagetemp].length() > 1800 && artists.length-1  != i) {
-                        pagetemp++;
-                        pages[pagetemp] = "";
+
+
+                    String[] pagesReal = new String[pagetemp + 1];
+                    for (int j = 0; j <= pagetemp; j++) {
+                        pagesReal[j] = "";
+                        pagesReal[j] = pages[j];
                     }
+
+
+                    String firstArtist = artists[0][1];
+
+                    try {
+                        Document doc = Jsoup.connect("https://www.last.fm/music/" + firstArtist + "/+images").userAgent("Chrome").get();
+                        Elements images = doc.getElementsByClass("image-list-item-wrapper");
+                        String imagelink = images.get(0).getElementsByTag("img").toString();
+                        imagelink = imagelink.replace("/avatar170s/", "/450x450/");
+                        imagelink += "</img>";
+
+                        InputSource is = new InputSource(new StringReader(imagelink));
+                        DOMParser dp = new DOMParser();
+                        dp.parse(is);
+                        org.w3c.dom.Document document = dp.getDocument();
+                        NodeList nl = document.getElementsByTagName("img");
+                        Node n = nl.item(0);
+                        NamedNodeMap nnm = n.getAttributes();
+                        thumbnail = nnm.getNamedItem("src").getFirstChild().getTextContent();
+
+                    } catch (NullPointerException | IOException | SAXException e) {
+                        thumbnail = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png";
+                        e.printStackTrace();
+                    }
+                    int page = 1;
+                    String periodforURL = checkPeriodforURL(periodStr);
+                    pbuilder = new Paginator.Builder()
+                            .setColumns(1)
+                            .setBulkSkipNumber(2000)
+                            .setItemsPerPage(1)
+                            .showPageNumbers(true)
+                            .waitOnSinglePage(false)
+                            .useNumberedItems(false)
+                            .setFinalAction(m -> {
+                                try {
+                                    m.clearReactions().queue();
+                                } catch (PermissionException e) {
+                                    m.delete().queue();
+                                }
+                            })
+                            .setEventWaiter(waiter)
+                            .setTimeout(2, TimeUnit.MINUTES);
+                    pbuilder.clearItems();
+                    pbuilder.addItems(pagesReal);
+                    pbuilder.setAuthorText("🎤" + username + "'s top artists");
+                    pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/artists?date_preset=" + periodforURL);
+                    pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
+                    pbuilder.setThumbnail(thumbnail);
+                    pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlayount));
+                    pbuilder.setTitle(getPeriodForBuilder(periodStr));
+                    Paginator p = pbuilder.setColor(Color.RED)
+                            .setText("")
+                            .build();
+                    message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
+                    p.paginate(message, page);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    message.editMessage("```❌ No artists found for your account ❌```").queue();
                 }
-
-
-                String[] pagesReal = new String[pagetemp + 1];
-                for (int j = 0; j <= pagetemp; j++) {
-                    pagesReal[j] = "";
-                    pagesReal[j] = pages[j];
-                }
-
-
-                String firstArtist = artists[0][1];
-                sql.closeConnection();
-
-                try {
-                    Document doc = Jsoup.connect("https://www.last.fm/music/" + firstArtist + "/+images").userAgent("Chrome").get();
-                    Elements images = doc.getElementsByClass("image-list-item-wrapper");
-                    String imagelink = images.get(0).getElementsByTag("img").toString();
-                    imagelink = imagelink.replace("/avatar170s/", "/450x450/");
-                    imagelink += "</img>";
-
-                    InputSource is = new InputSource(new StringReader(imagelink));
-                    DOMParser dp = new DOMParser();
-                    dp.parse(is);
-                    org.w3c.dom.Document document = dp.getDocument();
-                    NodeList nl = document.getElementsByTagName("img");
-                    Node n = nl.item(0);
-                    NamedNodeMap nnm = n.getAttributes();
-                    thumbnail = nnm.getNamedItem("src").getFirstChild().getTextContent();
-
-                } catch (NullPointerException | IOException | SAXException e) {
-                    thumbnail = "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png";
-                    e.printStackTrace();
-                }
-                int page = 1;
-                String periodforURL = checkPeriodforURL(periodStr);
-                pbuilder = new Paginator.Builder()
-                        .setColumns(1)
-                        .setBulkSkipNumber(2000)
-                        .setItemsPerPage(1)
-                        .showPageNumbers(true)
-                        .waitOnSinglePage(false)
-                        .useNumberedItems(false)
-                        .setFinalAction(m -> {
-                            try {
-                                m.clearReactions().queue();
-                            } catch (PermissionException e) {
-                                m.delete().queue();
-                            }
-                        })
-                        .setEventWaiter(waiter)
-                        .setTimeout(2, TimeUnit.MINUTES);
-                pbuilder.clearItems();
-                pbuilder.addItems(pagesReal);
-                pbuilder.setAuthorText("🎤" + username + "'s top artists");
-                pbuilder.setAuthorURL("https://www.last.fm/user/" + username + "/library/artists?date_preset=" + periodforURL);
-                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
-                pbuilder.setThumbnail(thumbnail);
-                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlayount));
-                pbuilder.setTitle(getPeriodForBuilder(periodStr));
-                Paginator p = pbuilder.setColor(Color.RED)
-                        .setText("")
-                        .build();
-                message.editMessage("\u200B").queue();
-                p.paginate(message, page);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                message.editMessage("```❌ No artists found for your account ❌```").queue();
-            }
+            } else message.editMessage(failedToLoad).queue();
         });
     }
 
@@ -782,32 +726,34 @@ public class LastFmCommand extends Command {
     public void getProfile(String username, GuildMessageReceivedEvent event) {
 
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
-            if(username != null) {
+            if (username != null) {
                 LastFmProfileParser pp = new LastFmProfileParser(username, apikey);
-                String[] profile = pp.getStrings();
+                if (pp.isLoaded()) {
+                    String[] profile = pp.getProfile();
 
-                String scrobbles = profile[0];
-                String country = profile[1];
-                String date = profile[2];
-                String thumbnail = profile[3];
-                String topArtist = profile[4];
-                String topTrack = profile[5];
-                String usernameURL = profile[7];
+                    String scrobbles = profile[0];
+                    String country = profile[1];
+                    String date = profile[2];
+                    String thumbnail = profile[3];
+                    String topArtist = profile[4];
+                    String topTrack = profile[5];
+                    String usernameURL = profile[7];
 
 
-                EmbedBuilder account = new EmbedBuilder();
-                account.setColor(0xFF0000);
-                account.setAuthor("\uD83D\uDEC8 "+username + "'s Last.FM Account", usernameURL);
-                account.setThumbnail(thumbnail);
-                account.addField("Scrobbles", scrobbles, false);
-                account.addField("Country", country, false);
-                account.addField("Making my bot slower since", date, false);
-                account.addField("Top artist", topArtist, false);
-                account.addField("Top track", topTrack, true);
-                message.editMessage("\u200B").queue();
-                message.editMessage(account.build()).queue();
-            }
-            else message.editMessage(noUsernameMessage).queue();
+                    EmbedBuilder account = new EmbedBuilder();
+                    account.setColor(0xFF0000);
+                    account.setAuthor("\uD83D\uDEC8 " + username + "'s Last.FM Account", usernameURL);
+                    account.setThumbnail(thumbnail);
+                    account.addField("Scrobbles", scrobbles, false);
+                    account.addField("Country", country, false);
+                    account.addField("Making my bot slower since", date, false);
+                    account.addField("Top artist", topArtist, false);
+                    account.addField("Top track", topTrack, true);
+                    message.editMessage("\u200B").queue();
+                    message.editMessage(account.build()).queue();
+                } else message.editMessage(failedToLoad).queue();
+
+            } else message.editMessage(noUsernameMessage).queue();
         });
         /*
         LastFmProfileParser pp = new LastFmProfileParser(username, apikey);
@@ -837,7 +783,7 @@ public class LastFmCommand extends Command {
          */
     }
 
-    public void getRecentTracks(String discordID, int trackamount, GuildMessageReceivedEvent event){
+    public void getRecentTracks(String discordID, int trackamount, GuildMessageReceivedEvent event) {
         AtomicInteger trackAmount = new AtomicInteger(trackamount);
 
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
@@ -850,104 +796,103 @@ public class LastFmCommand extends Command {
             decimalFormat.setGroupingUsed(true);
             String thumbnail = "";
             String username = sql.getUsername(discordID);
+            sql.closeConnection();
             LastFmRecentTracksParser rt = new LastFmRecentTracksParser(apikey, username, trackamount);
-            String[][] recentTracks = LastFmRecentTracksParser.getResultsRecents();
-            if(trackAmount.get() > recentTracks.length){
-                trackAmount.set(recentTracks.length);
-            }
-            try {
-
-                String[] pages = new String[trackAmount.get()];
-                int pagetemp = 0;
-
-
-                int totalPlayount = 0;
-                totalPlayount += Integer.parseInt(recentTracks[0][5]);
-
-                for (int i = 0; i < trackAmount.get(); i++) {
-                    if (i == 0) {
-                        pages[pagetemp] = "";
-                    }
-
-                    String rank = recentTracks[i][0];
-                    String artist = recentTracks[i][1];
-                    String trackname = recentTracks[i][2];
-                    String tracklink = recentTracks[i][3];
-                    String timeAgo = recentTracks[i][4];
-                    if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
-                    }
-                    if (trackname.contains("*")) {
-                        trackname= trackname.replace("*", "\\*");
-                    }
-
-                    if(timeAgo.equalsIgnoreCase("now")){
-                        pages[pagetemp] += "🎧 #" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo+ ") 🎧\n";
-                    }
-                    else {
-                        pages[pagetemp] += "#" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo + ")\n";
-                    }
-
-                    if (pages[pagetemp].length() > 1800 && recentTracks.length-1 != i) {
-                        pagetemp++;
-                        pages[pagetemp] = "";
-                    }
+            if (rt.isLoaded()) {
+                String[][] recentTracks = rt.getResultsRecents();
+                if (trackAmount.get() > recentTracks.length) {
+                    trackAmount.set(recentTracks.length);
                 }
+                try {
+
+                    String[] pages = new String[trackAmount.get()];
+                    int pagetemp = 0;
 
 
-                String[] pagesReal = new String[pagetemp + 1];
-                for (int j = 0; j <= pagetemp; j++) {
-                    pagesReal[j] = "";
-                    pagesReal[j] = pages[j];
+                    int totalPlayount = 0;
+                    totalPlayount += Integer.parseInt(recentTracks[0][5]);
+
+                    for (int i = 0; i < trackAmount.get(); i++) {
+                        if (i == 0) {
+                            pages[pagetemp] = "";
+                        }
+
+                        String rank = recentTracks[i][0];
+                        String artist = recentTracks[i][1];
+                        String trackname = recentTracks[i][2];
+                        String tracklink = recentTracks[i][3];
+                        String timeAgo = recentTracks[i][4];
+                        if (artist.contains("*")) {
+                            artist = artist.replace("*", "\\*");
+                        }
+                        if (trackname.contains("*")) {
+                            trackname = trackname.replace("*", "\\*");
+                        }
+
+                        if (timeAgo.equalsIgnoreCase("now")) {
+                            pages[pagetemp] += "🎧 #" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo + ") 🎧\n";
+                        } else {
+                            pages[pagetemp] += "#" + rank + " " + artist + " - [" + trackname + "](" + tracklink + ") (" + timeAgo + ")\n";
+                        }
+
+                        if (pages[pagetemp].length() > 1800 && recentTracks.length - 1 != i) {
+                            pagetemp++;
+                            pages[pagetemp] = "";
+                        }
+                    }
+
+
+                    String[] pagesReal = new String[pagetemp + 1];
+                    for (int j = 0; j <= pagetemp; j++) {
+                        pagesReal[j] = "";
+                        pagesReal[j] = pages[j];
+                    }
+
+                    thumbnail = recentTracks[0][6];
+
+
+                    int page = 1;
+                    //String periodforURL = checkPeriodforURL(periodStr);
+                    pbuilder = new Paginator.Builder()
+                            .setColumns(1)
+                            .setBulkSkipNumber(2000)
+                            .setItemsPerPage(1)
+                            .showPageNumbers(true)
+                            .waitOnSinglePage(false)
+                            .useNumberedItems(false)
+                            .setFinalAction(m -> {
+                                try {
+                                    m.clearReactions().queue();
+                                } catch (PermissionException e) {
+                                    m.delete().queue();
+                                }
+                            })
+                            .setEventWaiter(waiter)
+                            .setTimeout(2, TimeUnit.MINUTES);
+                    pbuilder.clearItems();
+                    pbuilder.addItems(pagesReal);
+                    pbuilder.setAuthorText("💽 " + username + "'s recent tracks");
+                    pbuilder.setAuthorURL("https://www.last.fm/user/" + username);
+                    pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
+                    pbuilder.setThumbnail(thumbnail);
+                    pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlayount));
+                    pbuilder.setTitle("Recent tracks");//getPeriodForBuilder(periodStr));
+                    Paginator p = pbuilder.setColor(Color.RED)
+                            .setText("")
+                            .build();
+                    message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
+                    p.paginate(message, page);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    message.editMessage("```❌ No tracks found for your account ❌```").queue();
+                    e.printStackTrace();
                 }
-
-                thumbnail = recentTracks[0][6];
-
-                sql.closeConnection();
-
-
-
-                int page = 1;
-                //String periodforURL = checkPeriodforURL(periodStr);
-                pbuilder = new Paginator.Builder()
-                        .setColumns(1)
-                        .setBulkSkipNumber(2000)
-                        .setItemsPerPage(1)
-                        .showPageNumbers(true)
-                        .waitOnSinglePage(false)
-                        .useNumberedItems(false)
-                        .setFinalAction(m -> {
-                            try {
-                                m.clearReactions().queue();
-                            } catch (PermissionException e) {
-                                m.delete().queue();
-                            }
-                        })
-                        .setEventWaiter(waiter)
-                        .setTimeout(2, TimeUnit.MINUTES);
-                pbuilder.clearItems();
-                pbuilder.addItems(pagesReal);
-                pbuilder.setAuthorText("💽 " + username + "'s recent tracks");
-                pbuilder.setAuthorURL("https://www.last.fm/user/" + username);
-                pbuilder.setAuthorIconURL(event.getAuthor().getAvatarUrl());
-                pbuilder.setThumbnail(thumbnail);
-                pbuilder.setFooter("    |   Total scrobbles: "+ decimalFormat.format(totalPlayount));
-                pbuilder.setTitle("Recent tracks");//getPeriodForBuilder(periodStr));
-                Paginator p = pbuilder.setColor(Color.RED)
-                        .setText("")
-                        .build();
-                message.editMessage("\u200B").queue();
-                p.paginate(message, page);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                message.editMessage("```❌ No tracks found for your account ❌```").queue();
-                e.printStackTrace();
-            }
+            } else message.editMessage(failedToLoad).queue();
 
 
         });
     }
 
-    public void getNowPlaying(String discordID, GuildMessageReceivedEvent event){
+    public void getNowPlaying(String discordID, GuildMessageReceivedEvent event) {
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
             LastFmSQL sql = new LastFmSQL();
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
@@ -960,66 +905,93 @@ public class LastFmCommand extends Command {
             String username = sql.getUsername(discordID);
             sql.closeConnection();
             LastFmNowPlayingParser np = new LastFmNowPlayingParser(apikey, username);
-            String[][] nowPlayingInfo = np.getNowplayingInfo();
-            //String[][] embedInfo = new String[2][8];
-            String fieldPlaying = "Last played";
-            String userLink = "https://www.last.fm/user/" + username;
+            if (np.isLoaded()) {
 
-            for(int i = 0; i < 2; i++) {
 
-                if (nowPlayingInfo[i][1].contains("*")) {
-                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
-                }
-                if (nowPlayingInfo[i][2].contains("*")) {
-                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
-                }
+                String[][] nowPlayingInfo = np.getNowplayingInfo();
+                if (!nowPlayingInfo[0][0].equalsIgnoreCase("not loaded")) {
+                    //String[][] embedInfo = new String[2][8];
+                    String fieldPlaying = "Last played";
+                    String userLink = "https://www.last.fm/user/" + username;
 
-            }
-            if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
-                fieldPlaying = "Now playing";
-            }
-            String artistName = nowPlayingInfo[0][1];
-            String trackName = nowPlayingInfo[0][2];
-            String trackLink = nowPlayingInfo[0][3];
-            String totalScrobbles = nowPlayingInfo[0][5];
-            String thumbnail = nowPlayingInfo[0][6];
-            String trackScrobbles = nowPlayingInfo[0][7];
+                    for (int i = 0; i < nowPlayingInfo.length; i++) {
 
-            String artistNamePrevious = nowPlayingInfo[1][1];
-            String trackNamePrevious = nowPlayingInfo[1][2];
-            String trackLinkPrevious = nowPlayingInfo[1][3];
-            message.editMessage("\u200B").queue();
-            EmbedBuilder nowPlaying = new EmbedBuilder();
-            nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
-            nowPlaying.addField(fieldPlaying, "["+ trackName + "]("+trackLink+") - " + artistName, false);
-            nowPlaying.addField("Listened to previously", "["+trackNamePrevious+"]("+trackLinkPrevious+") - " + artistNamePrevious, false);
-            nowPlaying.setThumbnail(thumbnail);
-            nowPlaying.setFooter("Total trackplays: " + trackScrobbles + "      |       Total scrobbles: "+totalScrobbles);
-            nowPlaying.setColor(0xFF0000);
+                        if (nowPlayingInfo[i][1].contains("*")) {
+                            nowPlayingInfo[i][1] = nowPlayingInfo[i][2].replace("*", "\\*");
+                        }
+                        if (nowPlayingInfo[i][2].contains("*")) {
+                            nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
+                        }
 
-            message.editMessage(nowPlaying.build()).queue();
+                    }
+                    if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
+                        fieldPlaying = "Now playing";
+                    }
+                    String artistName = nowPlayingInfo[0][1];
+                    String trackName = nowPlayingInfo[0][2];
+                    String trackLink = nowPlayingInfo[0][3];
+                    String totalScrobbles = nowPlayingInfo[0][5];
+                    String thumbnail = nowPlayingInfo[0][6];
+                    String trackScrobbles = nowPlayingInfo[0][7];
+                    EmbedBuilder nowPlaying = new EmbedBuilder();
+
+                    if(nowPlayingInfo.length !=1) {
+                        String artistNamePrevious = nowPlayingInfo[1][1];
+                        String trackNamePrevious = nowPlayingInfo[1][2];
+                        String trackLinkPrevious = nowPlayingInfo[1][3];
+                        message.editMessage("\u200B").queue();
+                        nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+                        nowPlaying.addField(fieldPlaying, "[" + trackName + "](" + trackLink + ") - " + artistName, false);
+                        nowPlaying.addField("Listened to previously", "[" + trackNamePrevious + "](" + trackLinkPrevious + ") - " + artistNamePrevious, false);
+
+                    }
+                    else {
+                        message.editMessage("\u200B").queue();
+                        nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+                        nowPlaying.addField(fieldPlaying, "[" + trackName + "](" + trackLink + ") - " + artistName, false);
+
+                    }
+                    nowPlaying.setThumbnail(thumbnail);
+                    if (trackScrobbles.equalsIgnoreCase("Failed to load")) {
+                        nowPlaying.setFooter("Total trackplays: " + trackScrobbles + "      |       Total scrobbles: " + totalScrobbles);
+                    } else
+                        nowPlaying.setFooter("Total trackplays: " + decimalFormat.format(Integer.parseInt(trackScrobbles)) + "      |       Total scrobbles: " + decimalFormat.format(Integer.parseInt(totalScrobbles)));
+                    nowPlaying.setColor(0xFF0000);
+
+                    message.editMessage(nowPlaying.build()).queue();
+                } else message.editMessage("```❌ No tracks found for your account ❌```").queue();
+            } else message.editMessage(failedToLoad).queue();
         });
     }
 
-    public void getChartAlbum(String discordID, String size, String period, GuildMessageReceivedEvent event){
-        String [] arraySize = size.split("x");
+    public double getResponseTime(){
+        long end = System.nanoTime();
+        long elapsedTime = end - start;
+        double elapsedTimeDouble = (double) elapsedTime / 1_000_000_000;
+        BigDecimal bd = BigDecimal.valueOf(elapsedTimeDouble);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    public void getChartAlbum(String discordID, String size, String period, GuildMessageReceivedEvent event) {
+        String[] arraySize = size.split("x");
         //KANSKE EN TRY CATCH IFALL FEL FORMAT?
         int x = 0;
         int y = 0;
         try {
             x = Integer.parseInt(arraySize[0]);
             y = Integer.parseInt(arraySize[1]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             event.getChannel().sendMessage(wrongFormatMessage).queue();
             return;
         }
 
-        int result = (int) Math.round(Math.sqrt(x*y));
-        if(result >10){
+        int result = (int) Math.round(Math.sqrt(x * y));
+        if (result > 10) {
             result = 10;
         }
-        String amountOfAlbums = Integer.toString(result*result);
+        String amountOfAlbums = Integer.toString(result * result);
 
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
 
@@ -1027,44 +999,45 @@ public class LastFmCommand extends Command {
             String username = sql.getUsername(discordID);
             sql.closeConnection();
             LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, getPeriodForAPICall(period), amountOfAlbums);
-            if(ap.isLoaded()) {
+            if (ap.isLoaded()) {
                 String[][] albumsInfo = ap.getTopAlbums();
-                int amountAlbums = Integer.parseInt(amountOfAlbums);
-                if (amountAlbums > albumsInfo.length) {
-                    amountAlbums = albumsInfo.length;
-                }
-                int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
-                int rowSize = rowColSize;
-                if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
-                    rowSize++;
-                }
+                if (albumsInfo.length > 0) {
+                    int amountAlbums = Integer.parseInt(amountOfAlbums);
+                    if (amountAlbums > albumsInfo.length) {
+                        amountAlbums = albumsInfo.length;
+                    }
+                    int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
+                    int rowSize = rowColSize;
+                    if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
+                        rowSize++;
+                    }
 
 
-                int dimensionHeight = rowColSize * 300;
-                int dimensionWidth = rowSize * 300;
-                LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
-                albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
-                albumHTML.createJSFile(dimensionHeight, dimensionWidth);
-                albumHTML.runJSFile();
-                message.delete().queue();
-                event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
-            }
-            else message.editMessage("```Failed to load, try again please```").queue();
+                    int dimensionHeight = rowColSize * 300;
+                    int dimensionWidth = rowSize * 300;
+                    LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
+                    albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
+                    albumHTML.createJSFile(dimensionHeight, dimensionWidth);
+                    albumHTML.runJSFile();
+                    message.delete().queue();
+                    event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
+                } else message.editMessage("```❌ No albums found for your account ❌```").queue();
+            } else message.editMessage("```Failed to load, try again please```").queue();
         });
     }
 
-    public boolean checkIfUserExist(String username){
+    public boolean checkIfUserExist(String username) {
         User testuser = null;
-        try{
+        try {
             testuser = User.getInfo(username, apikey);
             return testuser != null;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
 
     }
 
-    public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event){
+    public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event) {
         LastFmSQL sql = new LastFmSQL();
         sql.deleteQuery(discordID);
         sql.closeConnection();
@@ -1089,7 +1062,8 @@ public class LastFmCommand extends Command {
         }
         return periodforURL;
     }
-    public String getPeriodForAPICall(String period){
+
+    public String getPeriodForAPICall(String period) {
         String periodAPI = "7day";
         if (period.equalsIgnoreCase("week") || period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("w") || period.equalsIgnoreCase("7days")) {
             periodAPI = "7day";
@@ -1207,6 +1181,14 @@ public class LastFmCommand extends Command {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public long getStart() {
+        return start;
+    }
+
+    public void setStart(long start) {
+        this.start = start;
     }
 
     public String getNoUsernameMessage() {
