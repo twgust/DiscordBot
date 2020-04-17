@@ -38,10 +38,9 @@ public class Controller {
     public Controller() throws LoginException, IOException {
 
         token = new Token();
-        JDA jda = new JDABuilder("Njc3ODY4NjM4OTAwMDYwMTYx.XpbTtA.LhAuQ50SYMW5TfG36CJ_AnSGMX4").build();
+        JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
         musicController = new MusicController();
-
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LastFmCommand(waiter));

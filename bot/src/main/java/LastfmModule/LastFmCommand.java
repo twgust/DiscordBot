@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
-import net.dv8tion.jda.internal.requests.Route;
 import org.apache.xerces.parsers.DOMParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,8 +22,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,7 +40,7 @@ public class LastFmCommand extends Command {
     private User user;
     private EventWaiter waiter;
     private Paginator.Builder pbuilder;
-    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type "+EventListener.prefix+"fm set <username>. Type "+EventListener.prefix+"help for more help noob. ❌```";
+    private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type "+ EventListener.prefix+"fm set <username>. Type "+ EventListener.prefix+"help for more help noob. ❌```";
     private String wrongFormatMessage = "```❌ Invalid format, try again. Type "+ EventListener.prefix +"help for more help noob ❌```";
 
     public LastFmCommand(EventWaiter waiter) {
