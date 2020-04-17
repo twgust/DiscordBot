@@ -16,6 +16,7 @@ public class InfoCommand extends ModCommand {
     public InfoCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
+    private String helpText = "```\ninfo [user]\n```";
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
@@ -35,5 +36,10 @@ public class InfoCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }

@@ -11,6 +11,7 @@ import static ModerationModule.ModerationController.getLogChannel;
 
 public class KickCommand extends ModCommand {
     private Permission perm = Permission.KICK_MEMBERS;
+    private String helpText = "```\nkick [user] [reason]\n```";
     public KickCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
@@ -24,5 +25,10 @@ public class KickCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }

@@ -11,6 +11,7 @@ import static ModerationModule.ModerationController.getLogChannel;
 public class MuteCommand extends ModCommand {
     String muteRoleName = "%BotMuted";
     private Permission perm = Permission.MESSAGE_MANAGE;
+    private String helpText = "```\nmute [user]\n```";
 
     public MuteCommand(ModerationController modCTRL) {
         super(modCTRL);
@@ -37,5 +38,10 @@ public class MuteCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }

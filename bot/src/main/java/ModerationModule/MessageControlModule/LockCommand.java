@@ -12,6 +12,7 @@ public class LockCommand extends ModCommand {
     public LockCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
+    private String helpText = "```\nlock\n```";
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
@@ -20,5 +21,10 @@ public class LockCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }

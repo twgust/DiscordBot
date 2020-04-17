@@ -18,6 +18,7 @@ public class UnBanCommand extends ModCommand {
     public UnBanCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
+    private String helpText = "```\nunban [user]\n```";
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -75,5 +76,10 @@ public class UnBanCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }

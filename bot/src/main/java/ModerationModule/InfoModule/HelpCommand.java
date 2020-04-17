@@ -12,9 +12,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 public class HelpCommand extends ModCommand {
     private Controller ctrl;
     private Permission perm = Permission.MESSAGE_WRITE;
+    private String helpText;
     public HelpCommand(ModerationController modCTRL, Controller ctrl) {
         super(modCTRL);
         this.ctrl = ctrl;
+        helpText = "```\n" + ctrl.getCmdMap().getNameList() + "\n```";
     }
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -25,5 +27,10 @@ public class HelpCommand extends ModCommand {
     @Override
     public Permission getPerm() {
         return perm;
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }
