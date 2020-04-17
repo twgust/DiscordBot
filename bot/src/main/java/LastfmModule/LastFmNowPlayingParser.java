@@ -36,7 +36,6 @@ public class LastFmNowPlayingParser {
     }
 
     public void parse(String responsebody) {
-
         try {
             String[][] result = new String[2][8];
             JSONObject recenttracksinfo = new JSONObject(responsebody);

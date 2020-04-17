@@ -911,7 +911,7 @@ public class LastFmCommand extends Command {
                 String[][] nowPlayingInfo = np.getNowplayingInfo();
                 if (!nowPlayingInfo[0][0].equalsIgnoreCase("not loaded")) {
                     //String[][] embedInfo = new String[2][8];
-                    String fieldPlaying = "Last played";
+                    String fieldPlaying = "Last played (" + nowPlayingInfo[0][4] + ")";
                     String userLink = "https://www.last.fm/user/" + username;
 
                     for (int i = 0; i < nowPlayingInfo.length; i++) {
@@ -924,8 +924,10 @@ public class LastFmCommand extends Command {
                         }
 
                     }
+                    String authorText = "'s last played";
                     if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
                         fieldPlaying = "Now playing";
+                        authorText = "'s current track";
                     }
                     String artistName = nowPlayingInfo[0][1];
                     String trackName = nowPlayingInfo[0][2];
@@ -940,14 +942,14 @@ public class LastFmCommand extends Command {
                         String trackNamePrevious = nowPlayingInfo[1][2];
                         String trackLinkPrevious = nowPlayingInfo[1][3];
                         message.editMessage("\u200B").queue();
-                        nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+                        nowPlaying.setAuthor("🎧 " + username + authorText, userLink, event.getAuthor().getAvatarUrl());
                         nowPlaying.addField(fieldPlaying, "[" + trackName + "](" + trackLink + ") - " + artistName, false);
                         nowPlaying.addField("Listened to previously", "[" + trackNamePrevious + "](" + trackLinkPrevious + ") - " + artistNamePrevious, false);
 
                     }
                     else {
                         message.editMessage("\u200B").queue();
-                        nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+                        nowPlaying.setAuthor("🎧 " + username + authorText, userLink, event.getAuthor().getAvatarUrl());
                         nowPlaying.addField(fieldPlaying, "[" + trackName + "](" + trackLink + ") - " + artistName, false);
 
                     }
