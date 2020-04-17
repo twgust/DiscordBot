@@ -5,6 +5,8 @@ import Main.EventListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -18,6 +20,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DecimalFormat;
@@ -32,11 +35,9 @@ public class LastFmCommand extends Command {
     private String username;
     private String messageReceived;
     private String[] messageReceivedArr;
-    private EmbedBuilder embedMessage;
     private String messageTosend;
     private int maxTrackAmount = 10;
     private String periodStr;
-    private MessageEmbed messageEmbed;
     private User user;
     private EventWaiter waiter;
     private Paginator.Builder pbuilder;
@@ -56,32 +57,32 @@ public class LastFmCommand extends Command {
         LastFmSQL sql1 = new LastFmSQL();
         if (getMessageReceivedArr().length == 1) {
             if (sql1.checkQuery(getDiscordID())) {
-                getProfile(sql1.getUsername(getDiscordID()), event);
                 sql1.closeConnection();
+                getProfile(sql1.getUsername(getDiscordID()), event);
             } else event.getChannel().sendMessage(noUsernameMessage).queue();
         }
         else if (getMessageReceivedArr().length == 2) {
             if(getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")){
                 if(sql1.checkQuery(getDiscordID())){
                     setPeriodStr("7day");
-                    topTracks(getDiscordID(),10, getPeriodStr(), event);
                     sql1.closeConnection();
+                    topTracks(getDiscordID(),10, getPeriodStr(), event);
                 }
                 else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
             }
             else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
                 if (sql1.checkQuery(getDiscordID())){
                     setPeriodStr("7day");
-                    topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     sql1.closeConnection();
+                    topArtists(getDiscordID(), 10, getPeriodStr(), event);
                 }
                 else event.getChannel().sendMessage(noUsernameMessage).queue(); sql1.closeConnection();
             }
             else if (getMessageReceivedArr()[1].contains("<@!")){
                 net.dv8tion.jda.api.entities.User user = event.getMessage().getMentionedUsers().get(0);
                 if (sql1.checkQuery(user.getId())){
-                    getProfile(sql1.getUsername(user.getId()), event);
                     sql1.closeConnection();
+                    getProfile(sql1.getUsername(user.getId()), event);
                 }
                 else {
                     setMessageTosend("```❌ No username linked to discord account. ❌```");
@@ -109,10 +110,30 @@ public class LastFmCommand extends Command {
                     sql1.closeConnection();
                 }
             }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("nowplaying") || getMessageReceivedArr()[1].equalsIgnoreCase("np")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    getNowPlaying(getDiscordID(), event);
+                }
+                else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    getChartAlbum(getDiscordID(),"3x3", "7day", event);
+                }
+                else {
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                    sql1.closeConnection();
+                }
+            }
             else  {
                 if (checkIfUserExist(getMessageReceivedArr()[1])){
-                    getProfile(getMessageReceivedArr()[1], event);
                     sql1.closeConnection();
+                    getProfile(getMessageReceivedArr()[1], event);
                 }
                 else {
                     event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] +"' does not exist ❌```").queue();
@@ -134,40 +155,40 @@ public class LastFmCommand extends Command {
                 if(sql1.checkQuery(getDiscordID())){
                     if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
                         setPeriodStr("7day");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
                         setPeriodStr("1month");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
                         setPeriodStr("3month");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
                         setPeriodStr("6month");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
                         setPeriodStr("12month");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
                         setPeriodStr("overall");
-                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topTracks(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
@@ -175,46 +196,49 @@ public class LastFmCommand extends Command {
                         }
                     }
                 }
-                else event.getChannel().sendMessage(noUsernameMessage).queue();
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
             }
             else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")){
                 if(sql1.checkQuery(getDiscordID())){
                     if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
                         setPeriodStr("7day");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
                         setPeriodStr("1month");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
                         setPeriodStr("3month");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
                         setPeriodStr("6month");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
                         setPeriodStr("12month");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
                         setPeriodStr("overall");
-                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                         sql1.closeConnection();
+                        topArtists(getDiscordID(), 10, getPeriodStr(), event);
                     }
                     else {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[2]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
                             sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             sql1.closeConnection();
@@ -222,7 +246,10 @@ public class LastFmCommand extends Command {
                         }
                     }
                 }
-                else event.getChannel().sendMessage(noUsernameMessage).queue();
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
             }
             else if(getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")){
                 if ((sql1.checkQuery(getDiscordID()))){
@@ -233,6 +260,24 @@ public class LastFmCommand extends Command {
                     }catch (NumberFormatException e){
                         event.getChannel().sendMessage(wrongFormatMessage).queue();
                     }
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if (sql1.checkQuery(getDiscordID())){
+                    if (getMessageReceivedArr()[2].contains("x")){
+                        String size = getMessageReceivedArr()[2];
+                        sql1.closeConnection();
+                        getChartAlbum(getDiscordID(), size, "7day", event);
+                    }
+                    else {
+                        sql1.closeConnection();
+                        event.getChannel().sendMessage(wrongFormatMessage).queue();
+                    }
+
                 }
                 else {
                     sql1.closeConnection();
@@ -252,56 +297,56 @@ public class LastFmCommand extends Command {
                         setPeriodStr("7day");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
                         setPeriodStr("1month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")){
                         setPeriodStr("3month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
                         setPeriodStr("6month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("y") || getMessageReceivedArr()[2].equalsIgnoreCase("year") || getMessageReceivedArr()[2].equalsIgnoreCase("12m") || getMessageReceivedArr()[2].equalsIgnoreCase("12months")){
                         setPeriodStr("12month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -312,12 +357,12 @@ public class LastFmCommand extends Command {
                         setPeriodStr("overall");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topTracks(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else {
@@ -334,21 +379,22 @@ public class LastFmCommand extends Command {
                     if(getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")){
                         setPeriodStr("7day");
                         try {
+                            sql1.closeConnection();
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                            sql1.closeConnection();
+
                         } catch (NumberFormatException e){
+                            sql1.closeConnection();
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
-                            sql1.closeConnection();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("m") || getMessageReceivedArr()[2].equalsIgnoreCase("month")){
                         setPeriodStr("1month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -359,8 +405,8 @@ public class LastFmCommand extends Command {
                         setPeriodStr("3month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -370,9 +416,10 @@ public class LastFmCommand extends Command {
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")){
                         setPeriodStr("6month");
                         try {
+                            sql1.closeConnection();
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                            sql1.closeConnection();
+
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -383,20 +430,21 @@ public class LastFmCommand extends Command {
                         setPeriodStr("12month");
                         try {
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
-                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                             sql1.closeConnection();
+                            topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
-                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                             sql1.closeConnection();
+                            event.getChannel().sendMessage(wrongFormatMessage).queue();
                         }
                     }
                     else if (getMessageReceivedArr()[2].equalsIgnoreCase("all") || getMessageReceivedArr()[2].equalsIgnoreCase("overall") || getMessageReceivedArr()[2].equalsIgnoreCase("at") || getMessageReceivedArr()[2].equalsIgnoreCase("alltime")){
                         setPeriodStr("overall");
                         try {
+                            sql1.closeConnection();
                             setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
                             topArtists(getDiscordID(), getMaxTrackAmount(),getPeriodStr(), event);
-                            sql1.closeConnection();
+
                         } catch (NumberFormatException e){
                             setMaxTrackAmount(10);
                             event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -412,9 +460,24 @@ public class LastFmCommand extends Command {
                     sql1.closeConnection();
                 }
             }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("chart")){
+                if(sql1.checkQuery(getDiscordID())){
+                    sql1.closeConnection();
+                    String size = getMessageReceivedArr()[2];
+                    String period = getMessageReceivedArr()[3];
+                    getChartAlbum(getDiscordID(),size,period,event);
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
+            }
 
         }
-        else event.getChannel().sendMessage("Use correct format (HOLDER FOR UPCOMING SHIT POGU)").queue();
+        else {
+            sql1.closeConnection();
+            event.getChannel().sendMessage("Use correct format (HOLDER FOR UPCOMING SHIT POGU)").queue();
+        }
 
 
     }
@@ -433,7 +496,7 @@ public class LastFmCommand extends Command {
             String thumbnail = "";
             String username = sql.getUsername(discordID);
             LastFmTopTracksParser tt = new LastFmTopTracksParser(apikey, username, periodStr);
-            String[][] tracks = LastFmTopTracksParser.getResultTracks();
+            String[][] tracks = tt.getResultTracks();
             try {
 
                 if (trackAmountTemp.get() > tracks.length) {
@@ -580,7 +643,7 @@ public class LastFmCommand extends Command {
             String thumbnail = "";
             String username = sql.getUsername(discordID);
             LastFmTopArtistParser ta = new LastFmTopArtistParser(apikey, username, periodStr);
-            String[][] artists = LastFmTopArtistParser.getResultArtists();
+            String[][] artists = ta.getResultArtists();
             try {
 
                 if (artistAmountTemp.get() > artists.length) {
@@ -718,7 +781,7 @@ public class LastFmCommand extends Command {
         event.getChannel().sendMessage("```Loading data...```").queue(message -> {
             if(username != null) {
                 LastFmProfileParser pp = new LastFmProfileParser(username, apikey);
-                String[] profile = LastFmProfileParser.getStrings();
+                String[] profile = pp.getStrings();
 
                 String scrobbles = profile[0];
                 String country = profile[1];
@@ -811,8 +874,8 @@ public class LastFmCommand extends Command {
                     if (artist.contains("*")) {
                         artist = artist.replace("*", "\\*");
                     }
-                    if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
+                    if (trackname.contains("*")) {
+                        trackname= trackname.replace("*", "\\*");
                     }
 
                     if(timeAgo.equalsIgnoreCase("now")){
@@ -882,7 +945,109 @@ public class LastFmCommand extends Command {
     }
 
     public void getNowPlaying(String discordID, GuildMessageReceivedEvent event){
-        
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
+            LastFmSQL sql = new LastFmSQL();
+            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+            formatSymbols.setDecimalSeparator('.');
+            formatSymbols.setGroupingSeparator(',');
+            DecimalFormat decimalFormat = new DecimalFormat("#.##", formatSymbols);
+            decimalFormat.setGroupingSize(3);
+            decimalFormat.setGroupingUsed(true);
+
+            String username = sql.getUsername(discordID);
+            sql.closeConnection();
+            LastFmNowPlayingParser np = new LastFmNowPlayingParser(apikey, username);
+            String[][] nowPlayingInfo = np.getNowplayingInfo();
+            //String[][] embedInfo = new String[2][8];
+            String fieldPlaying = "Last played";
+            String userLink = "https://www.last.fm/user/" + username;
+
+            for(int i = 0; i < 2; i++) {
+
+                if (nowPlayingInfo[i][1].contains("*")) {
+                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
+                }
+                if (nowPlayingInfo[i][2].contains("*")) {
+                    nowPlayingInfo[i][2] = nowPlayingInfo[i][2].replace("*", "\\*");
+                }
+
+            }
+            if (nowPlayingInfo[0][4].equalsIgnoreCase("now")) {
+                fieldPlaying = "Now playing";
+            }
+            String artistName = nowPlayingInfo[0][1];
+            String trackName = nowPlayingInfo[0][2];
+            String trackLink = nowPlayingInfo[0][3];
+            String totalScrobbles = nowPlayingInfo[0][5];
+            String thumbnail = nowPlayingInfo[0][6];
+            String trackScrobbles = nowPlayingInfo[0][7];
+
+            String artistNamePrevious = nowPlayingInfo[1][1];
+            String trackNamePrevious = nowPlayingInfo[1][2];
+            String trackLinkPrevious = nowPlayingInfo[1][3];
+            message.editMessage("\u200B").queue();
+            EmbedBuilder nowPlaying = new EmbedBuilder();
+            nowPlaying.setAuthor("🎧 " + username + "'s recents", userLink);
+            nowPlaying.addField(fieldPlaying, "["+ trackName + "]("+trackLink+") - " + artistName, false);
+            nowPlaying.addField("Listened to previously", "["+trackNamePrevious+"]("+trackLinkPrevious+") - " + artistNamePrevious, false);
+            nowPlaying.setThumbnail(thumbnail);
+            nowPlaying.setFooter("Total trackplays: " + trackScrobbles + "      |       Total scrobbles: "+totalScrobbles);
+            nowPlaying.setColor(0xFF0000);
+
+            message.editMessage(nowPlaying.build()).queue();
+        });
+    }
+
+    public void getChartAlbum(String discordID, String size, String period, GuildMessageReceivedEvent event){
+        String [] arraySize = size.split("x");
+        //KANSKE EN TRY CATCH IFALL FEL FORMAT?
+        int x = 0;
+        int y = 0;
+        try {
+            x = Integer.parseInt(arraySize[0]);
+            y = Integer.parseInt(arraySize[1]);
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+            event.getChannel().sendMessage(wrongFormatMessage).queue();
+            return;
+        }
+
+        int result = (int) Math.round(Math.sqrt(x*y));
+        if(result >10){
+            result = 10;
+        }
+        String amountOfAlbums = Integer.toString(result*result);
+
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
+
+            LastFmSQL sql = new LastFmSQL();
+            String username = sql.getUsername(discordID);
+            sql.closeConnection();
+            LastFmTopAlbumsParserChart ap = new LastFmTopAlbumsParserChart(apikey, username, getPeriodForAPICall(period), amountOfAlbums);
+            if(ap.isLoaded()) {
+                String[][] albumsInfo = ap.getTopAlbums();
+                int amountAlbums = Integer.parseInt(amountOfAlbums);
+                if (amountAlbums > albumsInfo.length) {
+                    amountAlbums = albumsInfo.length;
+                }
+                int rowColSize = (int) Math.round(Math.sqrt(amountAlbums));
+                int rowSize = rowColSize;
+                if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
+                    rowSize++;
+                }
+
+
+                int dimensionHeight = rowColSize * 300;
+                int dimensionWidth = rowSize * 300;
+                LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
+                albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
+                albumHTML.createJSFile(dimensionHeight, dimensionWidth);
+                albumHTML.runJSFile();
+                message.delete().queue();
+                event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
+            }
+            else message.editMessage("```Failed to load, try again please```").queue();
+        });
     }
 
     public boolean checkIfUserExist(String username){
@@ -898,7 +1063,7 @@ public class LastFmCommand extends Command {
 
     public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event){
         LastFmSQL sql = new LastFmSQL();
-        sql.deleteQuery(discordID, sql.getUsername(discordID));
+        sql.deleteQuery(discordID);
         sql.closeConnection();
         event.getChannel().sendMessage("```Removed your Last.FM account ✅```").queue();
 
@@ -920,6 +1085,24 @@ public class LastFmCommand extends Command {
             periodforURL = "ALL";
         }
         return periodforURL;
+    }
+    public String getPeriodForAPICall(String period){
+        String periodAPI = "7day";
+        if (period.equalsIgnoreCase("week") || period.equalsIgnoreCase("7day") || period.equalsIgnoreCase("w") || period.equalsIgnoreCase("7days")) {
+            periodAPI = "7day";
+        } else if (period.equalsIgnoreCase("1month") || period.equalsIgnoreCase("m") || period.equalsIgnoreCase("month")) {
+            periodAPI = "1month";
+        } else if (period.equalsIgnoreCase("3month") || period.equalsIgnoreCase("3m")) {
+            periodAPI = "3month";
+        } else if (period.equalsIgnoreCase("6month") || period.equalsIgnoreCase("6m")) {
+            periodAPI = "6month";
+        } else if (period.equalsIgnoreCase("12month") || period.equalsIgnoreCase("12m") || period.equalsIgnoreCase("year") || period.equalsIgnoreCase("y")) {
+            periodAPI = "12month";
+        } else if (period.equalsIgnoreCase("overall") || period.equalsIgnoreCase("alltime") || period.equalsIgnoreCase("at")) {
+            periodAPI = "overall";
+        }
+        return periodAPI;
+
     }
 
     public String getPeriodForBuilder(String periodStr) {
@@ -991,14 +1174,6 @@ public class LastFmCommand extends Command {
         this.messageReceivedArr = messageReceivedArr;
     }
 
-    public EmbedBuilder getEmbedMessage() {
-        return embedMessage;
-    }
-
-    public void setEmbedMessage(EmbedBuilder embedMessage) {
-        this.embedMessage = embedMessage;
-    }
-
     public String getMessageTosend() {
         return messageTosend;
     }
@@ -1021,14 +1196,6 @@ public class LastFmCommand extends Command {
 
     public void setPeriodStr(String periodStr) {
         this.periodStr = periodStr;
-    }
-
-    public MessageEmbed getMessageEmbed() {
-        return messageEmbed;
-    }
-
-    public void setMessageEmbed(MessageEmbed messageEmbed) {
-        this.messageEmbed = messageEmbed;
     }
 
     public User getUser() {

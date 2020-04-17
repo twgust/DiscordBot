@@ -18,7 +18,7 @@ public class EventListener extends ListenerAdapter {
         return prefix;
     }
 
-    public static char prefix = '&';
+    public static char prefix = '%';
     private Controller ctrl;
     private ErrorCommand error = new ErrorCommand();
 

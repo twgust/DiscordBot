@@ -246,7 +246,7 @@ public class LastFmCommandOld extends Command {
         }
         System.out.println(pageInformationDB);
         LastFmSQL sql = new LastFmSQL();
-        sql.updateTopTracks(sql.getUsername(userId), pageInformationDB, "week");
+        //sql.updateTopTracks(sql.getUsername(userId), pageInformationDB, "week");
         sql.closeConnection();
 
 

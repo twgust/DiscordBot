@@ -28,4 +28,9 @@ public class BanCommand extends ModCommand {
     public Permission getPerm() {
         return perm;
     }
+
+    @Override
+    public String getHelp() {
+        return helpText;
+    }
 }

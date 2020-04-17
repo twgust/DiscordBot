@@ -12,20 +12,22 @@ import java.util.Arrays;
 
 public class LastFmTopTracksParser {
 
-    private static String [][] resultTracks;
+    private String [][] resultTracks;
 
+    //changed thenAccpet (CLASSNAME::parse) to current to not make it static
     public LastFmTopTracksParser(String apikey, String username, String period) {
         HttpClient client = HttpClient.newHttpClient();
+        System.out.println("try to connect");
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&period="+period+"&user="+username+"&limit=1000&api_key="+apikey+"&format=json")).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(LastFmTopTracksParser::parse)
+                .thenAccept(this::parse)
                 .join();
     }
 
 
-    public static void parse(String responsebody) {
-
+    public void parse(String responsebody) {
+        System.out.println("connected");
         JSONObject trackinfo = new JSONObject(responsebody);
         JSONObject toptracks = trackinfo.getJSONObject("toptracks");
         JSONArray tracks = toptracks.getJSONArray("track");
@@ -58,7 +60,7 @@ public class LastFmTopTracksParser {
         resultTracks = result;
     }
 
-    public static String[][] getResultTracks() {
+    public String[][] getResultTracks() {
         return resultTracks;
     }
 
@@ -66,9 +68,9 @@ public class LastFmTopTracksParser {
 
     public static void main(String[] args) {
         LastFmTopTracksParser tt2 = new LastFmTopTracksParser("c806a80470bbd773b00c2b46b3a1fd75", "abhi_sama", "overall");
-        System.out.println(Arrays.deepToString(LastFmTopTracksParser.getResultTracks()));
+        System.out.println(Arrays.deepToString(tt2.getResultTracks()));
         LastFmTopTracksParser tt = new LastFmTopTracksParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874", "overall");
-        System.out.println(Arrays.deepToString(LastFmTopTracksParser.getResultTracks()));
+        System.out.println(Arrays.deepToString(tt.getResultTracks()));
 
     }
 }

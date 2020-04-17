@@ -16,6 +16,12 @@ public class QuizCommand extends Command {
     private QuizMulti quizM = new QuizMulti();
     private TextChannel channel;
     private EmbedBuilder eb = new EmbedBuilder();
+    private String helpText = "To play quiz, you can choose between either Single-answers or Multi-answers\n" +
+            "-To start playing a Single-answers game, type **"+EventListener.prefix+"quiz start single**\n" +
+            "-To stop playing a Single-answers game, type  **"+EventListener.prefix+"quiz stop single**\n" +
+            "-To skip a question in a Single-answers game, type **"+EventListener.prefix+"quiz skip**\n" +
+            "-To start playing a Multi-answers game, type **"+EventListener.prefix+"quiz start multi**\n" +
+            "-To stop playing a Multi-answers game, type  **"+EventListener.prefix+"quiz stop multi**\n";
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -27,8 +33,8 @@ public class QuizCommand extends Command {
         switch(subCommand){
             case "start single":
                 if(quizM.isAlive()){
-                    eb.setTitle("A session of Multi-answer quiz is currently running\n" +
-                            "Please wait for it to finish before starting an new session of Single-answer quiz");
+                    eb.setTitle("A session of Multi-answer Quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Single-answer Quiz");
                     eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
@@ -45,8 +51,8 @@ public class QuizCommand extends Command {
                 break;
             case "start multi":
                 if(quizS.isAlive()){
-                    eb.setTitle("A session of Single-answer quiz is currently running\n" +
-                            "Please wait for it to finish before starting an new session of Multi-answer quiz");
+                    eb.setTitle("A session of Single-answer Quiz is currently running\n" +
+                            "Please wait for it to finish before starting an new session of Multi-answer Quiz");
                     eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
@@ -86,5 +92,10 @@ public class QuizCommand extends Command {
                 }
             }
         }
+    }
+
+    @Override
+    public String getHelp() {
+        return helpText;
     }
 }
