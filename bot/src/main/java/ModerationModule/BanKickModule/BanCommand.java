@@ -9,6 +9,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class BanCommand extends ModCommand {
     private Permission perm = Permission.BAN_MEMBERS;
+<<<<<<< Updated upstream
+=======
+    private String helpText = "```\nban [user] [reason]\n```";
+>>>>>>> Stashed changes
 
     public BanCommand(ModerationController modCTRL) {
         super(modCTRL);
