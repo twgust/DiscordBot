@@ -2,6 +2,7 @@ package Main;
 
 import Commands.*;
 import LastfmModule.LastFmCommand;
+import LevelModule.ProfileCommand;
 import ModerationModule.*;
 import ModerationModule.BanKickModule.BanCommand;
 import ModerationModule.BanKickModule.KickCommand;
@@ -70,7 +71,8 @@ public class Controller {
                     && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
                     && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
                     && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
-                    && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")){
+                    && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
+                    && !arguments[0].equalsIgnoreCase("profile")){
                 if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0])) {
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
@@ -102,6 +104,7 @@ public class Controller {
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("quiz", quizCommand);
+        cmdMap.put("profile", new ProfileCommand());
 
         //Moderation commands
         cmdMap.put("lock", new LockCommand(modCtrl));
