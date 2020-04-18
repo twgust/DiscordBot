@@ -43,10 +43,19 @@ public class PruneCommand extends ModCommand {
             List<Message> messages = channel.getIterableHistory().complete();
             if (messages.size() - 1 < num) num = messages.size();
             int j = 0;
-            for (int i = 0; i < num + 1; j++) {
-                if (messages.get(j).getMember().equals(member)) {
-                    messages.get(j).delete().queue();
-                    i++;
+            if (text != "") {
+                for (int i = 0; i < num + 1; j++) {
+                    if (messages.get(j).getContentRaw().indexOf(text) != -1 && messages.get(j).getMember().equals(member)) {
+                        messages.get(j).delete().queue();
+                        i++;
+                    }
+                }
+            } else {
+                for (int i = 0; i < num + 1; j++) {
+                    if (messages.get(j).getMember().equals(member)) {
+                        messages.get(j).delete().queue();
+                        i++;
+                    }
                 }
             }
         }
