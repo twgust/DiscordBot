@@ -53,19 +53,6 @@ public class LevelController {
     }
 
     public static void writeToDisk() {
-        try {
-            File file = new File(filename);
-            if (!file.exists()) {
-                file.createNewFile();
-                file.setWritable(true);
-            }
-            FileOutputStream fos = new FileOutputStream(filename);
-            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-            oos.writeObject(guildMap);
-            oos.flush();
-            oos.close();
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        
     }
 }
