@@ -6,44 +6,66 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.io.*;
+
 public class LevelController {
     private static GuildMap guildMap = new GuildMap();
+    private static final String filename = "./levels.dat";
 
-    public static void addGuild(Guild guild){
+    public static void addGuild(Guild guild) {
         guildMap.put(guild);
     }
 
-    public static void addExp(Guild guild, Member member, TextChannel channel){
+    public static void addExp(Guild guild, Member member, TextChannel channel) {
         checkMember(guild, member);
         guildMap.getUserLevel(guild, member).addExp(channel);
     }
 
-    public static String getUserInfo(Guild guild, Member member){
+    public static String getUserInfo(Guild guild, Member member) {
         String info = "```\nLevel: " + guildMap.getUserLevel(guild, member).getLevel() +
                 "\nCurrent exp:" + guildMap.getUserLevel(guild, member).getCurrentExp() +
                 "\nExp for next level: " + guildMap.getUserLevel(guild, member).getNextLevelExp() + "\n```";
         return info;
     }
 
-    public static void checkMember(Guild guild, Member member){
-        if (!guildMap.containsKey(guild)){
+    public static void checkMember(Guild guild, Member member) {
+        if (!guildMap.containsKey(guild)) {
             addGuild(guild);
             guildMap.get(guild).put(member);
         }
-        if (!guildMap.containsMember(guild, member)){
+        if (!guildMap.containsMember(guild, member)) {
             guildMap.get(guild).put(member);
         }
     }
 
-    public static void checkForRoleLevel(UserLevel userLevel){
+    public static void checkForRoleLevel(UserLevel userLevel) {
         Role levelRole = guildMap.checkForRoleLevel(userLevel.getMember().getGuild(), userLevel.getLevel());
-        if (levelRole != null) userLevel.getMember().getGuild().addRoleToMember(userLevel.getMember(), levelRole).queue();
+        if (levelRole != null)
+            userLevel.getMember().getGuild().addRoleToMember(userLevel.getMember(), levelRole).queue();
     }
 
-    public static boolean addLevelRole(Guild guild, Integer level, Role role){
-        System.out.println("2hi");
+    public static boolean addLevelRole(Guild guild, Integer level, Role role) {
+        if (!guildMap.containsKey(guild)) {
+            guildMap.put(guild);
+        }
         guildMap.addLevelRole(guild, level, role);
-        System.out.println("2hii");
         return guildMap.checkForRoleLevel(guild, level) != null;
+    }
+
+    public static void writeToDisk() {
+        try {
+            File file = new File(filename);
+            if (!file.exists()) {
+                file.createNewFile();
+                file.setWritable(true);
+            }
+            FileOutputStream fos = new FileOutputStream(filename);
+            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(fos));
+            oos.writeObject(guildMap);
+            oos.flush();
+            oos.close();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 }

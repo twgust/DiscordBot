@@ -25,10 +25,8 @@ public class MemberMap {
     }
 
     public void putLevelRole(Integer level, Role role){
-        System.out.println("4hi");
         if (levelRoleMap.containsKey(level)) setLevelRole(level, role);
         else levelRoleMap.put(level, role);
-        System.out.println("4hii");
     }
 
     public void setLevelRole(Integer level, Role role){

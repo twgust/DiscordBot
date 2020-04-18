@@ -18,27 +18,22 @@ public class AddLevelRoleCommand extends Command {
             HelpCommand.dispHelp(arguments[0], event.getChannel());
             return;
         }
-        System.out.println("hi");
         if (arguments.length < 3){
             HelpCommand.dispHelp(arguments[0], event.getChannel());
             return;
         }
-        System.out.println("hii");
         String roleId = arguments[2].substring(3,arguments[2].length()-1);
         Role levelRole;
-        System.out.println("hiii");
         try { levelRole = event.getGuild().getRoleById(roleId); }
         catch (Exception e){
             event.getChannel().sendMessage("I was unable to find that role").queue();
             return;
         }
-        System.out.println("hiiii");
         if (LevelController.addLevelRole(event.getGuild(), level, levelRole)) event.getChannel().sendMessage(
                 "Role " + levelRole.getName() + " was added as the reward for reaching level " + level + ".").queue();
         else event.getChannel().sendMessage(
                 "I was unable to add the role " + levelRole.getName() + " as the reward for reaching level " + level + ".").queue();
-        System.out.println("hiiiii");
-    }
+        }
 
     @Override
     public Permission getPerm() {
