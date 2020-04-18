@@ -38,7 +38,7 @@ public class LevelController {
         }
     }
 
-    public static void checkForRoleLevel(UserLevel userLevel) {
+    public static void checkForRoleLevelUp(UserLevel userLevel) {
         Role levelRole = guildMap.checkForRoleLevel(userLevel.getMember().getGuild(), userLevel.getLevel());
         if (levelRole != null)
             userLevel.getMember().getGuild().addRoleToMember(userLevel.getMember(), levelRole).queue();
@@ -52,7 +52,7 @@ public class LevelController {
         return guildMap.checkForRoleLevel(guild, level) != null;
     }
 
-    public static void writeToDisk() {
-
+    public static void removeLevelRole(Guild guild, Integer level){
+        guildMap.removeLevelRole(guild, level);
     }
 }

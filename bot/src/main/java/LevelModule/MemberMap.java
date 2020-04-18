@@ -37,4 +37,8 @@ public class MemberMap {
         if (levelRoleMap.containsKey(level)) return levelRoleMap.get(level);
         else return null;
     }
+
+    public void removeLevelRole(Integer level){
+        levelRoleMap.remove(level);
+    }
 }

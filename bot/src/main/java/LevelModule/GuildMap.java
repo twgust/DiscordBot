@@ -13,7 +13,6 @@ public class GuildMap {
 
     public void put(Guild guild) {
         guildMap.put(guild, new MemberMap());
-        LevelController.writeToDisk();
     }
 
     public MemberMap get(Guild guild) {
@@ -38,5 +37,9 @@ public class GuildMap {
 
     public void addLevelRole(Guild guild, Integer level, Role role) {
         guildMap.get(guild).putLevelRole(level, role);
+    }
+
+    public void removeLevelRole(Guild guild, Integer level){
+        guildMap.get(guild).removeLevelRole(level);
     }
 }

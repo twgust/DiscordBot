@@ -26,6 +26,7 @@ public class PruneCommand extends ModCommand {
         if (member == null) {
             List<Message> messages = channel.getIterableHistory().complete();
             if (messages.size() - 1 < num) num = messages.size();
+            if (num > 100) num = 100;
             if (text != "") {
                 int j = 0;
                 for (int i = 0; i < num + 1; j++) {

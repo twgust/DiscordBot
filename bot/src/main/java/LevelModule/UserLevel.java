@@ -1,6 +1,5 @@
 package LevelModule;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -19,7 +18,7 @@ public class UserLevel {
         if (levelUp()){
             channel.sendMessage("Oi c*nt! Yeah you " + member.getAsMention() +
                     ". You just leveled up. Hope you are happy being level " + level + " now!").queue();
-            LevelController.checkForRoleLevel(this);
+            LevelController.checkForRoleLevelUp(this);
         }
     }
 
