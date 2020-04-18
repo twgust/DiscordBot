@@ -34,18 +34,11 @@ public class ModerationController {
         String[] msgContent = event.getMessage().getContentRaw().substring(startIndex).trim().split("\\s+");
         String text = "";
         int textStartIndex = 0;
-        System.out.println(text);
-        if (!checkPerms(member, ((Command)ctrl.getCmdMap().get(key)).getPerm())){
-            channel.sendMessage("You do not have the permission to use that command.").queue();
-            return;
-        }
-
         if (key.equalsIgnoreCase("setLogChannel")) {
             setLogChannel(channel);
             channel.sendMessage("Log channel set.").queue();
             return;
         }
-
         int num = -1;
 
         try{
@@ -53,6 +46,7 @@ public class ModerationController {
             textStartIndex = 1;
         }catch (Exception e1){
             if((member = GetMember.get(msgContent[0], channel, event.getMember())) != null){
+
                 try{
                     num = Integer.parseInt(msgContent[1]);
                     textStartIndex = 2;
@@ -76,9 +70,5 @@ public class ModerationController {
 
     public static void setLogChannel(TextChannel newLogChannel) {
         logChannel = newLogChannel;
-    }
-
-    public boolean checkPerms(Member member, Permission perm){
-        return member.hasPermission(perm);
     }
 }

@@ -18,9 +18,9 @@ public class KickCommand extends ModCommand {
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num){
-        channel.sendMessage("User " + member.getUser().getName() + "was kicked");
-        if (getLogChannel() != null) getLogChannel().sendMessage("User " + member.getUser().getName() + "was kicked");
-        member.kick(text);
+        channel.sendMessage("User " + member.getUser().getName() + " was kicked").queue();
+        if (getLogChannel() != null) getLogChannel().sendMessage("User " + member.getUser().getName() + " was kicked").queue();
+        member.kick(text).queue();
     }
     @Override
     public Permission getPerm() {

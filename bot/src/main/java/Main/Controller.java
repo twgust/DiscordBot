@@ -66,24 +66,28 @@ public class Controller {
     public void processMessage(GuildMessageReceivedEvent event) {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
-            int needHelp = event.getMessage().getContentRaw().indexOf(" ");
-            if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
-                    && !arguments[0].equalsIgnoreCase("unlock")&& !arguments[0].equalsIgnoreCase("goodbye")
-                    && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("fm")
-                    && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
-                    && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
-                    && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
-                    && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
-                    && !arguments[0].equalsIgnoreCase("profile")){
-                if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0])) {
+            if (cmdMap.containsKey(arguments[0]) && cmdMap.get(arguments[0]) instanceof Command) {
+
+                if (!event.getMember().hasPermission(((Command) cmdMap.get(arguments[0])).getPerm())) {
+                    event.getChannel().sendMessage("You do not have the permission to use that command.").queue();
+                    return;
+                }
+
+                int needHelp = event.getMessage().getContentRaw().indexOf(" ");
+                if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
+                        && !arguments[0].equalsIgnoreCase("unlock") && !arguments[0].equalsIgnoreCase("goodbye")
+                        && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("fm")
+                        && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
+                        && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
+                        && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
+                        && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
+                        && !arguments[0].equalsIgnoreCase("profile")) {
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }
-            }
-            arguments[0] = arguments[0].toLowerCase();
-            if (cmdMap.get(arguments[0]) instanceof Command && cmdMap.containsKey(arguments[0]))
+                arguments[0] = arguments[0].toLowerCase();
                 ((Command) cmdMap.get(arguments[0])).execute(event);
-            else error.throwMissingCommand(event);
+            } else error.throwMissingCommand(event);
         } catch (Exception e) {
             error.throwFailedMessageProcessing(event);
             System.out.println(e.getMessage());
