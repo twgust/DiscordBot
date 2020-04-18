@@ -2,6 +2,7 @@ package Main;
 
 import Commands.*;
 import LastfmModule.LastFmCommand;
+import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
 import ModerationModule.*;
 import ModerationModule.BanKickModule.BanCommand;
@@ -20,6 +21,7 @@ import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
@@ -105,6 +107,7 @@ public class Controller {
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("profile", new ProfileCommand());
+        cmdMap.put("addlevelrole", new AddLevelRoleCommand());
 
         //Moderation commands
         cmdMap.put("lock", new LockCommand(modCtrl));
@@ -121,5 +124,6 @@ public class Controller {
     public CommandMap getCmdMap() {
         return cmdMap;
     }
+
 
 }

@@ -16,7 +16,11 @@ public class UserLevel {
 
     public void addExp(TextChannel channel){
         currentExp++;
-        if (levelUp()) channel.sendMessage("Oi c*nt! Yeah you " + member.getAsMention() + ". You just leveled up. Hope you are happy being level " + level + " now!").queue();
+        if (levelUp()){
+            channel.sendMessage("Oi c*nt! Yeah you " + member.getAsMention() +
+                    ". You just leveled up. Hope you are happy being level " + level + " now!").queue();
+            LevelController.checkForRoleLevel(this);
+        }
     }
 
     private boolean levelUp(){
@@ -39,5 +43,9 @@ public class UserLevel {
 
     public int getNextLevelExp() {
         return nextLevelExp;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }
