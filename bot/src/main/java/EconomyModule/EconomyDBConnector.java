@@ -1,9 +1,6 @@
 package EconomyModule;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class EconomyDBConnector {
 
@@ -37,5 +34,40 @@ public class EconomyDBConnector {
             e.printStackTrace();
         }
 
+    }
+
+    public void createUser(int id, int initialValue) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query = "INSERT INTO WALLETS (id,total)" +
+                           "VALUES(" + id + "," + initialValue + ")";
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean userExists(int id) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query = "SELECT * FROM WALLETS WHERE  id=" + id;
+            ResultSet rs = stmt.executeQuery(query);
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            return false;
+        }
+    }
+    public int getRowTotal(int id) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query = "SELECT total FROM WALLETS WHERE id=" + id;
+            ResultSet rs = stmt.executeQuery(query);
+            return rs.getInt("total");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

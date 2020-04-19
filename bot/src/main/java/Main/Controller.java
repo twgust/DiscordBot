@@ -1,7 +1,8 @@
 package Main;
 
 import Commands.*;
-import EconomyModule.EconomyCommand;
+import EconomyModule.EconomyController;
+import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
 import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
@@ -22,7 +23,6 @@ import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
@@ -41,6 +41,7 @@ public class Controller {
     private MusicController musicController;
     private QuizCommand quizCommand;
     private ModerationController modCtrl = new ModerationController(this);
+    private EconomyController economyController;
 
     public Controller() throws LoginException, IOException {
 
@@ -49,6 +50,7 @@ public class Controller {
         waiter = new EventWaiter();
         musicController = new MusicController();
         quizCommand = new QuizCommand();
+        economyController = new EconomyController();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LevelListener());
@@ -127,7 +129,7 @@ public class Controller {
 
         //Economy commands
 
-        cmdMap.put("economy", new EconomyCommand());
+        cmdMap.put("wallet", new WalletCommand(economyController));
     }
 
     public CommandMap getCmdMap() {
