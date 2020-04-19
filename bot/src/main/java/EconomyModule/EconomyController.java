@@ -8,10 +8,14 @@ public class EconomyController extends Command {
         dbConnector = new EconomyDBConnector();
     }
 
-    public int getWalletTotalForUser (int id) {
-        if (!dbConnector.userExists(id)) {
+    public int getWalletTotalForUser (String id) {
+        if (dbConnector.userExists(id)) {
             dbConnector.createUser(id, 500);
         }
         return dbConnector.getRowTotal(id);
+    }
+
+    public void activityReward (String id) {
+        dbConnector.addToTotal(id, 5);
     }
 }
