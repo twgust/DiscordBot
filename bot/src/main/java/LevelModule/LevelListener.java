@@ -12,7 +12,8 @@ public class LevelListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         if (!event.getAuthor().isBot()){
-            LevelController.addExp(event.getGuild(), event.getMember(), event.getChannel());
+            //LevelController.addExp(event.getGuild(), event.getMember(), event.getChannel());
+            LevelController.addGuild(event.getGuild());
         }
     }
 

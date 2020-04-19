@@ -9,16 +9,16 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.io.*;
 
 public class LevelController {
+    private static LevelDBConnector levelDB = new LevelDBConnector();
     private static GuildMap guildMap = new GuildMap();
     private static final String filename = "./levels.dat";
 
     public static void addGuild(Guild guild) {
-        guildMap.put(guild);
+        levelDB.newGuildTable(guild.getName().replace(" ", ""));
     }
 
     public static void addExp(Guild guild, Member member, TextChannel channel) {
-        checkMember(guild, member);
-        guildMap.getUserLevel(guild, member).addExp(channel);
+        levelDB.addUserExp(guild.getId(), member.getIdLong());
     }
 
     public static String getUserInfo(Guild guild, Member member) {

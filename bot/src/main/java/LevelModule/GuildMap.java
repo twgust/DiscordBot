@@ -13,7 +13,6 @@ public class GuildMap {
 
     public void put(Guild guild) {
         guildMap.put(guild, new MemberMap());
-        LevelController.writeToDisk();
     }
 
     public MemberMap get(Guild guild) {
