@@ -26,7 +26,7 @@ public class EconomyDBConnector {
             System.out.println("Creating DB table if it does not exist.");
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS WALLETS " +
-                           "(id INTEGER not NULL, " +
+                           "(id VARCHAR(255) not NULL, " +
                            " total INTEGER not NULL," +
                            " PRIMARY KEY ( id ))";
             stmt.executeUpdate(query);
@@ -36,7 +36,7 @@ public class EconomyDBConnector {
 
     }
 
-    public void createUser(int id, int initialValue) {
+    public void createUser(String id, int initialValue) {
         try {
             Statement stmt = conn.createStatement();
             String query = "INSERT INTO WALLETS (id,total)" +
@@ -46,7 +46,7 @@ public class EconomyDBConnector {
             e.printStackTrace();
         }
     }
-    public boolean userExists(int id) {
+    public boolean userExists(String id) {
         try {
             Statement stmt = conn.createStatement();
             String query = "SELECT * FROM WALLETS WHERE  id=" + id;
@@ -59,7 +59,7 @@ public class EconomyDBConnector {
             return false;
         }
     }
-    public int getRowTotal(int id) {
+    public int getRowTotal(String id) {
         try {
             Statement stmt = conn.createStatement();
             String query = "SELECT total FROM WALLETS WHERE id=" + id;
@@ -69,5 +69,17 @@ public class EconomyDBConnector {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public void addToTotal(String id, int addition) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query ="UPDATE WALLETS " +
+                    " SET total = total + " + addition + " " +
+                    " WHERE id = " + id;
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

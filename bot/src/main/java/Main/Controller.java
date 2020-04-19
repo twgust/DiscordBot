@@ -53,7 +53,7 @@ public class Controller {
         economyController = new EconomyController();
 
         jda.addEventListener(new EventListener(this));
-        jda.addEventListener(new LevelListener());
+        jda.addEventListener(new LevelListener(economyController));
         jda.addEventListener(new LastFmCommand(waiter));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
@@ -84,7 +84,8 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
-                        && !arguments[0].equalsIgnoreCase("profile")) {
+                        && !arguments[0].equalsIgnoreCase("profile")
+                        && !arguments[0].equalsIgnoreCase("wallet")) {
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }

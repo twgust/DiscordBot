@@ -10,7 +10,7 @@ public class WalletCommand extends Command {
     }
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        int total = controller.getWalletTotalForUser(Integer.parseInt(event.getAuthor().getId()));
+        int total = controller.getWalletTotalForUser((event.getAuthor().getId()));
         event.getChannel().sendMessage("You have " + total + "Ⱡ in your wallet.").queue();
     }
 }
