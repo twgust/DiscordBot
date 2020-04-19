@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.*;
+import EconomyModule.EconomyCommand;
 import LastfmModule.LastFmCommand;
 import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
@@ -123,6 +124,10 @@ public class Controller {
         cmdMap.put("unban", new UnBanCommand(modCtrl));
         cmdMap.put("kick", new KickCommand(modCtrl));
         cmdMap.put("help", new HelpCommand(modCtrl, this));
+
+        //Economy commands
+
+        cmdMap.put("economy", new EconomyCommand());
     }
 
     public CommandMap getCmdMap() {

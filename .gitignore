@@ -118,7 +118,6 @@ hs_err_pid*
 
 /bot/token.txt
 /bot/LastFm_DB.sqlite
-/bot/
 *.class
 /bot/.idea/*
 
