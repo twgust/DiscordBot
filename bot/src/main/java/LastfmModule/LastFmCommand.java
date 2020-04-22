@@ -120,7 +120,19 @@ public class LastFmCommand extends Command {
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                     sql1.closeConnection();
                 }
-            } else {
+            }
+            else if(getMessageReceivedArr()[1].equalsIgnoreCase("youtube") || getMessageReceivedArr()[1].equalsIgnoreCase("yt")){
+                if(sql1.checkQuery(getDiscordID())){
+                    String user = sql1.getUsername(getDiscordID());
+                    sql1.closeConnection();
+                    getYoutubeLink(user, event);
+                }
+                else {
+                    sql1.closeConnection();
+                    event.getChannel().sendMessage(noUsernameMessage).queue();
+                }
+            }
+            else {
                 if (checkIfUserExist(getMessageReceivedArr()[1])) {
                     sql1.closeConnection();
                     getProfile(getMessageReceivedArr()[1], event);
@@ -250,7 +262,33 @@ public class LastFmCommand extends Command {
                     sql1.closeConnection();
                     event.getChannel().sendMessage(noUsernameMessage).queue();
                 }
-            } else {
+            }else if (getMessageReceivedArr()[1].equalsIgnoreCase("youtube") || getMessageReceivedArr()[1].equalsIgnoreCase("yt")){
+                String user = getMessageReceivedArr()[2];
+                System.out.println(user);
+                if(user.contains("<@!")){
+                    String userID = event.getMessage().getMentionedUsers().get(0).getId();
+                    if(sql1.checkQuery(userID)){
+                        user = sql1.getUsername(userID);
+                        sql1.closeConnection();
+                        getYoutubeLink(user, event);
+                    }
+                    else {
+                        sql1.closeConnection();
+                        event.getChannel().sendMessage(noUsernameMessage).queue();
+                    }
+                }
+                else {
+                    if(checkIfUserExist(user)){
+                        sql1.closeConnection();
+                        getYoutubeLink(user, event);
+                    }
+                    else {
+                        sql1.closeConnection();
+                        event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] + "' does not exist ❌```").queue();
+                    }
+                }
+            }
+            else {
                 sql1.closeConnection();
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
@@ -1025,6 +1063,25 @@ public class LastFmCommand extends Command {
                     event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
                 } else message.editMessage("```❌ No albums found for your account ❌```").queue();
             } else message.editMessage("```Failed to load, try again please```").queue();
+        });
+    }
+
+    public void getYoutubeLink(String username, GuildMessageReceivedEvent event){
+        event.getChannel().sendMessage("```Loading data```").queue(message -> {
+
+            LastFmYoutube fmYoutube = new LastFmYoutube(apikey,username);
+            if(fmYoutube.isLoaded()){
+                String[] ytInfo = fmYoutube.getYtLink();
+                String ytLink = ytInfo[0];
+                String lastPlayed = ytInfo[1];
+                if(!lastPlayed.equalsIgnoreCase("noplays")){
+                    message.editMessage(lastPlayed + ytLink).queue();
+                }
+                else message.editMessage("```No recent tracks found for the account```").queue();
+
+            }
+            else message.editMessage("```Failed to load, please try again.```").queue();
+
         });
     }
 
