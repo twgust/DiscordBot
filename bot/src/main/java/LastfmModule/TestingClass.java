@@ -49,6 +49,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.RenderableImageOp;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -539,11 +541,21 @@ public class TestingClass extends Command {
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        long start = System.nanoTime();
         TestingClass test = new TestingClass();
         //test.testChart();
         //test.testGettingImages();
         //test.testAPI();
-        test.testMath();
+        //test.testMath();
+        Thread.sleep(2413);
+        long end = System.nanoTime();
+        long elapsedTime = end -start;
+        double elapsedTimeDouble = (double) elapsedTime / 1_000_000_000;
+        System.out.println(elapsedTimeDouble);
+        BigDecimal bd = BigDecimal.valueOf(elapsedTimeDouble);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        System.out.println(bd.doubleValue());
+
     }
 }
