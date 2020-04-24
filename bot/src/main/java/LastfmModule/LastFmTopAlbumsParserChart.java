@@ -18,13 +18,18 @@ public class LastFmTopAlbumsParserChart {
     private boolean loaded = false;
 
     public LastFmTopAlbumsParserChart(String apikey, String username, String period, String limit) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user="+username+"&api_key="+apikey+"&period="+period+"&limit="+limit+"&format=json"
-                /*"http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=robi874&api_key=c806a80470bbd773b00c2b46b3a1fd75&format=json"*/)).build();
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(this::parse)
-                .join();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=" + username + "&api_key=" + apikey + "&period=" + period + "&limit=" + limit + "&format=json"
+                    /*"http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=robi874&api_key=c806a80470bbd773b00c2b46b3a1fd75&format=json"*/)).build();
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body)
+                    .thenAccept(this::parse)
+                    .join();
+        }catch (Exception e){
+            e.printStackTrace();
+            setLoaded(false);
+        }
     }
 
     public void parse (String responsebody){
@@ -53,9 +58,9 @@ public class LastFmTopAlbumsParserChart {
 
 
                 result[i][3] = image;
-                setLoaded(true);
             }
             setTopAlbums(result);
+            setLoaded(true);
         } catch (Exception e){
             e.printStackTrace();
             setLoaded(false);
