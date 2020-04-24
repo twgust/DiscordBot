@@ -13,7 +13,7 @@ public class EconomyDBConnector {
         try {
             String url = "jdbc:sqlite:db/economyDB.db";
             conn = DriverManager.getConnection(url);
-            System.out.println("Connection to SQLite has been established.");
+            System.out.println("Connection to SQLite (economyDB) has been established.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -23,7 +23,7 @@ public class EconomyDBConnector {
 
     private void createTable() {
         try {
-            System.out.println("Creating DB table if it does not exist.");
+            System.out.println("Creating economyDB table if it does not exist.");
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS WALLETS " +
                            "(id VARCHAR(255) not NULL, " +
@@ -54,9 +54,7 @@ public class EconomyDBConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        finally {
-            return false;
-        }
+        return true;
     }
     public int getRowTotal(String id) {
         try {

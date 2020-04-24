@@ -20,7 +20,7 @@ public class LevelDBConnector {
         try {
             String url = "jdbc:sqlite:db/levelDB.db";
             conn = DriverManager.getConnection(url);
-            System.out.println("Connection to SQLite has been established.");
+            System.out.println("Connection to SQLite (levelDB) has been established.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class LevelDBConnector {
 
     private void createDBTable(String guildID) {
         try {
-            System.out.println("Creating DB table if it does not exist.");
+            System.out.println("Creating levelDB table if it does not exist.");
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS "+ guildID +
                     " (id INTEGER not NULL, " +
