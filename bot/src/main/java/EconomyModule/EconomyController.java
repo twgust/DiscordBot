@@ -9,7 +9,7 @@ public class EconomyController extends Command {
     }
 
     public int getWalletTotalForUser (String id) {
-        if (dbConnector.userExists(id)) {
+        if (!dbConnector.userExists(id)) {
             dbConnector.createUser(id, 500);
         }
         return dbConnector.getRowTotal(id);

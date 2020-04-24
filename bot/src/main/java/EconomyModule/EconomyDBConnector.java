@@ -50,8 +50,7 @@ public class EconomyDBConnector {
         try {
             Statement stmt = conn.createStatement();
             String query = "SELECT * FROM WALLETS WHERE  id=" + id;
-            ResultSet rs = stmt.executeQuery(query);
-            return rs.next();
+            return stmt.executeQuery(query).next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -63,8 +62,8 @@ public class EconomyDBConnector {
         try {
             Statement stmt = conn.createStatement();
             String query = "SELECT total FROM WALLETS WHERE id=" + id;
-            ResultSet rs = stmt.executeQuery(query);
-            return rs.getInt("total");
+            return stmt.executeQuery(query).getInt("total");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
