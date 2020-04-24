@@ -2,6 +2,7 @@ package Main;
 
 import Commands.*;
 import EconomyModule.EconomyController;
+import EconomyModule.TransferCommand;
 import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
 import LevelModule.AddLevelRoleCommand;
@@ -131,6 +132,7 @@ public class Controller {
         //Economy commands
 
         cmdMap.put("wallet", new WalletCommand(economyController));
+        cmdMap.put("transfer", new TransferCommand(economyController));
     }
 
     public CommandMap getCmdMap() {

@@ -81,4 +81,20 @@ public class EconomyDBConnector {
             e.printStackTrace();
         }
     }
+
+    public void transferToUser(String sender, String receiver, int transferAmount) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query = "UPDATE WALLETS " +
+                    " SET total = total - " + transferAmount + " " +
+                    " WHERE id = " + sender;
+            stmt.executeUpdate(query);
+            String query2 = "UPDATE WALLETS " +
+                    " SET total = total + " + transferAmount + " " +
+                    " WHERE id = " + receiver;
+            stmt.executeUpdate(query2);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

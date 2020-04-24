@@ -18,4 +18,14 @@ public class EconomyController extends Command {
     public void activityReward (String id) {
         dbConnector.addToTotal(id, 5);
     }
+
+    public EconomyResponses transferToUser (String sender, String receiver, int transferAmount) {
+        if (getWalletTotalForUser(sender) - transferAmount < 0) {
+            return EconomyResponses.INSUFFICIENT_FUNDS;
+        }
+        else {
+            dbConnector.transferToUser(sender, receiver, transferAmount);
+            return EconomyResponses.SUCCESS;
+        }
+    }
 }
