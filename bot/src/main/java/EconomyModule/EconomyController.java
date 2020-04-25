@@ -2,9 +2,16 @@ package EconomyModule;
 
 import Commands.Command;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class EconomyController extends Command {
     EconomyDBConnector dbConnector;
-    public EconomyController() {
+    public EconomyController() throws IOException {
+        if (Files.notExists(Paths.get("db"))) {
+            Files.createDirectory(Paths.get("db"));
+        }
         dbConnector = new EconomyDBConnector();
     }
 
