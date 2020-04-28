@@ -22,9 +22,11 @@ public class EconomyController extends Command {
         return dbConnector.getRowTotal(id);
     }
 
-    public void activityReward (String id) {
-        dbConnector.addToTotal(id, 5);
-    }
+    public void activityReward (String id) { addToUser(id, 5); }
+
+    public void addToUser(String id, int amount) { dbConnector.addToTotal(id, amount); }
+
+    public void subtractFromUser(String id, int amount) { dbConnector.subtractFromTotal(id, amount); }
 
     public EconomyResponses transferToUser (String sender, String receiver, int transferAmount) {
         if (getWalletTotalForUser(sender) - transferAmount < 0) {

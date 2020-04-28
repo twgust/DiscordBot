@@ -2,6 +2,7 @@ package Main;
 
 import Commands.*;
 import EconomyModule.EconomyController;
+import EconomyModule.GamesModule.SlotsCommand;
 import EconomyModule.TransferCommand;
 import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
@@ -86,7 +87,8 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
                         && !arguments[0].equalsIgnoreCase("profile")
-                        && !arguments[0].equalsIgnoreCase("wallet")) {
+                        && !arguments[0].equalsIgnoreCase("wallet")
+                        && !arguments[0].equalsIgnoreCase("slots")){
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }
@@ -133,6 +135,7 @@ public class Controller {
 
         cmdMap.put("wallet", new WalletCommand(economyController));
         cmdMap.put("transfer", new TransferCommand(economyController));
+        cmdMap.put("slots", new SlotsCommand(economyController));
     }
 
     public CommandMap getCmdMap() {
