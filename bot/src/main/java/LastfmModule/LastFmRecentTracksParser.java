@@ -23,7 +23,7 @@ public class LastFmRecentTracksParser {
         try {
             this.trackamount = trackamount;
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=" + username + "&period=overall&api_key=" + apikey + "&format=json")).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=" + username + "&period=overall&limit="+trackamount+"&api_key=" + apikey + "&format=json")).build();
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body)
                     .thenAccept(this::parse)
