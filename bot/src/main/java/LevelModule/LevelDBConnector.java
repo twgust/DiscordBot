@@ -27,7 +27,9 @@ public class LevelDBConnector {
     }
 
     private void createDBTable(String guildID) {
+        guildID = "G" + guildID;
         try {
+
             System.out.println("Creating levelDB table if it does not exist.");
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS "+ guildID +
@@ -43,6 +45,7 @@ public class LevelDBConnector {
     }
 
     private void createDBUser(String guildID, long memberID){
+        guildID = "G" + guildID;
         createDBTable(guildID);
         try {
             Statement stmt = conn.createStatement();
@@ -55,6 +58,7 @@ public class LevelDBConnector {
     }
 
     private void addExpToDBUser(String guildID, long memberID){
+        guildID = "G" + guildID;
         try{
             Statement stmt = conn.createStatement();
             String query = "SELECT currentExp FROM "+guildID+" WHERE id=" + memberID;
@@ -64,6 +68,7 @@ public class LevelDBConnector {
     }
 
     private boolean DBUserExist(String guildID, long memberID){
+        guildID = "G" + guildID;
         try {
             Statement stmt = conn.createStatement();
             String query = "SELECT * FROM "+guildID +" WHERE  id=" + memberID;
