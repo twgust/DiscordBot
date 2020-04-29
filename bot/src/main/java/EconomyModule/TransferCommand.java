@@ -1,15 +1,14 @@
 package EconomyModule;
 
 import Commands.Command;
-import Commands.ErrorCommand;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-import java.util.Arrays;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class TransferCommand extends Command {
 
-    EconomyController economyController;
+    final EconomyController economyController;
     public TransferCommand(EconomyController economyController) {
         this.economyController = economyController;
     }
@@ -41,10 +40,10 @@ public class TransferCommand extends Command {
             event.getChannel().sendMessage("You do not have sufficient funds for this!").queue();
         }
         else if (response == EconomyResponses.SUCCESS) {
-            event.getChannel().sendMessage("Transferred " + transferAmount + "Ⱡ to " + mentionedUser.getName());
+            event.getChannel().sendMessage("Transferred " + transferAmount + "Ⱡ to " + mentionedUser.getName()).queue();
         }
         else {
-            event.getChannel().sendMessage("Unknown error");
+            event.getChannel().sendMessage("Unknown error").queue();
         }
 
     }

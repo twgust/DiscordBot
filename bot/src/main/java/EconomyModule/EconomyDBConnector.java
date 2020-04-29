@@ -80,6 +80,18 @@ public class EconomyDBConnector {
         }
     }
 
+    public void subtractFromTotal(String id, int subtraction) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query ="UPDATE WALLETS " +
+                    " SET total = total - " + subtraction + " " +
+                    " WHERE id = " + id;
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void transferToUser(String sender, String receiver, int transferAmount) {
         try {
             Statement stmt = conn.createStatement();
