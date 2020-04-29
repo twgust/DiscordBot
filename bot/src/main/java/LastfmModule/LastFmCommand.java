@@ -790,11 +790,11 @@ public class LastFmCommand extends Command {
                 setPeriodStr("1month");
                 //sql.closeConnection();
                 topTracks(getDiscordID(), 10, getPeriodStr(), event, sql);
-            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
+            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3month")) {
                 setPeriodStr("3month");
                 //sql.closeConnection();
                 topTracks(getDiscordID(), 10, getPeriodStr(), event, sql);
-            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
+            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6month")) {
                 setPeriodStr("6month");
                 //sql.closeConnection();
                 topTracks(getDiscordID(), 10, getPeriodStr(), event, sql);
@@ -835,11 +835,11 @@ public class LastFmCommand extends Command {
                 setPeriodStr("1month");
                 //sql.closeConnection();
                 topArtists(getDiscordID(), 10, getPeriodStr(), event, sql);
-            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
+            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3month")) {
                 setPeriodStr("3month");
                 //sql.closeConnection();
                 topArtists(getDiscordID(), 10, getPeriodStr(), event, sql);
-            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
+            } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6month")) {
                 setPeriodStr("6month");
                 //sql.closeConnection();
                 topArtists(getDiscordID(), 10, getPeriodStr(), event, sql);
@@ -892,7 +892,7 @@ public class LastFmCommand extends Command {
                 sql.closeConnection();
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
-        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
+        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3month")) {
             setPeriodStr("3month");
             try {
                 setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
@@ -903,7 +903,7 @@ public class LastFmCommand extends Command {
                 sql.closeConnection();
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
-        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
+        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6month")) {
             setPeriodStr("6month");
             try {
                 setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
@@ -966,7 +966,7 @@ public class LastFmCommand extends Command {
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
                 sql.closeConnection();
             }
-        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3months")) {
+        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("3m") || getMessageReceivedArr()[2].equalsIgnoreCase("3month")) {
             setPeriodStr("3month");
             try {
                 setMaxTrackAmount(Integer.parseInt(getMessageReceivedArr()[3]));
@@ -977,7 +977,7 @@ public class LastFmCommand extends Command {
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
                 sql.closeConnection();
             }
-        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6months")) {
+        } else if (getMessageReceivedArr()[2].equalsIgnoreCase("6m") || getMessageReceivedArr()[2].equalsIgnoreCase("6month")) {
             setPeriodStr("6month");
             try {
                 //sql.closeConnection();
