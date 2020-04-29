@@ -111,7 +111,6 @@ public class QuizMulti implements Runnable{
         return null;
     }
 
-
     //Retrieves the current questions type
     public String getQuestionType(){
         if(currentQuestion != null) {
