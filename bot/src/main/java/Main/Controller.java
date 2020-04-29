@@ -87,8 +87,7 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
                         && !arguments[0].equalsIgnoreCase("profile")
-                        && !arguments[0].equalsIgnoreCase("wallet")
-                        && !arguments[0].equalsIgnoreCase("slots")){
+                        && !arguments[0].equalsIgnoreCase("wallet")){
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }

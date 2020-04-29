@@ -12,11 +12,15 @@ import java.util.Random;
 
 public class SlotsCommand extends Command {
     EconomyController economyController;
-
+    String helpText = "Play slots!\n```%slots [amount to bet]```";
     public SlotsCommand(EconomyController economyController) {
         this.economyController = economyController;
     }
 
+    @Override
+    public String getHelp() {
+        return helpText;
+    };
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         String[][] emojiArray = new String[3][3];
