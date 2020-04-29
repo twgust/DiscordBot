@@ -22,10 +22,18 @@ public class EconomyController extends Command {
         return dbConnector.getRowTotal(id);
     }
 
-    public void activityReward (String id) {
-        dbConnector.addToTotal(id, 5);
-    }
+    public void activityReward (String id) { addToUser(id, 5); }
 
+    public void addToUser(String id, int amount) { dbConnector.addToTotal(id, amount); }
+
+    public EconomyResponses subtractFromUser(String id, int amount) {
+        if (getWalletTotalForUser(id) - amount < 0) {
+            return EconomyResponses.INSUFFICIENT_FUNDS;
+        } else {
+            dbConnector.subtractFromTotal(id, amount);
+            return EconomyResponses.SUCCESS;
+        }
+    }
     public EconomyResponses transferToUser (String sender, String receiver, int transferAmount) {
         if (getWalletTotalForUser(sender) - transferAmount < 0) {
             return EconomyResponses.INSUFFICIENT_FUNDS;
