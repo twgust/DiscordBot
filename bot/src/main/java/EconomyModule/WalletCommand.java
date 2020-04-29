@@ -4,7 +4,7 @@ import Commands.Command;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class WalletCommand extends Command {
-    EconomyController controller;
+    final EconomyController controller;
     public WalletCommand(EconomyController economyController) {
         this.controller = economyController;
     }

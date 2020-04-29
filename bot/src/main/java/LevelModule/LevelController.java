@@ -18,7 +18,7 @@ public class LevelController {
     }
 
     public static void addExp(Guild guild, Member member, TextChannel channel) {
-        levelDB.addUserExp(guild.getId(), member.getIdLong());
+//        levelDB.addUserExp(guild.getId(), member.getIdLong());
     }
 
     public static String getUserInfo(Guild guild, Member member) {
