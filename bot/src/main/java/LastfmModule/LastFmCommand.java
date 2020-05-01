@@ -27,9 +27,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 public class LastFmCommand extends Command {
     private long start;
@@ -111,7 +113,12 @@ public class LastFmCommand extends Command {
                 executeTopArtists(sql1,event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
                 executeChart(sql1, event, getMessageReceivedArr()[3]);
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("play")) {
+                if(getMessageReceivedArr()[2].equalsIgnoreCase("tt") || getMessageReceivedArr()[2].equalsIgnoreCase("toptracks")) {
+                    playMusicFromTopList(getDiscordID(), event, sql1, getMessageReceivedArr()[3]);
+                }
             }
+
         } else {
             sql1.closeConnection();
             event.getChannel().sendMessage("Use correct format (HOLDER FOR UPCOMING SHIT POGU)").queue();
@@ -771,6 +778,46 @@ public class LastFmCommand extends Command {
         });
     }
 
+    public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period){
+        if (sql.checkQuery(discordID)){
+            event.getChannel().sendMessage("```Loading music...```").queue(message -> {
+                LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), getPeriodForAPICall(period), 5);
+                sql.closeConnection();
+                if (ttmusic.isLoaded()) {
+                    String[][] tracks = ttmusic.getResultTracks();
+                    System.out.println(Arrays.deepToString(tracks));
+                    int length = tracks.length;
+                    int counter = 1;
+                    for (int i = 0; i < length; i++){
+                        musicController.loadMusic(tracks[i][2], event.getMember(), event);
+                        message.editMessage("Loaded " + counter + " song").queue();
+                        counter++;
+                        if(counter == length+1){
+                            message.editMessage("Finished loading!").queue();
+                            break;
+                        }
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+                else {
+                    event.getChannel().sendMessage(failedToLoad).queue();
+                    sql.closeConnection();
+                }
+
+            });
+
+        }
+        else {
+            event.getChannel().sendMessage(noUsernameMessage).queue();
+        }
+
+    }
+
     public boolean checkIfUserExist(String username) {
         User testuser = null;
         try {
@@ -1124,14 +1171,6 @@ public class LastFmCommand extends Command {
         }
     }
 
-    public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period){
-        if (sql.checkQuery(discordID)){
-            LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), period, 10);
-
-        }
-        else event.getChannel().sendMessage(noUsernameMessage).queue();
-
-    }
 
     public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql) {
         if (sql.checkQuery(getDiscordID())) {
@@ -1225,6 +1264,8 @@ public class LastFmCommand extends Command {
             return false;
         }
     }
+
+
 
     public String getDiscordID() {
         return discordID;
