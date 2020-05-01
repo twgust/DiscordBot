@@ -1,5 +1,6 @@
 package QuizModule.QuizMulti;
 
+import QuizModule.QuizSQLConnector;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -18,6 +19,7 @@ public class QuizMulti implements Runnable{
     private User correctUser;
     private Boolean answered = false;
     private EmbedBuilder eb = new EmbedBuilder();
+    private QuizSQLConnector dbConnection;
 
     /*
     Constructors
@@ -158,7 +160,9 @@ public class QuizMulti implements Runnable{
             postMessage("**The correct answer is " + currentQuestion.getCorrectAnswer() + "!**");
         }
         else {
-            postMessage("**"+correctUser.getName() + " is correct with the answer " + currentQuestion.getCorrectAnswer() + "!**");
+            postMessage("**"+correctUser.getName() + " is correct with the answer " + currentQuestion.getCorrectAnswer() + "!**" +
+                    "\n**1 point is awarded!**");
+            dbConnection.addToPoints(correctUser.getId(),1);
         }
         resetData(); //Resets references used in the thread to null
     }
@@ -187,4 +191,7 @@ public class QuizMulti implements Runnable{
         channel.getManager().setSlowmode(limit);
     }
 
+    public void setDatabaseConnection(QuizSQLConnector dbConnection) {
+        this.dbConnection=dbConnection;
+    }
 }

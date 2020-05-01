@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class QuizCommand extends Command {
+    private QuizSQLConnector dbConnection = new QuizSQLConnector();
     private QuizSingle quizS = new QuizSingle();
     private QuizMulti quizM = new QuizMulti();
     private TextChannel channel;
@@ -27,7 +28,9 @@ public class QuizCommand extends Command {
     public void execute(GuildMessageReceivedEvent event) {
         channel = event.getChannel();
         quizS.setTextChannel(channel);
+        quizS.setDatabaseConnection(dbConnection);
         quizM.setTextChannel(channel);
+        quizM.setDatabaseConnection(dbConnection);
         String subCommand = event.getMessage().getContentRaw().substring(6);
 
         switch(subCommand){
@@ -37,12 +40,11 @@ public class QuizCommand extends Command {
                             "Please wait for it to finish before starting an new session of Single-answer Quiz");
                     eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
-                    break;
                 }
                 else {
                     quizS.start(event.getAuthor());
-                    break;
                 }
+                break;
             case "stop single":
                 quizS.stop(event.getAuthor());
                 break;
@@ -64,6 +66,19 @@ public class QuizCommand extends Command {
             case "stop multi":
                 quizM.stop(event.getAuthor());
                 break;
+            case "myPoints":
+                int points = getPoints(event.getAuthor());
+                if(points == -1) {
+                    eb.setTitle(event.getAuthor().getAsTag() + " has " + points + " points!");
+                    eb.setDescription("");
+                    event.getChannel().sendMessage(eb.build()).queue();
+                }
+                else {
+                    eb.setTitle(event.getAuthor().getAsTag() + " has " + points + " points!");
+                    eb.setDescription("");
+                    event.getChannel().sendMessage(eb.build()).queue();
+                    break;
+                }
         }
 
     }
@@ -84,6 +99,10 @@ public class QuizCommand extends Command {
                 }
             }
         }
+    }
+
+    private int getPoints(User user){
+        return dbConnection.getPoints(user.getId());
     }
 
     @Override

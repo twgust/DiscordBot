@@ -1,5 +1,6 @@
 package QuizModule.QuizSingle;
 
+import QuizModule.QuizSQLConnector;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -16,6 +17,7 @@ public class QuizSingle implements Runnable{
     private String[] hints;
     private Thread thread;
     private int hintCounter;
+    private QuizSQLConnector dbConnection;
 
     public QuizSingle(TextChannel channel){
         this.channel=channel;
@@ -83,7 +85,6 @@ public class QuizSingle implements Runnable{
                     generateHints();
                     postMessage("Hint:  " + getHint());
                     thread.sleep(5000);
-
                 }
                 if(!question.getAnswered()){
                     postMessage("Nobody answered correctly! \nThe correct answer is " + question.getAnswer());
@@ -147,7 +148,6 @@ public class QuizSingle implements Runnable{
             else {
                 res += s + " ";
             }
-
         }
         return res.toUpperCase();
     }
@@ -155,8 +155,10 @@ public class QuizSingle implements Runnable{
     public void checkAnswer(User user, Message message){
         if(question != null) {
             if (message.getContentRaw().equalsIgnoreCase(question.getAnswer())) {
-                postMessage("**" + user.getName() + " is correct with the answer " + question.getAnswer() + "!**");
+                postMessage("**" + user.getName() + " is correct with the answer " + question.getAnswer() + "!**" +
+                 "\n**1 point is awarded!**");
                 question.setAnswered(true);
+                dbConnection.addToPoints(user.getId(), 1);
                 thread.interrupt();
             }
         }
@@ -170,5 +172,9 @@ public class QuizSingle implements Runnable{
         else{
             System.out.println("Channel missing");
         }
+    }
+
+    public void setDatabaseConnection(QuizSQLConnector dbConnection) {
+        this.dbConnection=dbConnection;
     }
 }
