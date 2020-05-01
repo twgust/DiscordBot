@@ -29,9 +29,6 @@ public class TrackScheduler extends AudioEventAdapter {
 
     }
 
-    public AudioPlayer getPlayer() {
-        return player;
-    }
 
     public void onNextSong(GuildMessageReceivedEvent event, AudioTrack track) {
         event.getChannel().sendMessage("Now plaing:" + track.getInfo().title);
