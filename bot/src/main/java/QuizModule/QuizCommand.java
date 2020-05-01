@@ -64,14 +64,6 @@ public class QuizCommand extends Command {
             case "stop multi":
                 quizM.stop(event.getAuthor());
                 break;
-            default:
-                eb.setTitle("To play quiz, you can choose between either Single-answers or Multi-answers\n");
-                eb.setDescription("-To start playing a Single-answers game, type **"+ EventListener.prefix+"quiz start single**\n" +
-                        "-To stop playing a Single-answers game, type  **"+ EventListener.prefix+"quiz stop single**\n" +
-                        "-To skip a question in a Single-answers game, type **"+ EventListener.prefix+"quiz skip**\n" +
-                        "-To start playing a Multi-answers game, type **"+ EventListener.prefix+"quiz start multi**\n" +
-                        "-To stop playing a Multi-answers game, type  **"+ EventListener.prefix+"quiz stop multi**\n");
-                event.getChannel().sendMessage(eb.build()).queue();
         }
 
     }

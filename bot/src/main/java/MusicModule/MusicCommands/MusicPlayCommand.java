@@ -28,8 +28,8 @@ public class MusicPlayCommand extends Command {
 
 
         String[] array = messageRaw.split(" ", 2);
-
         String substring = messageRaw.substring(6);
+        //prints
         System.out.println(substring);
 
 
@@ -39,6 +39,7 @@ public class MusicPlayCommand extends Command {
 
         controller.loadMusic("ytsearch:" + substring, user, event);
         //controller.loadMusic(array[1], user, event);
+        //SpotifyPlayer.loadMusic for spotify (switch case)
 
     }
 }

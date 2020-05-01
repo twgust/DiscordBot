@@ -41,16 +41,16 @@ public class Controller {
     private EventWaiter waiter;
     private Token token;
     private MusicController musicController;
+
     private QuizCommand quizCommand;
     private ModerationController modCtrl = new ModerationController(this);
     private EconomyController economyController;
 
     public Controller() throws LoginException, IOException {
-
         token = new Token();
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
-        musicController = new MusicController();
+        musicController = new MusicController(waiter);
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
 
@@ -115,6 +115,8 @@ public class Controller {
         cmdMap.put("current", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
+        cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
+
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("profile", new ProfileCommand());
         cmdMap.put("addlevelrole", new AddLevelRoleCommand());
