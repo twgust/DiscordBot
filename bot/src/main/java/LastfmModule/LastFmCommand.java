@@ -259,6 +259,8 @@ public class LastFmCommand extends Command {
                         p.paginate(message, page);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         message.editMessage("```❌ No tracks found for your account ❌```").queue();
+                    } catch (NegativeArraySizeException e) {
+                        message.editMessage("```❌ Invalid number ❌```").queue();
                     }
                 } else message.editMessage(failedToLoad).queue();
             });
@@ -408,6 +410,8 @@ public class LastFmCommand extends Command {
                         p.paginate(message, page);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         message.editMessage("```❌ No artists found for your account ❌```").queue();
+                    } catch (NegativeArraySizeException e){
+                        message.editMessage("```❌ Invalid number ❌```").queue();
                     }
                 } else message.editMessage(failedToLoad).queue();
             });
@@ -582,6 +586,8 @@ public class LastFmCommand extends Command {
                     } catch (ArrayIndexOutOfBoundsException e) {
                         message.editMessage("```❌ No tracks found for your account ❌```").queue();
                         e.printStackTrace();
+                    } catch (NegativeArraySizeException e) {
+                        message.editMessage("```❌ Invalid number ❌```").queue();
                     }
                 } else message.editMessage(failedToLoad).queue();
 
