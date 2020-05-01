@@ -46,12 +46,10 @@ public class MusicController extends Command {
     private EventWaiter waiter;
 
 
-    public ArrayList<AudioTrack> getListOfTracks() {
-        return listOfTracks;
-    }
 
     private ArrayList<AudioTrack> listOfTracks;
 
+    //Constructor
     public MusicController(EventWaiter waiter) {
         this.waiter = waiter;
         playerManager = new DefaultAudioPlayerManager();
@@ -60,12 +58,11 @@ public class MusicController extends Command {
         player.addListener(scheduler);
     }
 
-
-
-    public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
-
-    }
-
+    //connects to voice channels with priority:
+    //Users current voice channel (if it exists)
+    //Servers Music voice channel (if it exists)
+    //Servers General voice channel (if it exists)
+    //Else music won't load
     private void connectToVoiceChannels(AudioManager audioManager, Member user){
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
             for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
@@ -93,7 +90,7 @@ public class MusicController extends Command {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                System.out.println("playlistloaded searchmusic");
+                System.out.println("playlistloaded() under searchmusic() invoked by %search <input> command");
 
                 listOfTracks = new ArrayList<AudioTrack>(5);
                 AudioTrack t;
@@ -101,14 +98,13 @@ public class MusicController extends Command {
                     t = audioPlaylist.getTracks().get(i);
                     listOfTracks.add(t);
                 }
-//                event.getChannel().sendMessage("Tracks: " + audioPlaylist.getTracks().size()).queue();
-
                 try{
                     event.getChannel().sendMessage("```Track 1: " + listOfTracks.get(0).getInfo().title +
                             " " + listOfTracks.get(0).getInfo().uri +
                             "\nTrack 2: " + listOfTracks.get(1).getInfo().title + " " + listOfTracks.get(1).getInfo().uri +
                             "\nTrack 3: " + listOfTracks.get(2).getInfo().title + " " + listOfTracks.get(2).getInfo().uri +
-                            "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +"```" ).queue(message -> {
+                            "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +
+                            "\nReact to start playing!✌✌```" ).queue(message -> {
 
                         message.addReaction("1️⃣").queue();
                         message.addReaction("2️⃣").queue();
@@ -118,24 +114,19 @@ public class MusicController extends Command {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
-
-
             @Override
             public void noMatches() {
-
+                event.getChannel().sendMessage("no matches").queue();
             }
-
             @Override
             public void loadFailed(FriendlyException e) {
                 event.getChannel().sendMessage("nothing tracks found").queue();
             }
         });
     }
-
     /**
-     *
+     *Function that loads all music. Function invoked by %play command.
      * @param identifier
      * @param user
      * @param event
@@ -144,7 +135,6 @@ public class MusicController extends Command {
         if (user.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         } else {
-
         }
         //checks to see if user is a member of guild
         Guild server = user.getGuild();
@@ -194,6 +184,14 @@ public class MusicController extends Command {
             }
         });
     }
+    //getter
+    public ArrayList<AudioTrack> getListOfTracks() {
+        return listOfTracks;
+    }
+    public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
+
+    }
+
 }
 
 
