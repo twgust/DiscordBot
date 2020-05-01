@@ -1,6 +1,7 @@
 package MusicModule;
 
 import Commands.Command;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.*;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -8,7 +9,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 //git
 public class MusicController extends Command {
@@ -37,36 +43,26 @@ public class MusicController extends Command {
     private AudioPlayer player;
     private Guild server;
     private GuildMessageReceivedEvent event;
+    private EventWaiter waiter;
 
-    public MusicController() {
 
+
+    private ArrayList<AudioTrack> listOfTracks;
+
+    //Constructor
+    public MusicController(EventWaiter waiter) {
+        this.waiter = waiter;
         playerManager = new DefaultAudioPlayerManager();
         player = playerManager.createPlayer();
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
     }
 
-
-    public void sendMessages(GuildMessageReceivedEvent e) {
-        e.getChannel().sendMessage("");
-    }
-
-
-    public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
-
-    }
-
-    //bot only joins voice channels named "General" as of now. Will fix later TODO
-    private void connectToVoiceChannel(AudioManager audioManager) {
-        if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
-            for (VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
-                if ("General".equals(voiceChannel.getName())) {
-                    audioManager.openAudioConnection(voiceChannel);
-                    return;
-                }
-            }
-        }
-    }
+    //connects to voice channels with priority:
+    //Users current voice channel (if it exists)
+    //Servers Music voice channel (if it exists)
+    //Servers General voice channel (if it exists)
+    //Else music won't load
     private void connectToVoiceChannels(AudioManager audioManager, Member user){
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
             for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
@@ -82,17 +78,64 @@ public class MusicController extends Command {
             }
         }
     }
+    /**
+     * function for searching music
+     */
+    public void searchMusic(String identifier, GuildMessageReceivedEvent event){
+        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+                event.getChannel().sendMessage("Track: " + audioTrack.getInfo().title);
+            }
 
-    /*
-        LoadMusic tar in en låt från användare (identifier)
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                System.out.println("playlistloaded() under searchmusic() invoked by %search <input> command");
+
+                listOfTracks = new ArrayList<AudioTrack>(5);
+                AudioTrack t;
+                for (int i = 0; i < 4; i++) {
+                    t = audioPlaylist.getTracks().get(i);
+                    listOfTracks.add(t);
+                }
+                try{
+                    event.getChannel().sendMessage("```Track 1: " + listOfTracks.get(0).getInfo().title +
+                            " " + listOfTracks.get(0).getInfo().uri +
+                            "\nTrack 2: " + listOfTracks.get(1).getInfo().title + " " + listOfTracks.get(1).getInfo().uri +
+                            "\nTrack 3: " + listOfTracks.get(2).getInfo().title + " " + listOfTracks.get(2).getInfo().uri +
+                            "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +
+                            "\nReact to start playing!✌✌```" ).queue(message -> {
+
+                        message.addReaction("1️⃣").queue();
+                        message.addReaction("2️⃣").queue();
+                        message.addReaction("3️⃣").queue();
+                        message.addReaction("4️⃣").queue();
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void noMatches() {
+                event.getChannel().sendMessage("no matches").queue();
+            }
+            @Override
+            public void loadFailed(FriendlyException e) {
+                event.getChannel().sendMessage("nothing tracks found").queue();
+            }
+        });
+    }
+    /**
+     *Function that loads all music. Function invoked by %play command.
+     * @param identifier
+     * @param user
+     * @param event
      */
     public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event) {
         if (user.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         } else {
-
         }
-
         //checks to see if user is a member of guild
         Guild server = user.getGuild();
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
@@ -141,6 +184,14 @@ public class MusicController extends Command {
             }
         });
     }
+    //getter
+    public ArrayList<AudioTrack> getListOfTracks() {
+        return listOfTracks;
+    }
+    public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
+
+    }
+
 }
 
 

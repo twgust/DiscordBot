@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class BanCommand extends ModCommand {
     private Permission perm = Permission.BAN_MEMBERS;
-    private String helpText = "ban [user] reason";
+    private String helpText = "```\nban [user] [reason]\n```";
 
     public BanCommand(ModerationController modCTRL) {
         super(modCTRL);
