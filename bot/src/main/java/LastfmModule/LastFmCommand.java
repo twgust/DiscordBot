@@ -2,6 +2,7 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
+import MusicModule.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,12 +44,14 @@ public class LastFmCommand extends Command {
     private String periodStr;
     private User user;
     private EventWaiter waiter;
+    private MusicController musicController;
     private Paginator.Builder pbuilder;
     private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type " + EventListener.prefix + "fm set <username>. Type " + EventListener.prefix + "help for more help noob. ❌```";
     private String wrongFormatMessage = "```❌ Invalid format, try again. Type " + EventListener.prefix + "help for more help noob ❌```";
 
-    public LastFmCommand(EventWaiter waiter) {
+    public LastFmCommand(EventWaiter waiter, MusicController musicController) {
         this.waiter = waiter;
+        this.musicController = musicController;
     }
 
     @Override
@@ -1119,6 +1122,15 @@ public class LastFmCommand extends Command {
                 event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] + "' does not exist ❌```").queue();
             }
         }
+    }
+
+    public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period){
+        if (sql.checkQuery(discordID)){
+            LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), period, 10);
+
+        }
+        else event.getChannel().sendMessage(noUsernameMessage).queue();
+
     }
 
     public void deleteUsernameInSQL(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql) {

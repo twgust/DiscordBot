@@ -56,7 +56,7 @@ public class Controller {
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LevelListener(economyController));
-        jda.addEventListener(new LastFmCommand(waiter));
+        jda.addEventListener(new LastFmCommand(waiter, musicController));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
         addCommands();
@@ -106,7 +106,7 @@ public class Controller {
         cmdMap.put("ping", new PingCommand());
         cmdMap.put("weather", new WeatherCommand());
         cmdMap.put("prefix", new PrefixCommand());
-        cmdMap.put("fm", new LastFmCommand(waiter));
+        cmdMap.put("fm", new LastFmCommand(waiter, musicController));
         cmdMap.put("queue", new MusicQueueCommand(musicController));
         cmdMap.put("skip", new MusicSkipCommand(musicController));
         cmdMap.put("pause", new MusicPauseCommand(musicController));
