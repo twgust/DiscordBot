@@ -1271,7 +1271,25 @@ public class LastFmCommand extends Command {
         }
     }
 
+    @Override
+    public String getHelp() {
+        String helpString = "```" +
+                "Required arguments are shown in brackets [argument]" +
+                "\nOptional arguments are shown in parenthesis (argument)\n" +
+                "\n'fm set [username]' - set lastFM username to be used.\n" +
+                "\n'fm (username) OR fm (taggedDiscordUser) - shows profile of provided username or tagged discord user. If no username/discordUser is provided shows own profile.\n" +
+                "\n'fm nowplaying (username) - shows the current and previous track for your lastFM account.\n"+
+                "\n'fm recent (trackamount) - shows list of recent tracks played.\n"+
+                "\n'fm toptracks (period) (trackamount) - shows list of top tracks for a given period. Defaults to week and 10 tracks.\n" +
+                "\n'fm topartists (period) (trackamount) - shows list of top artists for given period. Defaults to week and 10 artists.\n"+
+                "\n'fm youtube (username) OR fm (taggedDiscordUser) - shows youtube link for the song user is listening to.\n"+
+                "\n'fm delete' - removes the linked username.\n" +
+                "\n\nValid periods are: 'week/7day/w', '1month'/1m, '3month/3m', '6month/6m', '12month/12m, 'year/y', 'overall/alltime/at'\n"+
+                "\nValid inputs are also; toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt```";
 
+
+        return helpString;
+    }
 
     public String getDiscordID() {
         return discordID;
