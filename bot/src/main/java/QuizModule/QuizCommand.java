@@ -66,7 +66,7 @@ public class QuizCommand extends Command {
             case "stop multi":
                 quizM.stop(event.getAuthor());
                 break;
-            case "myPoints":
+            case "points":
                 int points = getPoints(event.getAuthor());
                 if(points == -1) {
                     eb.setTitle(event.getAuthor().getAsTag() + " has " + points + " points!");

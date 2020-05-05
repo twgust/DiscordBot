@@ -18,16 +18,6 @@ public class QuizSQLConnector {
         catch (SQLException e) {
             e.printStackTrace();
         }
-        finally {
-            if(conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
     }
 
     private void createTable() {
@@ -46,7 +36,7 @@ public class QuizSQLConnector {
     private void createUser(String id, int initialPoints) {
         try {
             Statement stmt = conn.createStatement();
-            String query = "INSERT INTO POINTS (id,total)" +
+            String query = "INSERT INTO POINTS (id,points)" +
                     "VALUES(" + id + "," + initialPoints + ")";
             stmt.executeUpdate(query);
         } catch (SQLException e) {

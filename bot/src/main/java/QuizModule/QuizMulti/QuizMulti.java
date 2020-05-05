@@ -5,11 +5,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.json.JSONException;
 
 import java.util.LinkedList;
 
 //The Quiz game
-public class QuizMulti implements Runnable{
+public class QuizMulti implements Runnable {
     private Thread thread;
     private volatile boolean isRunning = false;
     private LinkedList<QuestionMulti> questions = new LinkedList<QuestionMulti>();
@@ -18,39 +19,49 @@ public class QuizMulti implements Runnable{
     private QuestionMulti currentQuestion = null;
     private User correctUser;
     private Boolean answered = false;
+    private Boolean working = true;
     private EmbedBuilder eb = new EmbedBuilder();
     private QuizSQLConnector dbConnection;
 
     /*
     Constructors
      */
-    public QuizMulti(TextChannel channel){
+    public QuizMulti(TextChannel channel) {
         this.channel=channel;
         questions = new QuizMultiParser(defaultUrl).getQuestions();
     }
 
-    public QuizMulti(){
-        questions = new QuizMultiParser(defaultUrl).getQuestions();
+    public QuizMulti() {
+        try {
+            questions = new QuizMultiParser(defaultUrl).getQuestions();
+        }
+        catch(JSONException e ) {
+            System.out.println("API-call error");
+            working = false;
+        }
     }
 
-    public void setTextChannel(TextChannel channel){
+    public void setTextChannel(TextChannel channel) {
         this.channel=channel;
     }
 
 
-    public void start(User user){
-        if(!isRunning) {
+    public void start(User user) {
+        if(!isRunning && working) {
             postMessage("Multi-answer Quiz game was started by " + user.getName());
             isRunning = true;
             thread = new Thread(this);
             thread.start();
+        }
+        else if(!isRunning && !working) {
+            postMessage("Multi-answer Quiz cannot be started at this time, please try again later");
         }
         else{
             postMessage("A session of Multi-answer Quiz is already running");
         }
     }
 
-    public void stop(User user){
+    public void stop(User user) {
         if(isRunning) {
             postMessage("Multi-answer Quiz game was stopped by " + user.getName());
             isRunning = false;
@@ -61,7 +72,7 @@ public class QuizMulti implements Runnable{
         }
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         return isRunning;
     }
 
@@ -105,7 +116,7 @@ public class QuizMulti implements Runnable{
      */
 
     //Retrieves the current question if there is one
-    public String getQuestion(){
+    public String getQuestion() {
         pollQuestion();
         if(currentQuestion != null){
             return currentQuestion.getQuestion();
@@ -114,7 +125,7 @@ public class QuizMulti implements Runnable{
     }
 
     //Retrieves the current questions type
-    public String getQuestionType(){
+    public String getQuestionType() {
         if(currentQuestion != null) {
             return currentQuestion.getType().toString();
         }
@@ -124,7 +135,7 @@ public class QuizMulti implements Runnable{
     }
 
     //Polls the current first question in the list
-    private void pollQuestion(){
+    private void pollQuestion() {
         if(questions.size() != 0) {
             currentQuestion = questions.poll();
         }
@@ -132,7 +143,7 @@ public class QuizMulti implements Runnable{
 
 
     //Checks if a user entered a correct answer
-    public void checkAnswer(User author, Message msg){
+    public void checkAnswer(User author, Message msg) {
         if(currentQuestion!= null) {
             if (msg.getContentRaw().equalsIgnoreCase(currentQuestion.getCorrectAnswer()) && !answered) {
                 correctUser = author;
@@ -143,7 +154,7 @@ public class QuizMulti implements Runnable{
 
 
     //Retrieves all the alternative answers. Only one is correct
-    private String getAlternatives(){
+    private String getAlternatives() {
         String res = "";
         int counter = 1;
         for(String alternative : currentQuestion.getAlternatives()){
@@ -155,8 +166,8 @@ public class QuizMulti implements Runnable{
 
 
     //Posts the correct answer
-    private void postCorrectAnswer(){
-        if(correctUser == null){
+    private void postCorrectAnswer() {
+        if(correctUser == null) {
             postMessage("**The correct answer is " + currentQuestion.getCorrectAnswer() + "!**");
         }
         else {
@@ -169,7 +180,7 @@ public class QuizMulti implements Runnable{
 
 
     //Posts a message in the chat
-    private void postMessage(String message){
+    private void postMessage(String message) {
         if(channel != null) {
             eb.setTitle(message);
             channel.sendMessage(eb.build()).queue();
@@ -180,14 +191,14 @@ public class QuizMulti implements Runnable{
     }
 
     //Resets some data used by the thread
-    private void resetData(){
+    private void resetData() {
         answered = false;
         correctUser = null;
     }
 
 
     //Limits the user activity in the chat to 1 msg per user per 15 seconds
-    private void limitChat(int limit){
+    private void limitChat(int limit) {
         channel.getManager().setSlowmode(limit);
     }
 
