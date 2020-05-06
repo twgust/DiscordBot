@@ -1273,7 +1273,7 @@ public class LastFmCommand extends Command {
 
     @Override
     public String getHelp() {
-        String helpString = "```" +
+        String helpString = "**```" +
                 "Required arguments are shown in brackets [argument]" +
                 "\nOptional arguments are shown in parenthesis (argument)\n" +
                 "\n'fm set [username]' - set lastFM username to be used.\n" +
@@ -1285,7 +1285,7 @@ public class LastFmCommand extends Command {
                 "\n'fm youtube (username) OR fm (taggedDiscordUser) - shows youtube link for the song user is listening to.\n"+
                 "\n'fm delete' - removes the linked username.\n" +
                 "\n\nValid periods are: 'week/7day/w', '1month'/1m, '3month/3m', '6month/6m', '12month/12m, 'year/y', 'overall/alltime/at'\n"+
-                "\nValid inputs are also; toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt```";
+                "\nValid inputs are also; toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt```**";
 
 
         return helpString;
