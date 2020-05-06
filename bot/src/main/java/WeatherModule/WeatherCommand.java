@@ -35,13 +35,17 @@ public class WeatherCommand extends Command{
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         setLoaded(false);
-        String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
-        System.out.println(Arrays.toString(recievedMessageArr));
-        String city = recievedMessageArr[1];
+        //String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
+        //System.out.println(Arrays.toString(recievedMessageArr));
+        String city = event.getMessage().getContentRaw().substring(9);
+        city = city.replace(" ", "%20");
 
+        /*
         if(recievedMessageArr.length == 3){
             city = recievedMessageArr[1] + recievedMessageArr[2];
         }
+
+         */
 
 
         connectToOWM(city);
