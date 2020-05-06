@@ -116,6 +116,9 @@ public class Controller {
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
+        cmdMap.put("music", new MusicCommand());
+
+
 
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("profile", new ProfileCommand());

@@ -121,12 +121,5 @@
     <orderEntry type="library" name="Maven: org.seleniumhq.selenium:jetty-repacked:7.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.8" level="project" />
-    <orderEntry type="library" name="Maven: se.michaelthelin.spotify:spotify-web-api-java:6.0.0-RC1" level="project" />
-    <orderEntry type="library" name="Maven: com.neovisionaries:nv-i18n:1.27" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents.client5:httpclient5-cache:5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents.client5:httpclient5:5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents.core5:httpcore5:5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents.core5:httpcore5-h2:5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.30" level="project" />
   </component>
 </module>
