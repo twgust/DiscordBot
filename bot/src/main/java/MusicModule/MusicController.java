@@ -172,7 +172,7 @@ public class MusicController extends Command {
             }
 
             /**
-             * This method is invoked with the ytsearch identifier, unsure why.
+             * This method is invoked with the ytsearch identifier because youtube loads 30~ tracks.
              * For now it  will only load the first track of the search results,
              * if "AudioTrack track = playlist.getTracks().get(0);" is not there it will load and queue
              * 30~ of the same tracks when the user uses the command %play "I'm on fire"
