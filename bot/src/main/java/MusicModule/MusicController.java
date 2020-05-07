@@ -3,6 +3,7 @@ package MusicModule;
 import Commands.Command;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.*;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -47,15 +48,27 @@ public class MusicController extends Command {
 
 
 
+    private AudioPlayerSendHandler audioPlayerSendHandler;
+
+
     private ArrayList<AudioTrack> listOfTracks;
 
     //Constructor
     public MusicController(EventWaiter waiter) {
         this.waiter = waiter;
+
         playerManager = new DefaultAudioPlayerManager();
+
         player = playerManager.createPlayer();
+        audioPlayerSendHandler = new AudioPlayerSendHandler(player);
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
+
+        AudioSourceManagers.registerRemoteSources(playerManager);
+
+    }
+    public void setServer(Guild server){
+        this.server = server;
     }
 
     //connects to voice channels with priority:
@@ -83,7 +96,7 @@ public class MusicController extends Command {
      */
     public void searchMusic(String identifier, GuildMessageReceivedEvent event){
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
-            @Override
+
             public void trackLoaded(AudioTrack audioTrack) {
                 event.getChannel().sendMessage("Track: " + audioTrack.getInfo().title);
             }
@@ -110,6 +123,7 @@ public class MusicController extends Command {
                         message.addReaction("2️⃣").queue();
                         message.addReaction("3️⃣").queue();
                         message.addReaction("4️⃣").queue();
+
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -132,12 +146,14 @@ public class MusicController extends Command {
      * @param event
      */
     public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event) {
+        Guild server = user.getGuild();
+        server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
         if (user.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         } else {
         }
         //checks to see if user is a member of guild
-        Guild server = user.getGuild();
+
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
 
             @Override
@@ -190,6 +206,9 @@ public class MusicController extends Command {
     }
     public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
 
+    }
+    public AudioPlayerSendHandler getAudioPlayerSendHandler() {
+        return audioPlayerSendHandler;
     }
 
 }
