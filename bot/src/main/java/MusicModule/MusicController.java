@@ -12,10 +12,12 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 //git
 public class MusicController extends Command {
@@ -45,6 +47,10 @@ public class MusicController extends Command {
     private Guild server;
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
+    private final String one = "1️⃣";
+    private final String two = "2️⃣";
+    private final String three = "3️⃣";
+    private final String four = "4️⃣";
 
 
 
@@ -118,6 +124,7 @@ public class MusicController extends Command {
                             "\nTrack 3: " + listOfTracks.get(2).getInfo().title + " " + listOfTracks.get(2).getInfo().uri +
                             "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +
                             "\nReact to start playing!✌✌```" ).queue(message -> {
+                                initWaiter(message.getIdLong(), message.getChannel(), listOfTracks);
 
                         message.addReaction("1️⃣").queue();
                         message.addReaction("2️⃣").queue();
@@ -209,6 +216,50 @@ public class MusicController extends Command {
     }
     public AudioPlayerSendHandler getAudioPlayerSendHandler() {
         return audioPlayerSendHandler;
+    }
+
+    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks){
+        waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
+            User user = e.getUser();
+
+            System.out.println(e.getReactionEmote().getName());
+            return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
+        }, (e) -> {
+            handleReaction(tracks, e.getReactionEmote().getName(), channel, e.getMember());
+
+        },30, TimeUnit.SECONDS, () ->{
+
+        });
+    }
+    public boolean checkEmote(String emote){
+        switch (emote){
+            case one:
+            case two:
+            case three:
+            case four:
+                System.out.println(true);
+                return true;
+            default:
+                System.out.println(false);
+                return false;
+
+        }
+    }
+
+    public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member ){
+        if(emote.equalsIgnoreCase("1️⃣")){
+            scheduler.addToQueue(tracks.get(0), member);
+        }
+        else if(emote.equalsIgnoreCase("2️⃣")){
+            scheduler.addToQueue(tracks.get(1), member);
+        }
+        else if(emote.equalsIgnoreCase("3️⃣")){
+            scheduler.addToQueue(tracks.get(2), member);
+        }
+        else if(emote.equalsIgnoreCase("4️⃣")){
+            scheduler.addToQueue(tracks.get(3), member);
+        }
+        else System.out.println("failed to load something wrong monkaW");
     }
 
 }
