@@ -124,7 +124,7 @@ public class MusicController extends Command {
                             "\nTrack 3: " + listOfTracks.get(2).getInfo().title + " " + listOfTracks.get(2).getInfo().uri +
                             "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +
                             "\nReact to start playing!✌✌```" ).queue(message -> {
-                                initWaiter(message.getIdLong(), message.getChannel(), listOfTracks);
+                                initWaiter(message.getIdLong(), message.getChannel(), listOfTracks, message);
 
                         message.addReaction("1️⃣").queue();
                         message.addReaction("2️⃣").queue();
@@ -218,7 +218,7 @@ public class MusicController extends Command {
         return audioPlayerSendHandler;
     }
 
-    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks){
+    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks, Message message){
         waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
             User user = e.getUser();
 
@@ -226,6 +226,7 @@ public class MusicController extends Command {
             return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
         }, (e) -> {
             handleReaction(tracks, e.getReactionEmote().getName(), channel, e.getMember());
+            message.clearReactions().queue();
 
         },30, TimeUnit.SECONDS, () ->{
 
