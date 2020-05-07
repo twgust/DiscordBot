@@ -222,7 +222,7 @@ public class MusicController extends Command {
         waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
             User user = e.getUser();
 
-            System.out.println(e.getReactionEmote().getName());
+
             return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
         }, (e) -> {
             handleReaction(tracks, e.getReactionEmote().getName(), channel, e.getMember());
@@ -237,7 +237,7 @@ public class MusicController extends Command {
             case two:
             case three:
             case four:
-                System.out.println(true);
+
                 return true;
             default:
                 System.out.println(false);
@@ -247,16 +247,21 @@ public class MusicController extends Command {
     }
 
     public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member ){
+        setServer(member.getGuild());
         if(emote.equalsIgnoreCase("1️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(0), member);
         }
         else if(emote.equalsIgnoreCase("2️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(1), member);
         }
         else if(emote.equalsIgnoreCase("3️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(2), member);
         }
         else if(emote.equalsIgnoreCase("4️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(3), member);
         }
         else System.out.println("failed to load something wrong monkaW");
