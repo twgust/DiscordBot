@@ -77,8 +77,9 @@ public class QuizSQLConnector {
             return statement.executeQuery(query).getInt("points");
         } catch (SQLException e) {
             e.printStackTrace();
+            return 0;
+
         }
-        return -1; //Database error
     }
 
 }
