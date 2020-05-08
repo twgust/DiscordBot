@@ -34,11 +34,23 @@ public class WeatherCommand extends Command{
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        WeatherSQL sql = new WeatherSQL();
         setLoaded(false);
         //String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
         //System.out.println(Arrays.toString(recievedMessageArr));
-        String city = event.getMessage().getContentRaw().substring(9);
-        city = city.replace(" ", "%20");
+        String city = "";
+
+        if(event.getMessage().getContentRaw().split(" ").length != 1){
+            city = event.getMessage().getContentRaw().substring(9);
+            city = city.replace(" ", "%20");
+        }
+        else if(sql.checkQuery(event.getAuthor().getId())){
+            city = sql.getCity(event.getAuthor().getId());
+        }
+
+
+
+
 
         /*
         if(recievedMessageArr.length == 3){
@@ -46,28 +58,28 @@ public class WeatherCommand extends Command{
         }
 
          */
+        if(!city.equalsIgnoreCase("")) {
+            connectToOWM(city);
+            if (isLoaded()) {
+                sql.setCity(event.getAuthor().getId(), city);
+                sql.closeConnection();
+                EmbedBuilder weather = new EmbedBuilder();
+                weather.setColor(0x349CEE);
+                weather.setTitle("Weather in " + weatherInfo[10] + " at " + weatherInfo[5] + " " + weatherInfo[2]);
+                weather.addField("🌡 Temperature", "Current: " + weatherInfo[3] + "\n Feels like: " + weatherInfo[4], true);
+                weather.addField(weatherInfo[9] + " Current condition", weatherInfo[0], true);
+                weather.setThumbnail(weatherInfo[1]);
+                weather.setFooter("Powered by OpenWeatherMap.org", "https://raw.githubusercontent.com/ioBroker/ioBroker.openweathermap/master/admin/openweathermap.png");
+                TemporalAccessor currTime = OffsetDateTime.now();
+                weather.setTimestamp(currTime);
+                weather.addField("💨 Wind", weatherInfo[8] + " from the " + weatherInfo[7], false);
+                weather.addField("💧 Humidity", weatherInfo[6] + "%", false);
+
+                event.getChannel().sendMessage(weather.build()).queue();
 
 
-        connectToOWM(city);
-        if (isLoaded()){
-
-            EmbedBuilder weather =  new EmbedBuilder();
-            weather.setColor(0x349CEE);
-            weather.setTitle("Weather in " +weatherInfo[10] + " at " + weatherInfo[5] + " " + weatherInfo[2]);
-            weather.addField("🌡 Temperature", "Current: "+weatherInfo[3] + "\n Feels like: "+weatherInfo[4] , true);
-            weather.addField(weatherInfo[9] + " Current condition", weatherInfo[0] , true);
-            weather.setThumbnail( weatherInfo[1]);
-            weather.setFooter("Powered by OpenWeatherMap.org","https://raw.githubusercontent.com/ioBroker/ioBroker.openweathermap/master/admin/openweathermap.png");
-            TemporalAccessor currTime = OffsetDateTime.now();
-            weather.setTimestamp(currTime);
-            weather.addField("💨 Wind",weatherInfo[8] + " from the " + weatherInfo[7] , false);
-            weather.addField("💧 Humidity", weatherInfo[6] + "%" , false);
-
-            event.getChannel().sendMessage(weather.build()).queue();
-
-
-        }
-        else event.getChannel().sendMessage("Invalid city name or time format").queue();
+            } else event.getChannel().sendMessage("Invalid city name or time format").queue();
+        } event.getChannel().sendMessage("No city linked to your account");
 
     }
 
@@ -270,5 +282,11 @@ public class WeatherCommand extends Command{
 
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
+    }
+
+    @Override
+    public String getHelp() {
+        String help = "```weather <city> \nweather <city, countrycode>\n\nExample: 'weather New York' or 'weather New York, US```";
+        return help;
     }
 }
