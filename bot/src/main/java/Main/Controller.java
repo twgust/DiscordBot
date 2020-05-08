@@ -87,7 +87,7 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
                         && !arguments[0].equalsIgnoreCase("profile")
-                        && !arguments[0].equalsIgnoreCase("wallet")){
+                        && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")){
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }
@@ -117,6 +117,7 @@ public class Controller {
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
         cmdMap.put("music", new MusicCommand());
+        cmdMap.put("embedtest", new MusicEmbedBuilderTest());
 
 
 
