@@ -1,5 +1,5 @@
 package MusicModule;
-
+/*
 import Main.Controller;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyApi;
@@ -13,10 +13,10 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-/**
- * https://github.com/thelinmichael/spotify-web-api-java
- * https://github.com/thelinmichael/spotify-web-api-java/blob/master/examples/authorization/client_credentials/ClientCredentialsExample.java
- */
+
+  https://github.com/thelinmichael/spotify-web-api-java
+  https://github.com/thelinmichael/spotify-web-api-java/blob/master/examples/authorization/client_credentials/ClientCredentialsExample.java
+
 
 public class SpotifyClientSync {
     private static final String clientId = "5f0a19655b964b058126df4de15955a2";
@@ -67,3 +67,5 @@ public class SpotifyClientSync {
         clientCredentials_Async();
     }
 }
+
+ */

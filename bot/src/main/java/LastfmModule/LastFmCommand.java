@@ -2,8 +2,10 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
+import MusicModule.AudioPlayerSendHandler;
 import MusicModule.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
@@ -790,6 +792,7 @@ public class LastFmCommand extends Command {
                 LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), getPeriodForAPICall(period), 5);
                 sql.closeConnection();
                 if (ttmusic.isLoaded()) {
+
                     String[][] tracks = ttmusic.getResultTracks();
                     System.out.println(Arrays.deepToString(tracks));
                     int length = tracks.length;

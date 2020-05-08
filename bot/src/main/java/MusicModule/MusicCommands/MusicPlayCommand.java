@@ -33,11 +33,15 @@ public class MusicPlayCommand extends Command {
         System.out.println(substring);
 
 
-        AudioSourceManagers.registerRemoteSources(controller.getPlayerManager());
 
-        server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(controller.getPlayer()));
 
+        //deprecated
+        //server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(controller.getPlayer()));
+
+        //AudioSourceManagers.registerRemoteSources(controller.getPlayerManager());
+        //server.getAudioManager().setSendingHandler(controller.getAudioPlayerSendHandler());
         controller.loadMusic("ytsearch:" + substring, user, event);
+
         //controller.loadMusic(array[1], user, event);
         //SpotifyPlayer.loadMusic for spotify (switch case)
 
