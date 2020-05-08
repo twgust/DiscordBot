@@ -3,6 +3,7 @@ package MusicModule;
 import Commands.Command;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.*;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -11,10 +12,12 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 //git
 public class MusicController extends Command {
@@ -44,7 +47,14 @@ public class MusicController extends Command {
     private Guild server;
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
+    private final String one = "1️⃣";
+    private final String two = "2️⃣";
+    private final String three = "3️⃣";
+    private final String four = "4️⃣";
 
+
+
+    private AudioPlayerSendHandler audioPlayerSendHandler;
 
 
     private ArrayList<AudioTrack> listOfTracks;
@@ -52,10 +62,19 @@ public class MusicController extends Command {
     //Constructor
     public MusicController(EventWaiter waiter) {
         this.waiter = waiter;
+
         playerManager = new DefaultAudioPlayerManager();
+
         player = playerManager.createPlayer();
+        audioPlayerSendHandler = new AudioPlayerSendHandler(player);
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
+
+        AudioSourceManagers.registerRemoteSources(playerManager);
+
+    }
+    public void setServer(Guild server){
+        this.server = server;
     }
 
     //connects to voice channels with priority:
@@ -83,7 +102,7 @@ public class MusicController extends Command {
      */
     public void searchMusic(String identifier, GuildMessageReceivedEvent event){
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
-            @Override
+
             public void trackLoaded(AudioTrack audioTrack) {
                 event.getChannel().sendMessage("Track: " + audioTrack.getInfo().title);
             }
@@ -105,11 +124,13 @@ public class MusicController extends Command {
                             "\nTrack 3: " + listOfTracks.get(2).getInfo().title + " " + listOfTracks.get(2).getInfo().uri +
                             "\nTrack 4: " + listOfTracks.get(3).getInfo().title + " " + listOfTracks.get(3).getInfo().uri +
                             "\nReact to start playing!✌✌```" ).queue(message -> {
+                                initWaiter(message.getIdLong(), message.getChannel(), listOfTracks, message);
 
                         message.addReaction("1️⃣").queue();
                         message.addReaction("2️⃣").queue();
                         message.addReaction("3️⃣").queue();
                         message.addReaction("4️⃣").queue();
+
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -132,12 +153,14 @@ public class MusicController extends Command {
      * @param event
      */
     public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event) {
+        Guild server = user.getGuild();
+        server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
         if (user.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         } else {
         }
         //checks to see if user is a member of guild
-        Guild server = user.getGuild();
+
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
 
             @Override
@@ -156,7 +179,7 @@ public class MusicController extends Command {
             }
 
             /**
-             * This method is invoked with the ytsearch identifier, unsure why.
+             * This method is invoked with the ytsearch identifier because youtube loads 30~ tracks.
              * For now it  will only load the first track of the search results,
              * if "AudioTrack track = playlist.getTracks().get(0);" is not there it will load and queue
              * 30~ of the same tracks when the user uses the command %play "I'm on fire"
@@ -190,6 +213,59 @@ public class MusicController extends Command {
     }
     public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
 
+    }
+    public AudioPlayerSendHandler getAudioPlayerSendHandler() {
+        return audioPlayerSendHandler;
+    }
+
+    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks, Message message){
+        waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
+            User user = e.getUser();
+
+
+            return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
+        }, (e) -> {
+            handleReaction(tracks, e.getReactionEmote().getName(), channel, e.getMember());
+            message.clearReactions().queue();
+
+        },30, TimeUnit.SECONDS, () ->{
+
+        });
+    }
+    public boolean checkEmote(String emote){
+        switch (emote){
+            case one:
+            case two:
+            case three:
+            case four:
+
+                return true;
+            default:
+                System.out.println(false);
+                return false;
+
+        }
+    }
+
+    public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member ){
+        setServer(member.getGuild());
+        if(emote.equalsIgnoreCase("1️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
+            scheduler.addToQueue(tracks.get(0), member);
+        }
+        else if(emote.equalsIgnoreCase("2️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
+            scheduler.addToQueue(tracks.get(1), member);
+        }
+        else if(emote.equalsIgnoreCase("3️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
+            scheduler.addToQueue(tracks.get(2), member);
+        }
+        else if(emote.equalsIgnoreCase("4️⃣")){
+            connectToVoiceChannels(server.getAudioManager(), member);
+            scheduler.addToQueue(tracks.get(3), member);
+        }
+        else System.out.println("failed to load something wrong monkaW");
     }
 
 }

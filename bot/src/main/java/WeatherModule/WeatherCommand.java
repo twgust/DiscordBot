@@ -6,138 +6,68 @@ import net.aksingh.owmjapis.core.OWM;
 import net.aksingh.owmjapis.model.CurrentWeather;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.webbitserver.HttpHandler;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 
 
 public class WeatherCommand extends Command{
 
+    private boolean loaded = false;
+    private String[] weatherInfo;
+
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        String recievedMessage = event.getMessage().getContentRaw();
+        setLoaded(false);
+        //String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
+        //System.out.println(Arrays.toString(recievedMessageArr));
+        String city = event.getMessage().getContentRaw().substring(9);
+        city = city.replace(" ", "%20");
 
-        OWM owm = new OWM("19c501207c33f1d716f086176d524036");
-        //try catch som fångar API exception, beror förmodligen på fel stad namn.
-        try {
-            //nedan finns kod för att få max och min temperatur.
-            //String tempMax = (int) Math.round(Objects.requireNonNull(cwm.getMainData().getTempMax() - 273.15)) + "°C";
-            //String tempMin = (int) Math.round(Objects.requireNonNull(cwm.getMainData().getTempMin() - 273.15)) + "°C";
-            String city = recievedMessage.substring(9);
-            CurrentWeather cwm = owm.currentWeatherByCityName(city);
-            String currentCondition = "";
-            String currentConditionImg = "";
-            String countryCode = "";
-            String tempCurr = "";
-            Instant time;
-            ZonedDateTime zdt = null;
-            ZoneId zoneId;
-            String humidity = "";
-            double windDirectionTemp = 0;
-            String windDirection = "";
-            String windSpeed = "";
-            double cityLat = 0;
-            double cityLng = 0;
-            String emojiId = "";
-            String emojiCode = "";
-            String emoji = "";
-            String timezone = "";
-            DateTimeFormatter dtf = null;
+        /*
+        if(recievedMessageArr.length == 3){
+            city = recievedMessageArr[1] + recievedMessageArr[2];
+        }
 
-            //följande try catcher finns för att enstaka variabler kan bli null.
-            //Då skickar botten ut Invaliad city name som inte är sant
-
-            try {
-                currentCondition = cwm.getWeatherList().get(0).getDescription();
-            }catch (NullPointerException e){
-                currentCondition = "Could not be found.";
-            }
-
-            currentConditionImg = cwm.getWeatherList().get(0).getIconLink();
-            char[] arr = currentCondition.toCharArray();
-            arr[0] = Character.toUpperCase(arr[0]);
-            currentCondition = new String(arr);
-
-            try {
-                countryCode = cwm.getSystemData().getCountryCode();
-            }catch (NullPointerException e){
-                countryCode = "FLAG 404";
-            }
-
-            try {
-                tempCurr = (int) Math.round(cwm.getMainData().getTemp() - 273.15) + "°C "  + "(" + Math.round((cwm.getMainData().getTemp())*(1.8)-(459.67)) + "°F)";
-            } catch (NullPointerException e) {
-                tempCurr = "Temperature could not be found";
-            }
-
-            try {
-                humidity = Double.toString(cwm.getMainData().getHumidity());
-            }catch (NullPointerException e) {
-                humidity = "Humidity could not be found";
-            }
+         */
 
 
-            try {
-                windDirectionTemp = cwm.getWindData().getDegree();
-                windDirection = calculateWindDirection(windDirectionTemp);
-            }catch (NullPointerException e) {
-                windDirection = "direction could not be found";
-            }
-
-            try {
-                windSpeed = Double.toString(cwm.getWindData().getSpeed()) + " m/s "+ "(" + Double.toString(Math.round(cwm.getWindData().getSpeed()*2.23693629)) + " mph)";
-            }catch (NullPointerException e) {
-                windSpeed = "Speed could not be found";
-            }
-
-            emojiId = cwm.getWeatherList().get(0).getIconCode();
-
-            try {
-                emojiCode = Integer.toString(cwm.getWeatherList().get(0).getConditionId());
-                emoji = getEmojiForCondition(emojiCode, emojiId);
-            } catch (NullPointerException e) {
-                emoji = "☁";
-            }
-
-            try {
-                cityLat = cwm.getCoordData().getLatitude();
-                cityLng = cwm.getCoordData().getLongitude();
-            }catch (NullPointerException e) {
-                cityLat = 0;
-                cityLng = 0;
-            }
-
-            timezone = getTimeZone(cityLat, cityLng);
-            time = Instant.now();
-            zoneId = ZoneId.of(timezone);
-            zdt = ZonedDateTime.ofInstant(time, zoneId);
-            dtf = new DateTimeFormatterBuilder().appendPattern("HH:mm, EEEE dd-MM-yyyy").toFormatter(Locale.ENGLISH);
-            System.out.println(cwm.getCoordData().getLatitude());
-            System.out.println(cwm.getCoordData().getLongitude());
-            System.out.println(timezone);
-
+        connectToOWM(city);
+        if (isLoaded()){
 
             EmbedBuilder weather =  new EmbedBuilder();
             weather.setColor(0x349CEE);
-            weather.setTitle("Weather in " +cwm.getCityName() + " at " + zdt.format(dtf) + " " + countryCodeToEmoji(countryCode));
-            weather.addField("🌡 Temperature", tempCurr , true);
-            weather.addField(emoji + " Current condition", currentCondition , true);
-            weather.setThumbnail( currentConditionImg);
+            weather.setTitle("Weather in " +weatherInfo[10] + " at " + weatherInfo[5] + " " + weatherInfo[2]);
+            weather.addField("🌡 Temperature", "Current: "+weatherInfo[3] + "\n Feels like: "+weatherInfo[4] , true);
+            weather.addField(weatherInfo[9] + " Current condition", weatherInfo[0] , true);
+            weather.setThumbnail( weatherInfo[1]);
             weather.setFooter("Powered by OpenWeatherMap.org","https://raw.githubusercontent.com/ioBroker/ioBroker.openweathermap/master/admin/openweathermap.png");
             TemporalAccessor currTime = OffsetDateTime.now();
             weather.setTimestamp(currTime);
-            weather.addField("💨 Wind",windSpeed + " from the " + windDirection , false);
-            weather.addField("💧 Humidity", humidity + "%" , false);
-
+            weather.addField("💨 Wind",weatherInfo[8] + " from the " + weatherInfo[7] , false);
+            weather.addField("💧 Humidity", weatherInfo[6] + "%" , false);
 
             event.getChannel().sendMessage(weather.build()).queue();
-            city = ""; //anropas för att tomma strängen.
 
-        }catch (APIException /*| NullPointerException */|  IndexOutOfBoundsException  e) {
-           event.getChannel().sendMessage("Invalid city name or time format").queue();
+
         }
+        else event.getChannel().sendMessage("Invalid city name or time format").queue();
 
     }
 
@@ -244,7 +174,101 @@ public class WeatherCommand extends Command{
         else return brokenclouds;
     }
 
-    public String getTimeZone(double lat, double lng){
-        return  TimezoneMapper.latLngToTimezoneString(lat, lng);
+    public void connectToOWM(String city){
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=19c501207c33f1d716f086176d524036")).build();
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body)
+                    .thenAccept(this::parse)
+                    .join();
+        }catch (Exception e){
+            setLoaded(false);
+            e.printStackTrace();
+        }
+    }
+    public void parse(String responsebody){
+        try {
+            JSONObject object = new JSONObject(responsebody);
+            JSONArray weatherArr = object.getJSONArray("weather");
+            JSONObject weatherObj = weatherArr.getJSONObject(0);
+            JSONObject sysObj = object.getJSONObject("sys");
+            JSONObject mainObj = object.getJSONObject("main");
+            JSONObject windObj = object.getJSONObject("wind");
+
+            String currentCondition = weatherObj.getString("description");
+            char[] arr = currentCondition.toCharArray();
+            arr[0] = Character.toUpperCase(arr[0]);
+            currentCondition = new String(arr);
+            String icon = weatherObj.getString("icon");
+
+            String currentConditionImg = "http://openweathermap.org/img/w/"+icon+".png";
+
+            String countryCode = countryCodeToEmoji(sysObj.getString("country"));
+
+            double tempCurr = mainObj.getDouble("temp");
+            String tempCurrStr = (int) Math.round(tempCurr - 273.15) + "°C "  + "(" + Math.round((tempCurr)*(1.8)-(459.67)) + "°F)";
+
+            double tempFeel = mainObj.getDouble("feels_like");
+            String tempFeelStr = (int) Math.round(tempFeel - 273.15) + "°C "  + "(" + Math.round((tempFeel)*(1.8)-(459.67)) + "°F)";
+
+            Instant time = Instant.now().plusMillis(object.getLong("timezone")*1000);
+            DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("HH:mm, EEEE dd-MM-yyyy").toFormatter(Locale.ENGLISH).withZone(ZoneId.of("UTC"));
+            String timeStr = dtf.format(time);
+
+            int humidity = mainObj.getInt("humidity");
+
+            double windDirection = windObj.getDouble("deg");
+            String windDirectionStr = calculateWindDirection(windDirection);
+
+            double windSpeed = windObj.getDouble("speed");
+            String windspeedStr = Double.toString(windSpeed) + " m/s "+ "(" + Double.toString(Math.round(windSpeed*2.23693629)) + " mph)";
+
+            String id = Integer.toString(weatherObj.getInt("id"));
+
+            String emoji = getEmojiForCondition(icon, id);
+
+            String city = object.getString("name");
+
+            /*
+            System.out.println(currentCondition);
+            System.out.println(currentConditionImg);
+            System.out.println(countryCode);
+            System.out.println(tempCurrStr);
+            System.out.println(tempFeelStr);
+            System.out.println(timeStr);
+            System.out.println(humidity);
+            System.out.println(windDirectionStr);
+            System.out.println(windspeedStr);
+            System.out.println(emoji);
+            System.out.println(city);
+
+             */
+            String[] result = new String[11];
+            result[0] = currentCondition;
+            result[1] = currentConditionImg;
+            result[2] = countryCode;
+            result[3] = tempCurrStr;
+            result[4] = tempFeelStr;
+            result[5] = timeStr;
+            result[6] = Integer.toString(humidity);
+            result[7] = windDirectionStr;
+            result[8] = windspeedStr;
+            result[9] = emoji;
+            result[10] = city;
+            weatherInfo = result;
+            setLoaded(true);
+        }catch (Exception e){
+            setLoaded(false);
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }
