@@ -6,6 +6,7 @@ import EconomyModule.GamesModule.SlotsCommand;
 import EconomyModule.TransferCommand;
 import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
+import LastfmModule.LastFmSQL;
 import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
 import ModerationModule.*;
@@ -52,6 +53,7 @@ public class Controller {
         musicController = new MusicController(waiter);
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
+        LastFmSQL.createDB();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LevelListener(economyController));

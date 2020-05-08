@@ -12,16 +12,31 @@ public class LastFmSQL {
     public LastFmSQL(){
         //try to connect to db
         try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:db/LastFm_DB.sqlite");
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:db/LastFm_DB.db");
+            this.state = conn.createStatement();
             System.out.println("Connected to SQLite Database");
             //conn.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("classnotfoundexception");
         } catch (SQLException e) {
             System.out.println("sql exception");
             e.printStackTrace();
+            createDB();
+        }
+
+    }
+
+    public static void createDB(){
+        System.out.println("Trying to create FM Database");
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:db/LastFm_DB.db");
+            Statement statement = conn.createStatement();
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS fmUsers ("+
+                    "discordID VARCHAR(255) ,"+
+                    "fmUsername VARCHAR(255),"+
+                    "PRIMARY KEY ( discordID ))");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
     }
@@ -99,7 +114,7 @@ public class LastFmSQL {
     }
     public void openConnnection(){
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:LastFm_DB.sqlite");
+            conn = DriverManager.getConnection("jdbc:sqlite:db/LastFm_DB.db");
             System.out.println("Successfully connected to SQLite Database");
         } catch (SQLException e) {
             e.printStackTrace();
