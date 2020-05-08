@@ -226,7 +226,7 @@ public class WeatherCommand extends Command{
 
             String id = Integer.toString(weatherObj.getInt("id"));
 
-            String emoji = getEmojiForCondition(icon, id);
+            String emoji = getEmojiForCondition(id, icon);
 
             String city = object.getString("name");
 
