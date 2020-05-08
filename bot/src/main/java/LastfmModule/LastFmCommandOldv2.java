@@ -1,13 +1,10 @@
 package LastfmModule;
 
 import Commands.Command;
-import WeatherModule.TimezoneMapper;
-import com.jagrosh.jdautilities.menu.Menu;
 import de.umass.lastfm.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.xerces.parsers.DOMParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +15,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DecimalFormat;
