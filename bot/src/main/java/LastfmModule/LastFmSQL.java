@@ -13,7 +13,7 @@ public class LastFmSQL {
         //try to connect to db
         try {
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:LastFm_DB.sqlite");
+            conn = DriverManager.getConnection("jdbc:sqlite:db/LastFm_DB.sqlite");
             System.out.println("Connected to SQLite Database");
             //conn.close();
         } catch (ClassNotFoundException e) {
