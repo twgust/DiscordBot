@@ -1,0 +1,425 @@
+@startuml
+
+title __LASTFMMODULE's Class Diagram__\n
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmCommand {
+        {static} - apikey : String
+        - discordID : String
+        - failedToLoad : String
+        - maxTrackAmount : int
+        - messageReceived : String
+        - messageReceivedArr : String[]
+        - messageTosend : String
+        - noUsernameMessage : String
+        - periodStr : String
+        - start : long
+        - user : User
+        - username : String
+        - waiter : EventWaiter
+        - wrongFormatMessage : String
+        + LastFmCommand()
+        + checkIfUserExist()
+        + checkPeriodforURL()
+        + deleteUsernameInSQL()
+        + execute()
+        + executeChart()
+        + executeProfile()
+        + executeProfileSelf()
+        + executeProfileTagged()
+        + executeRecentTracks()
+        + executeTopArtistNoAmount()
+        + executeTopArtists()
+        + executeTopTracks()
+        + executeTopTracksNoAmount()
+        + executeYouTubeUsername()
+        + executeYoutubeSelf()
+        + getChartAlbum()
+        + getDiscordID()
+        + getHelp()
+        + getMaxTrackAmount()
+        + getMessageReceived()
+        + getMessageReceivedArr()
+        + getMessageTosend()
+        + getNoUsernameMessage()
+        + getNowPlaying()
+        + getPeriodForAPICall()
+        + getPeriodForBuilder()
+        + getPeriodStr()
+        + getProfile()
+        + getRecentTracks()
+        + getResponseTime()
+        + getStart()
+        + getUser()
+        + getUsername()
+        + getYoutubeLink()
+        + playMusicFromTopList()
+        + setDiscordID()
+        + setMaxTrackAmount()
+        + setMessageReceived()
+        + setMessageReceivedArr()
+        + setMessageTosend()
+        + setNoUsernameMessage()
+        + setPeriodStr()
+        + setStart()
+        + setUser()
+        + setUsername()
+        + setUsernameInDatabase()
+        + topArtists()
+        + topTracks()
+    }
+  }
+  
+
+
+  
+
+
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmNowPlayingParser {
+        - loaded : boolean
+        - nowplayingInfo : String[][]
+        - username : String
+        + LastFmNowPlayingParser()
+        + getNowplayingInfo()
+        + getUsername()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+        + setNowplayingInfo()
+        + setUsername()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmProfileParser {
+        - loaded : boolean
+        - profile : String[]
+        + LastFmProfileParser()
+        + getProfile()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmRecentTracksParser {
+        - loaded : boolean
+        - resultsRecents : String[][]
+        - trackamount : int
+        + LastFmRecentTracksParser()
+        + getResultsRecents()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmSQL {
+        - conn : Connection
+        - state : Statement
+        + LastFmSQL()
+        + checkQuery()
+        + closeConnection()
+        + deleteQuery()
+        + getUsername()
+        + listUser()
+        {static} + main()
+        + openConnnection()
+        + setUsername()
+        + updateUsername()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopAlbumHTML {
+        + createHTMLfile()
+        + createJSFile()
+        {static} + main()
+        + runJSFile()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopAlbumsParserChart {
+        - loaded : boolean
+        - topAlbums : String[][]
+        + LastFmTopAlbumsParserChart()
+        + getTopAlbums()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+        + setTopAlbums()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopArtistParser {
+        - limit : int
+        - loaded : boolean
+        - resultArtists : String[][]
+        + LastFmTopArtistParser()
+        + getResultArtists()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopArtistProfileParser {
+        - loaded : boolean
+        - resultArtists : String[][]
+        + LastFmTopArtistProfileParser()
+        + getResultArtists()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksParser {
+        - loaded : boolean
+        - resultTracks : String[][]
+        + LastFmTopTracksParser()
+        + getResultTracks()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksParserMusic {
+        - loaded : boolean
+        - resultTracks : String[][]
+        + LastFmTopTracksParserMusic()
+        + getResultTracks()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksProfileParser {
+        - loaded : boolean
+        - resultTracks : String[][]
+        + LastFmTopTracksProfileParser()
+        + getResultTracks()
+        + isLoaded()
+        {static} + main()
+        + parse()
+        + setLoaded()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTrackParser {
+        - loaded : boolean
+        - playcount : String
+        + LastFmTrackParser()
+        + getPlaycount()
+        + isLoaded()
+        + parse()
+        + setLoaded()
+        + setPlaycount()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmYoutube {
+        - loaded : boolean
+        - track : String[][]
+        - ytLink : String[]
+        + LastFmYoutube()
+        + generateYouTubeLink()
+        + getYtLink()
+        + isLoaded()
+        {static} + main()
+        + setLoaded()
+        + setYtLink()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    abstract class LastfmModule.Menu {
+        # roles : Set<Role>
+        # timeout : long
+        # unit : TimeUnit
+        # users : Set<User>
+        # waiter : EventWaiter
+        {abstract} + display()
+        {abstract} + display()
+        # Menu()
+        # isValidUser()
+        # isValidUser()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    abstract class LastfmModule.Menu.Builder {
+        # roles : Set<Role>
+        # timeout : long
+        # unit : TimeUnit
+        # users : Set<User>
+        # waiter : EventWaiter
+        + addRoles()
+        + addUsers()
+        {abstract} + build()
+        + setEventWaiter()
+        + setRoles()
+        + setTimeout()
+        + setUsers()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.Paginator {
+        {static} + BIG_LEFT : String
+        {static} + BIG_RIGHT : String
+        {static} + LEFT : String
+        {static} + RIGHT : String
+        {static} + STOP : String
+        - allowTextInput : boolean
+        - authorIconURL : String
+        - authorText : String
+        - authorURL : String
+        - bulkSkipNumber : int
+        - color : BiFunction<Integer, Integer, Color>
+        - columns : int
+        - finalAction : Consumer<Message>
+        - footer : String
+        - itemsPerPage : int
+        - leftText : String
+        - numberItems : boolean
+        - pages : int
+        - rightText : String
+        - showPageNumbers : boolean
+        - strings : List<String>
+        - text : BiFunction<Integer, Integer, String>
+        - thumbnail : String
+        - title : String
+        - waitOnSinglePage : boolean
+        - wrapPageEnds : boolean
+        + display()
+        + display()
+        + paginate()
+        + paginate()
+        ~ Paginator()
+        - checkReaction()
+        - handleMessageReactionAddAction()
+        - initialize()
+        - pagination()
+        - paginationWithTextInput()
+        - paginationWithoutTextInput()
+        - renderPage()
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.Paginator.Builder {
+        - allowTextInput : boolean
+        - authorIconURL : String
+        - authorText : String
+        - authorURL : String
+        - bulkSkipNumber : int
+        - color : BiFunction<Integer, Integer, Color>
+        - columns : int
+        - finalAction : Consumer<Message>
+        - footer : String
+        - itemsPerPage : int
+        - numberItems : boolean
+        - showPageNumbers : boolean
+        - strings : List<String>
+        - text : BiFunction<Integer, Integer, String>
+        - textToLeft : String
+        - textToRight : String
+        - thumbnail : String
+        - title : String
+        - waitOnSinglePage : boolean
+        - wrapPageEnds : boolean
+        + addItems()
+        + allowTextInput()
+        + build()
+        + clearItems()
+        + setAuthorIconURL()
+        + setAuthorText()
+        + setAuthorURL()
+        + setBulkSkipNumber()
+        + setColor()
+        + setColor()
+        + setColumns()
+        + setFinalAction()
+        + setFooter()
+        + setItems()
+        + setItemsPerPage()
+        + setLeftRightText()
+        + setText()
+        + setText()
+        + setThumbnail()
+        + setTitle()
+        + showPageNumbers()
+        + useNumberedItems()
+        + waitOnSinglePage()
+        + wrapPageEnds()
+    }
+  }
+  
+
+  
+
+
+
+  LastfmModule.LastFmCommand -up-|> Commands.Command
+  LastfmModule.LastFmCommand o-- MusicModule.MusicController : musicController
+  LastfmModule.LastFmCommand o-- LastfmModule.Paginator.Builder : pbuilder
+
+  LastfmModule.LastFmYoutube o-- LastfmModule.LastFmRecentTracksParser : tracksParser
+  LastfmModule.Menu +-down- LastfmModule.Menu.Builder
+  LastfmModule.Paginator -up-|> LastfmModule.Menu
+  LastfmModule.Paginator +-down- LastfmModule.Paginator.Builder
+  LastfmModule.Paginator.Builder -up-|> LastfmModule.Menu.Builder
+
+
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
