@@ -79,7 +79,7 @@ public class WeatherCommand extends Command{
 
 
             } else event.getChannel().sendMessage("Invalid city name or time format").queue();
-        } event.getChannel().sendMessage("No city linked to your account");
+        } else event.getChannel().sendMessage("No city linked to your account").queue();
 
     }
 
