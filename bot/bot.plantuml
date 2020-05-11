@@ -1,0 +1,666 @@
+@startuml
+
+title __BOTTEST's Class Diagram__\n
+
+  namespace Commands {
+    class Commands.Command {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.CommandMap {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.ErrorCommand {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.GoodbyeCommand {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.HelloCommand {
+    }
+  }
+  
+
+  namespace Commands {
+    interface Commands.ICommand {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.PingCommand {
+    }
+  }
+  
+
+  namespace Commands {
+    class Commands.PrefixCommand {
+    }
+  }
+  
+
+  namespace EconomyModule {
+    class EconomyModule.EconomyController {
+    }
+  }
+  
+
+  namespace EconomyModule {
+    class EconomyModule.EconomyDBConnector {
+    }
+  }
+  
+
+  namespace EconomyModule {
+    enum EconomyResponses {
+    }
+  }
+  
+
+  namespace EconomyModule {
+    namespace GamesModule {
+      class EconomyModule.GamesModule.SlotsCommand {
+      }
+    }
+  }
+  
+
+  namespace EconomyModule {
+    class EconomyModule.TransferCommand {
+    }
+  }
+  
+
+  namespace EconomyModule {
+    class EconomyModule.WalletCommand {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmCommand {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmCommandOld {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmCommandOldv2 {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmNowPlayingParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmProfileParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmRecentTracksParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmSQL {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopAlbumHTML {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopAlbumsParserChart {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopArtistParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopArtistProfileParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksParserMusic {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksParserTEST {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTopTracksProfileParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmTrackParser {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.LastFmYoutube {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    abstract class LastfmModule.Menu {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.Paginator {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.TestEventWaiter {
+    }
+  }
+  
+
+  namespace LastfmModule {
+    class LastfmModule.TestingClass {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.AddLevelRoleCommand {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.GuildMap {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.LevelController {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.LevelDBConnector {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.LevelListener {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.MemberMap {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.ProfileCommand {
+    }
+  }
+  
+
+  namespace LevelModule {
+    class LevelModule.UserLevel {
+    }
+  }
+  
+
+  namespace Main {
+    class Main.Bot {
+    }
+  }
+  
+
+  namespace Main {
+    class Main.Controller {
+    }
+  }
+  
+
+  namespace Main {
+    class Main.EventListener {
+    }
+  }
+  
+
+  namespace Main {
+    class Main.Token {
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace BanKickModule {
+      class ModerationModule.BanKickModule.BanCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace BanKickModule {
+      class ModerationModule.BanKickModule.KickCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace BanKickModule {
+      class ModerationModule.BanKickModule.UnBanCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    class ModerationModule.GetMember {
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace InfoModule {
+      class ModerationModule.InfoModule.HelpCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace InfoModule {
+      class ModerationModule.InfoModule.InfoCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace MessageControlModule {
+      class ModerationModule.MessageControlModule.LockCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace MessageControlModule {
+      class ModerationModule.MessageControlModule.MuteCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace MessageControlModule {
+      class ModerationModule.MessageControlModule.PruneCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    namespace MessageControlModule {
+      class ModerationModule.MessageControlModule.UnlockCommand {
+      }
+    }
+  }
+  
+
+  namespace ModerationModule {
+    class ModerationModule.ModCommand {
+    }
+  }
+  
+
+  namespace ModerationModule {
+    class ModerationModule.ModCommandMap {
+    }
+  }
+  
+
+  namespace ModerationModule {
+    class ModerationModule.ModerationController {
+    }
+  }
+  
+
+  namespace MusicModule {
+    class MusicModule.AudioChess {
+    }
+  }
+  
+
+  namespace MusicModule {
+    class MusicModule.AudioPlayerSendHandler {
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicCurrentlyPlayingCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicPauseCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicPlayCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicQueueCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicResumeCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicSearchCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    namespace MusicCommands {
+      class MusicModule.MusicCommands.MusicSkipCommand {
+      }
+    }
+  }
+  
+
+  namespace MusicModule {
+    class MusicModule.MusicController {
+    }
+  }
+  
+
+  namespace MusicModule {
+    class MusicModule.MusicInfo {
+    }
+  }
+  
+
+  namespace MusicModule {
+    class MusicModule.TrackScheduler {
+    }
+  }
+  
+
+  namespace QuizModule {
+    class QuizModule.QuizCommand {
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizMulti {
+      class QuizModule.QuizMulti.QuestionMulti {
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizMulti {
+      class QuizModule.QuizMulti.QuizMulti {
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizMulti {
+      class QuizModule.QuizMulti.QuizMultiParser {
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizMulti {
+      namespace enums {
+        enum QuizDifficulty {
+        }
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizMulti {
+      namespace enums {
+        enum QuizType {
+        }
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    class QuizModule.QuizSQLConnector {
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizSingle {
+      class QuizModule.QuizSingle.QuestionSingle {
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizSingle {
+      class QuizModule.QuizSingle.QuizSingle {
+      }
+    }
+  }
+  
+
+  namespace QuizModule {
+    namespace QuizSingle {
+      class QuizModule.QuizSingle.QuizSingleParser {
+      }
+    }
+  }
+  
+
+  namespace TestModule {
+    class TestModule.TestClass {
+    }
+  }
+  
+
+  namespace WeatherModule {
+    class WeatherModule.WeatherCommand {
+    }
+  }
+  
+
+  Commands.Command .up.|> Commands.ICommand
+  Commands.Command -up-|> net.dv8tion.jda.api.hooks.ListenerAdapter
+  Commands.GoodbyeCommand -up-|> Commands.Command
+  Commands.HelloCommand -up-|> Commands.Command
+  Commands.PingCommand -up-|> Commands.Command
+  Commands.PrefixCommand -up-|> Commands.Command
+  EconomyModule.EconomyController -up-|> Commands.Command
+  EconomyModule.EconomyController o-- EconomyModule.EconomyDBConnector : dbConnector
+  EconomyModule.GamesModule.SlotsCommand -up-|> Commands.Command
+  EconomyModule.GamesModule.SlotsCommand o-- EconomyModule.EconomyController : economyController
+  EconomyModule.TransferCommand -up-|> Commands.Command
+  EconomyModule.TransferCommand o-- EconomyModule.EconomyController : economyController
+  EconomyModule.WalletCommand -up-|> Commands.Command
+  EconomyModule.WalletCommand o-- EconomyModule.EconomyController : controller
+  LastfmModule.LastFmCommand -up-|> Commands.Command
+  LastfmModule.LastFmCommand o-- MusicModule.MusicController : musicController
+  LastfmModule.LastFmCommand o-- LastfmModule.Paginator.Builder : pbuilder
+  LastfmModule.LastFmCommandOld -up-|> Commands.Command
+  LastfmModule.LastFmCommandOldv2 -up-|> Commands.Command
+  LastfmModule.LastFmYoutube o-- LastfmModule.LastFmRecentTracksParser : tracksParser
+  LastfmModule.Paginator -up-|> LastfmModule.Menu
+  LastfmModule.TestEventWaiter -up-|> Commands.Command
+  LastfmModule.TestingClass -up-|> Commands.Command
+  LevelModule.AddLevelRoleCommand -up-|> Commands.Command
+  LevelModule.LevelListener -up-|> net.dv8tion.jda.api.hooks.ListenerAdapter
+  LevelModule.LevelListener o-- EconomyModule.EconomyController : economyController
+  LevelModule.ProfileCommand -up-|> Commands.Command
+  Main.Controller o-- Commands.CommandMap : cmdMap
+  Main.Controller o-- EconomyModule.EconomyController : economyController
+  Main.Controller o-- Commands.ErrorCommand : error
+  Main.Controller o-- ModerationModule.ModerationController : modCtrl
+  Main.Controller o-- MusicModule.MusicController : musicController
+  Main.Controller o-- QuizModule.QuizCommand : quizCommand
+  Main.Controller o-- Main.Token : token
+  Main.EventListener -up-|> net.dv8tion.jda.api.hooks.ListenerAdapter
+  Main.EventListener o-- Main.Controller : ctrl
+  Main.EventListener o-- Commands.ErrorCommand : error
+  ModerationModule.BanKickModule.BanCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.BanKickModule.KickCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.BanKickModule.UnBanCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.InfoModule.HelpCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.InfoModule.InfoCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.MessageControlModule.LockCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.MessageControlModule.MuteCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.MessageControlModule.PruneCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.MessageControlModule.UnlockCommand -up-|> ModerationModule.ModCommand
+  ModerationModule.ModCommand -up-|> Commands.Command
+  ModerationModule.ModCommand o-- ModerationModule.ModerationController : modCTRL
+  ModerationModule.ModerationController o-- Main.Controller : ctrl
+  MusicModule.AudioChess .up.|> com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
+  MusicModule.AudioChess o-- MusicModule.MusicController : controller
+  MusicModule.AudioPlayerSendHandler .up.|> net.dv8tion.jda.api.audio.AudioSendHandler
+  MusicModule.MusicCommands.MusicCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicCurrentlyPlayingCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicCurrentlyPlayingCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicCommands.MusicPauseCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicPauseCommand o-- MusicModule.MusicController : musicController
+  MusicModule.MusicCommands.MusicPlayCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicPlayCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicCommands.MusicQueueCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicQueueCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicCommands.MusicResumeCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicResumeCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicCommands.MusicSearchCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicSearchCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicCommands.MusicSkipCommand -up-|> Commands.Command
+  MusicModule.MusicCommands.MusicSkipCommand o-- MusicModule.MusicController : controller
+  MusicModule.MusicController -up-|> Commands.Command
+  MusicModule.MusicController o-- MusicModule.AudioPlayerSendHandler : audioPlayerSendHandler
+  MusicModule.MusicController o-- MusicModule.TrackScheduler : scheduler
+  MusicModule.TrackScheduler -up-|> com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter
+  QuizModule.QuizCommand -up-|> Commands.Command
+  QuizModule.QuizCommand o-- QuizModule.QuizSQLConnector : dbConnection
+  QuizModule.QuizCommand o-- QuizModule.QuizMulti.QuizMulti : quizM
+  QuizModule.QuizCommand o-- QuizModule.QuizSingle.QuizSingle : quizS
+  QuizModule.QuizMulti.QuestionMulti o-- QuizModule.QuizMulti.enums.QuizDifficulty : difficulty
+  QuizModule.QuizMulti.QuestionMulti o-- QuizModule.QuizMulti.enums.QuizType : type
+  QuizModule.QuizMulti.QuizMulti .up.|> java.lang.Runnable
+  QuizModule.QuizMulti.QuizMulti o-- QuizModule.QuizMulti.QuestionMulti : currentQuestion
+  QuizModule.QuizMulti.QuizMulti o-- QuizModule.QuizSQLConnector : dbConnection
+  QuizModule.QuizSingle.QuizSingle .up.|> java.lang.Runnable
+  QuizModule.QuizSingle.QuizSingle o-- QuizModule.QuizSQLConnector : dbConnection
+  QuizModule.QuizSingle.QuizSingle o-- QuizModule.QuizSingle.QuizSingleParser : parser
+  QuizModule.QuizSingle.QuizSingle o-- QuizModule.QuizSingle.QuestionSingle : question
+  TestModule.TestClass -up-|> Commands.Command
+  WeatherModule.WeatherCommand -up-|> Commands.Command
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

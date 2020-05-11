@@ -6,6 +6,7 @@ import EconomyModule.GamesModule.SlotsCommand;
 import EconomyModule.TransferCommand;
 import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
+import LastfmModule.LastFmSQL;
 import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
 import ModerationModule.*;
@@ -22,6 +23,7 @@ import MusicModule.MusicCommands.*;
 import MusicModule.*;
 import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
+import WeatherModule.WeatherSQL;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -52,6 +54,8 @@ public class Controller {
         musicController = new MusicController(waiter);
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
+        LastFmSQL.createDB();
+        WeatherSQL.createDB();
 
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LevelListener(economyController));
@@ -85,8 +89,9 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
-                        && !arguments[0].equalsIgnoreCase("profile")
-                        && !arguments[0].equalsIgnoreCase("wallet")){
+                        && !arguments[0].equalsIgnoreCase("profile") && !arguments[0].equalsIgnoreCase("weather")
+                        && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")){
+
                     event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
                     return;
                 }
@@ -116,6 +121,11 @@ public class Controller {
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
         cmdMap.put("music", new MusicCommand());
+
+        cmdMap.put("embedtest", new MusicEmbedBuilderTest());
+
+
+
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("profile", new ProfileCommand());
         cmdMap.put("addlevelrole", new AddLevelRoleCommand());

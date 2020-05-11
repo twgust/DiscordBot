@@ -139,11 +139,13 @@ public class LastFmNowPlayingParser {
                     }
                     String artistTemp = result[0][1];
                     String trackTemp = result[0][2];
-                    if (artistTemp.contains(" ")) {
+                    if (artistTemp.contains(" ") || artistTemp.contains("%")) {
                         artistTemp = artistTemp.replace(" ", "+");
+                        artistTemp = artistTemp.replace("%", "%25");
                     }
-                    if (trackTemp.contains(" ")) {
+                    if (trackTemp.contains(" ") || trackTemp.contains("%")) {
                         trackTemp = trackTemp.replace(" ", "+");
+                        trackTemp = trackTemp.replace("%", "%25");
                     }
 
                     LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "c806a80470bbd773b00c2b46b3a1fd75");
