@@ -2,10 +2,14 @@ package MusicModule.MusicCommands;
 
 import Commands.Command;
 import MusicModule.MusicController;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-public class MusicCommand extends Command {
+import java.awt.*;
+import java.util.Queue;
 
+public class MusicCommand extends Command {
+    private EmbedBuilder eBuilder;
     private String helpText = "```~  🎷 Music Module 🎷 ~ " +
             "\n%play <song> - searches youtube and plays first result" +
             "\n%pause - pauses current song" +
@@ -13,7 +17,9 @@ public class MusicCommand extends Command {
             "\n%queue - displays current song queue" +
             "\n%song - display currently playing song" +
             "\n%skip - skips currently playing song" +
-            "\n%search - returns first 4 search results from youtube```";
+            "\n%search <song> - returns search results from youtube. React and play !" +
+            "\nDM goose#0068 if you have suggestions" +
+            "\nd[link test](https://discordapp.com)```";
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {

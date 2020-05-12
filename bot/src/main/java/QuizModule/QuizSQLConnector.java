@@ -25,7 +25,7 @@ public class QuizSQLConnector {
             Statement statement = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS POINTS " +
                             "(id VARCHAR(255) not NULL, " +
-                            " points INTEGER not NULL," +
+                            " points INTEGER(100000) not NULL," +
                             " PRIMARY KEY ( id ))";
             statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -57,7 +57,7 @@ public class QuizSQLConnector {
 
     public void addToPoints(String id, int points) {
         if(!userExists(id)){
-           createUser(id, points);
+           createUser(id, 0);
         }
         try {
             Statement stmt = conn.createStatement();
@@ -76,7 +76,7 @@ public class QuizSQLConnector {
             String query = "SELECT points FROM POINTS WHERE id=" + id;
             return statement.executeQuery(query).getInt("points");
         } catch (SQLException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
             return 0;
 
         }
