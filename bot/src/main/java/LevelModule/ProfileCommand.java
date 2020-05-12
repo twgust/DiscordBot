@@ -13,7 +13,6 @@ public class ProfileCommand extends Command {
         if (startIndex != -1){
             member = GetMember.get(event.getMessage().getContentRaw().substring(startIndex).trim(), event.getChannel(), event.getMember());
         }
-        LevelController.checkMember(event.getGuild(), member);
         event.getChannel().sendMessage(LevelController.getUserInfo(event.getGuild(), member)).queue();
     }
 }

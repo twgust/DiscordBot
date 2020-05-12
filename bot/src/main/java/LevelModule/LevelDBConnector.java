@@ -1,5 +1,7 @@
 package LevelModule;
 
+import net.dv8tion.jda.api.entities.TextChannel;
+
 import java.sql.*;
 
 public class LevelDBConnector {
@@ -12,7 +14,19 @@ public class LevelDBConnector {
         createDBTable(guildID);
     }
 
-    public void addUserExp(String guildID, long memberID){
+    public void addUserExp(String guildID, long memberID, TextChannel channel){
+        addExpToDBUser(guildID, memberID, channel);
+    }
+
+    public boolean userExist(String guildID, long memberID){
+        return DBUserExist(guildID, memberID);
+    }
+
+    public String[] getUserInfo(String guildID, long memberID){
+        return getDBUserInfo(guildID, memberID);
+    }
+
+    public void createUser(String guildID, long memberID){
         createDBUser(guildID, memberID);
     }
 
@@ -27,10 +41,7 @@ public class LevelDBConnector {
     }
 
     private void createDBTable(String guildID) {
-        guildID = "G" + guildID;
         try {
-
-            System.out.println("Creating levelDB table if it does not exist.");
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS "+ guildID +
                     " (id INTEGER not NULL, " +
@@ -45,8 +56,6 @@ public class LevelDBConnector {
     }
 
     private void createDBUser(String guildID, long memberID){
-        guildID = "G" + guildID;
-        createDBTable(guildID);
         try {
             Statement stmt = conn.createStatement();
             String query = "INSERT INTO " + guildID + "(id,currentExp,nextLevelExp,level)" +
@@ -57,28 +66,57 @@ public class LevelDBConnector {
         }
     }
 
-    private void addExpToDBUser(String guildID, long memberID){
-        guildID = "G" + guildID;
+    private void addExpToDBUser(String guildID, long memberID, TextChannel channel){
         try{
+            int tempExp = 0;
+            int nextLevelExp = 0;
             Statement stmt = conn.createStatement();
-            String query = "SELECT currentExp FROM "+guildID+" WHERE id=" + memberID;
+            String expQuery = "SELECT currentExp FROM "+guildID+" WHERE id= " + memberID;
+            tempExp = stmt.executeQuery(expQuery).getInt("currentExp") + 1;
+            String lvlQuery = "SELECT nextLevelExp FROM "+guildID+" WHERE id= " + memberID;
+            nextLevelExp = stmt.executeQuery(lvlQuery).getInt("nextLevelExp");
+            if(tempExp >= nextLevelExp){
+                tempExp = 0;
+                lvlQuery = "UPDATE " + guildID + " SET level = level + " + 1 + " WHERE id = " + memberID;
+                stmt.executeUpdate(lvlQuery);
+                lvlQuery = "SELECT level FROM " + guildID + " WHERE id= " + memberID;
+                int level = stmt.executeQuery(lvlQuery).getInt("level");
+                lvlQuery = "UPDATE " + guildID + " SET nextLevelExp = " + (nextLevelExp + ((level) * 20)) + " WHERE id = " + memberID;
+                stmt.executeUpdate(lvlQuery);
+                LevelController.levelUP(memberID, level, channel);
+            }
+            expQuery = "UPDATE " + guildID + " SET currentExp = " + tempExp + " WHERE id = " + memberID;
+            stmt.executeUpdate(expQuery);
         }catch (SQLException e){
-
+            System.out.println("addExp sql went bad :(");
+            e.printStackTrace();
         }
     }
 
     private boolean DBUserExist(String guildID, long memberID){
-        guildID = "G" + guildID;
         try {
             Statement stmt = conn.createStatement();
-            String query = "SELECT * FROM "+guildID +" WHERE  id=" + memberID;
-            ResultSet rs = stmt.executeQuery(query);
-            return rs.next();
+            String query = "SELECT * FROM "+ guildID +" WHERE  id=" + memberID;
+            return stmt.executeQuery(query).next();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
             return false;
         }
     }
+
+    private String[] getDBUserInfo(String guildID, long memberID){
+        String[] info = new String[3];
+        try {
+            Statement stmt = conn.createStatement();
+            String query = "SELECT * FROM "+guildID +" WHERE  id=" + memberID;
+            info[0] = Integer.toString(stmt.executeQuery(query).getInt("currentExp"));
+            info[1] = Integer.toString(stmt.executeQuery(query).getInt("nextLevelExp"));
+            info[2] = Integer.toString(stmt.executeQuery(query).getInt("level"));
+            return info;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return info;
+        }
+    }
+
 }

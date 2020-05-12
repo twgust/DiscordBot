@@ -10,49 +10,36 @@ import java.io.*;
 
 public class LevelController {
     private static LevelDBConnector levelDB = new LevelDBConnector();
-    private static GuildMap guildMap = new GuildMap();
-    private static final String filename = "./levels.dat";
 
     public static void addGuild(Guild guild) {
-        levelDB.newGuildTable(guild.getName().replace(" ", ""));
+        levelDB.newGuildTable("G"+guild.getId());
     }
 
     public static void addExp(Guild guild, Member member, TextChannel channel) {
-//        levelDB.addUserExp(guild.getId(), member.getIdLong());
+        addGuild(guild);
+        if (!levelDB.userExist("G"+guild.getId(), member.getIdLong())) {
+            levelDB.createUser("G"+guild.getId(), member.getIdLong());
+        }
+        levelDB.addUserExp("G" + guild.getId(), member.getIdLong(), channel);
     }
 
     public static String getUserInfo(Guild guild, Member member) {
-        String info = "```\nLevel: " + guildMap.getUserLevel(guild, member).getLevel() +
-                "\nCurrent exp:" + guildMap.getUserLevel(guild, member).getCurrentExp() +
-                "\nExp for next level: " + guildMap.getUserLevel(guild, member).getNextLevelExp() + "\n```";
+        String data[] = levelDB.getUserInfo("G"+guild.getId(),member.getIdLong());
+        String info = "```\nLevel: " + data[2]
+                + "\nCurrent Exp: " + data[0]
+                + "\nExp to next level: " + data[1]
+                + "\n```";
         return info;
     }
 
-    public static void checkMember(Guild guild, Member member) {
-        if (!guildMap.containsKey(guild)) {
-            addGuild(guild);
-            guildMap.get(guild).put(member);
-        }
-        if (!guildMap.containsMember(guild, member)) {
-            guildMap.get(guild).put(member);
-        }
-    }
-
-    public static void checkForRoleLevel(UserLevel userLevel) {
-        Role levelRole = guildMap.checkForRoleLevel(userLevel.getMember().getGuild(), userLevel.getLevel());
-        if (levelRole != null)
-            userLevel.getMember().getGuild().addRoleToMember(userLevel.getMember(), levelRole).queue();
+    public static void levelUP(long memberID, int level, TextChannel channel){
+        Guild guild = channel.getGuild();
+        Member member = guild.getMemberById(memberID);
+        channel.sendMessage("Oi c*nt! Yeah you " + member.getAsMention() +
+                ". You just leveled up. Hope you are happy being level " + level + " now!").queue();
     }
 
     public static boolean addLevelRole(Guild guild, Integer level, Role role) {
-        if (!guildMap.containsKey(guild)) {
-            guildMap.put(guild);
-        }
-        guildMap.addLevelRole(guild, level, role);
-        return guildMap.checkForRoleLevel(guild, level) != null;
-    }
-
-    public static void writeToDisk() {
-
+        return true;
     }
 }
