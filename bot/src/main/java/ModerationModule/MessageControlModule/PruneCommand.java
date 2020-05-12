@@ -19,7 +19,7 @@ public class PruneCommand extends ModCommand {
         super(modCTRL);
     }
 
-    private String helpText = "```\nprune [user] [amount] [string to delete]\n```";
+    private String helpText = "```\nprune [user] [amount] [text] || [user] [amount] || [amount] [text]\n```";
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
