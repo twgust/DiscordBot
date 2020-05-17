@@ -21,13 +21,13 @@ title __BOTTEST's Class Diagram__\n
   
 
   namespace Commands {
-    class Commands.GoodbyeCommand {
+    class Commands.samples.GoodbyeCommand {
     }
   }
   
 
   namespace Commands {
-    class Commands.HelloCommand {
+    class Commands.samples.HelloCommand {
     }
   }
   
@@ -39,7 +39,7 @@ title __BOTTEST's Class Diagram__\n
   
 
   namespace Commands {
-    class Commands.PingCommand {
+    class Commands.samples.PingCommand {
     }
   }
   
@@ -570,9 +570,9 @@ title __BOTTEST's Class Diagram__\n
 
   Commands.Command .up.|> Commands.ICommand
   Commands.Command -up-|> net.dv8tion.jda.api.hooks.ListenerAdapter
-  Commands.GoodbyeCommand -up-|> Commands.Command
-  Commands.HelloCommand -up-|> Commands.Command
-  Commands.PingCommand -up-|> Commands.Command
+  Commands.samples.GoodbyeCommand -up-|> Commands.Command
+  Commands.samples.HelloCommand -up-|> Commands.Command
+  Commands.samples.PingCommand -up-|> Commands.Command
   Commands.PrefixCommand -up-|> Commands.Command
   EconomyModule.EconomyController -up-|> Commands.Command
   EconomyModule.EconomyController o-- EconomyModule.EconomyDBConnector : dbConnector

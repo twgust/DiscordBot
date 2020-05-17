@@ -3,24 +3,24 @@ package EconomyModule.GamesModule;
 import Commands.Command;
 import EconomyModule.EconomyController;
 import EconomyModule.EconomyResponses;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 
+import java.awt.*;
 import java.util.Random;
 
 public class SlotsCommand extends Command {
     EconomyController economyController;
-    String helpText = "Play slots!\n```%slots [amount to bet]```";
+    private EmbedBuilder eb = new EmbedBuilder();
+
     public SlotsCommand(EconomyController economyController) {
         this.economyController = economyController;
     }
 
-    @Override
-    public String getHelp() {
-        return helpText;
-    };
+
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         String[][] emojiArray = new String[3][3];
@@ -107,4 +107,13 @@ public class SlotsCommand extends Command {
         return lowestInt;
     }
 
+    @Override
+    public EmbedBuilder getHelp() {
+        eb.setTitle("Placeholder_Icon Games Module Placeholder_Icon", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/GamesModule");
+        eb.setDescription("A slots game!");
+        eb.addField("<%slots amount>", "- Bets the given amount", true);
+        eb.setFooter("Ugion#1917 if you have suggestions");
+        eb.setColor(Color.getHSBColor(51,153,255));
+        return eb;
+    }
 }

@@ -1,6 +1,10 @@
 package QuizModule;
 
+import net.dv8tion.jda.api.entities.User;
+
 import java.sql.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 
 public class QuizSQLConnector {
     private Connection conn = null;
@@ -14,8 +18,7 @@ public class QuizSQLConnector {
         try {
             String url = "jdbc:sqlite:db/quizDB.db";
             conn = DriverManager.getConnection(url);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -24,9 +27,9 @@ public class QuizSQLConnector {
         try {
             Statement statement = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS POINTS " +
-                            "(id VARCHAR(255) not NULL, " +
-                            " points INTEGER(100000) not NULL," +
-                            " PRIMARY KEY ( id ))";
+                    "(id VARCHAR(255) not NULL, " +
+                    " points INTEGER(100000) not NULL," +
+                    " PRIMARY KEY ( id ))";
             statement.executeUpdate(query);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,12 +59,12 @@ public class QuizSQLConnector {
     }
 
     public void addToPoints(String id, int points) {
-        if(!userExists(id)){
-           createUser(id, 0);
+        if (!userExists(id)) {
+            createUser(id, 0);
         }
         try {
             Statement stmt = conn.createStatement();
-            String query ="UPDATE POINTS " +
+            String query = "UPDATE POINTS " +
                     " SET points = points + " + points + " " +
                     " WHERE id = " + id;
             stmt.executeUpdate(query);
@@ -76,10 +79,27 @@ public class QuizSQLConnector {
             String query = "SELECT points FROM POINTS WHERE id=" + id;
             return statement.executeQuery(query).getInt("points");
         } catch (SQLException e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
             return 0;
 
         }
+    }
+
+    public AbstractMap.SimpleEntry<String, Integer> getHighestScore() {
+        AbstractMap.SimpleEntry<String, Integer> bestScoreUser = new AbstractMap.SimpleEntry<String, Integer>("-1", 0); //Temp
+        try {
+            Statement statement = conn.createStatement();
+            String query = "SELECT id, COUNT(*) FROM POINTS GROUP BY id";
+            ResultSet rs = statement.executeQuery(query);
+            while (rs.next()) {
+                if (rs.getInt(2) > bestScoreUser.getValue()) {
+                    bestScoreUser = new AbstractMap.SimpleEntry<String, Integer>(rs.getString(1), rs.getInt(2));
+                }
+            }
+        } catch (SQLException e) {
+            // e.printStackTrace();
+        }
+                return bestScoreUser;
     }
 
 }

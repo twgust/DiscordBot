@@ -3,12 +3,14 @@ package ModerationModule.InfoModule;
 import ModerationModule.ModCommand;
 
 import ModerationModule.ModerationController;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
 import java.util.List;
 
 public class InfoCommand extends ModCommand {
@@ -16,7 +18,7 @@ public class InfoCommand extends ModCommand {
     public InfoCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
-    private String helpText = "```\ninfo [user]\n```";
+    private EmbedBuilder eb = new EmbedBuilder();
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
@@ -39,7 +41,12 @@ public class InfoCommand extends ModCommand {
     }
 
     @Override
-    public String getHelp() {
-        return helpText;
+    public EmbedBuilder getHelp() {
+        eb.setTitle("\uD83E\uDDB5 Moderation Module - Info \uD83E\uDDB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
+        eb.setDescription("Show user information!");
+        eb.addField("<%info user>", "- Description Placeholder", true);
+        eb.setFooter("DM wiz#8158 if you have suggestions");
+        eb.setColor(Color.getHSBColor(102,0,153));
+        return eb;
     }
 }

@@ -1,6 +1,9 @@
 package Main;
 
 import Commands.*;
+import Commands.samples.GoodbyeCommand;
+import Commands.samples.HelloCommand;
+import Commands.samples.PingCommand;
 import EconomyModule.EconomyController;
 import EconomyModule.GamesModule.SlotsCommand;
 import EconomyModule.TransferCommand;
@@ -84,7 +87,7 @@ public class Controller {
                 int needHelp = event.getMessage().getContentRaw().indexOf(" ");
                 if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
                         && !arguments[0].equalsIgnoreCase("unlock") && !arguments[0].equalsIgnoreCase("goodbye")
-                        && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("fm")
+                        && !arguments[0].equalsIgnoreCase("ping")
                         && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
                         && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
                         && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
@@ -92,7 +95,7 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("profile") && !arguments[0].equalsIgnoreCase("weather")
                         && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")){
 
-                    event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp()).queue();
+                    event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp().build()).queue();
                     return;
                 }
                 arguments[0] = arguments[0].toLowerCase();

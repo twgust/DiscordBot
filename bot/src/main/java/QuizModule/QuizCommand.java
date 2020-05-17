@@ -11,18 +11,16 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
+import java.util.AbstractMap;
+
 public class QuizCommand extends Command {
     private QuizSQLConnector dbConnection = new QuizSQLConnector();
     private QuizSingle quizS = new QuizSingle();
     private QuizMulti quizM = new QuizMulti();
     private TextChannel channel;
     private EmbedBuilder eb = new EmbedBuilder();
-    private String helpText = "To play quiz, you can choose between either Single-answers or Multi-answers\n" +
-            "-To start playing a Single-answers game, type **"+EventListener.prefix+"quiz start single**\n" +
-            "-To stop playing a Single-answers game, type  **"+EventListener.prefix+"quiz stop single**\n" +
-            "-To skip a question in a Single-answers game, type **"+EventListener.prefix+"quiz skip**\n" +
-            "-To start playing a Multi-answers game, type **"+EventListener.prefix+"quiz start multi**\n" +
-            "-To stop playing a Multi-answers game, type  **"+EventListener.prefix+"quiz stop multi**\n";
+
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -79,6 +77,16 @@ public class QuizCommand extends Command {
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
                 }
+            case "highscore":
+                AbstractMap.SimpleEntry<String,Integer> bestScore = dbConnection.getHighestScore();
+                if (bestScore.getKey().equalsIgnoreCase("-1")) {
+                    eb.setTitle("No score has yet been entered in the database!");
+                }
+                else {
+                    eb.setTitle("<@" + bestScore.getKey() + "> has the highest score with " + bestScore.getValue() + " points!");
+                }
+                eb.setDescription("");
+                event.getChannel().sendMessage(eb.build()).queue();
         }
 
     }
@@ -106,7 +114,18 @@ public class QuizCommand extends Command {
     }
 
     @Override
-    public String getHelp() {
-        return helpText;
+    public EmbedBuilder getHelp() {
+        eb.setTitle("❓ Quiz Module ❓", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/QuizModule");
+        eb.setDescription("A trivia game!");
+        eb.addField("<%quiz start single >", "- Starts a single answer game", true);
+        eb.addField("<%quiz stop single>", "- Stops a single answer game", true);
+        eb.addField("<%quiz skip>", "- Skips a question in a single answer game", false);
+        eb.addField("<%quiz start multi>", "- Starts a multi answer game", true);
+        eb.addField("<%quiz stop multi>", "- Stops a multi answer game", true);
+        eb.addField("<%quiz points>", "- Shows your global points", true);
+        eb.addField("<%quiz highscore>", "- shows the highest score", true);
+        eb.setFooter("DM Johs#7898 if you have suggestions");
+        eb.setColor(Color.RED);
+        return eb;
     }
 }

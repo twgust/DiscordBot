@@ -48,6 +48,7 @@ public class LastFmCommand extends Command {
     private String periodStr;
     private User user;
     private EventWaiter waiter;
+    private EmbedBuilder eb = new EmbedBuilder();
     private MusicController musicController;
     private Paginator.Builder pbuilder;
     private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type " + EventListener.prefix + "fm set <username>. Type " + EventListener.prefix + "help for more help noob. ❌```";
@@ -1275,23 +1276,23 @@ public class LastFmCommand extends Command {
     }
 
     @Override
-    public String getHelp() {
-        String helpString = "**```" +
-                "Required arguments are shown in brackets [argument]" +
-                "\nOptional arguments are shown in parenthesis (argument)\n" +
-                "\n'fm set [username]' - set lastFM username to be used.\n" +
-                "\n'fm (username) OR fm (taggedDiscordUser) - shows profile of provided username or tagged discord user. If no username/discordUser is provided shows own profile.\n" +
-                "\n'fm nowplaying (username) - shows the current and previous track for your lastFM account.\n"+
-                "\n'fm recent (trackamount) - shows list of recent tracks played.\n"+
-                "\n'fm toptracks (period) (trackamount) - shows list of top tracks for a given period. Defaults to week and 10 tracks.\n" +
-                "\n'fm topartists (period) (trackamount) - shows list of top artists for given period. Defaults to week and 10 artists.\n"+
-                "\n'fm youtube (username) OR fm (taggedDiscordUser) - shows youtube link for the song user is listening to.\n"+
-                "\n'fm delete' - removes the linked username.\n" +
-                "\n\nValid periods are: 'week/7day/w', '1month'/1m, '3month/3m', '6month/6m', '12month/12m, 'year/y', 'overall/alltime/at'\n"+
-                "\nValid inputs are also; toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt```**";
-
-
-        return helpString;
+    public EmbedBuilder getHelp() {
+        eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
+        eb.setDescription("A lastFM music tracker");
+        eb.addField("<%fm set [username]>", "- Links the lastFM username with the discord user", true);
+        eb.addField("<%fm delete>", "- Removes any existing link between the discord user and any lastFM username", true);
+        eb.addField("<%fm [username]>", "- Shows the lastFm profile connected to the username", true);
+        eb.addField("<%fm nowplaying [username]>", "- Shows user activity", true);
+        eb.addField("<%fm recent (amount)>", "- Shows a list of the recent tracks played by the user", true);
+        eb.addField("<%fm toptracks (period) (trackamount)>", "- Shows a list of the top tracks for a given period", true);
+        eb.addField("<%fm topartists (period) (trackamount)>", "- Shows a list of top artists for given period", true);
+        eb.addField("<%fm youtube (username) / (DiscordUser)>", "- Gives youtube-links to the songs the user is listening to", true);
+        eb.addBlankField(false);
+        eb.addField("Valid inputs", "- toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt", false);
+        eb.addField("Valid periods", "week/7day/w, 1month/1m, 3month/3m, 6month/6m, 12month/12m, year/y, overall/alltime/at", false);
+        eb.setFooter("DM Robic#2351 if you have suggestions");
+        eb.setColor(Color.RED);
+        return eb;
     }
 
     public String getDiscordID() {

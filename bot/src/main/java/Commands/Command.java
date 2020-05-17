@@ -1,11 +1,19 @@
 package Commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.awt.*;
+
 public class Command extends ListenerAdapter implements ICommand {
-    private String helpText = "No help available for this command.";
+    private EmbedBuilder helpText;
+
+    public Command() {
+        helpText = new EmbedBuilder().setTitle("No help available for this command");
+        helpText.setColor(Color.ORANGE); //Temp color
+    }
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -13,7 +21,7 @@ public class Command extends ListenerAdapter implements ICommand {
     }
 
     @Override
-    public String getHelp() {
+    public EmbedBuilder getHelp() {
         return helpText;
     }
 

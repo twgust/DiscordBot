@@ -1,16 +1,17 @@
 package Commands;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandMap {
     private Map<String, Command> cmdMap = Collections.synchronizedMap(new HashMap());
-    private String nameList = "";
+    private ArrayList<String> nameList = new ArrayList<>();
 
     public void put(String key, Command cmd){
-        nameList += key + "\n";
+        nameList.add(key);
         cmdMap.put(key, cmd);
     }
 
@@ -22,7 +23,7 @@ public class CommandMap {
         return cmdMap.containsKey(key);
     }
 
-    public String getNameList() {
+    public ArrayList<String> getNameList() {
         return nameList;
     }
 }

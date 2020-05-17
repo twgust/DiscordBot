@@ -2,12 +2,14 @@ package ModerationModule.BanKickModule;
 
 import ModerationModule.ModCommand;
 import ModerationModule.ModerationController;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,11 @@ import static ModerationModule.ModerationController.getLogChannel;
 
 public class UnBanCommand extends ModCommand {
     private Permission perm = Permission.BAN_MEMBERS;
+    private EmbedBuilder eb = new EmbedBuilder();
+
     public UnBanCommand(ModerationController modCTRL) {
         super(modCTRL);
     }
-    private String helpText = "```\nunban [user]\n```";
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
@@ -79,7 +82,12 @@ public class UnBanCommand extends ModCommand {
     }
 
     @Override
-    public String getHelp() {
-        return helpText;
+    public EmbedBuilder getHelp() {
+        eb.setTitle("\uD83D\uDE07 Moderation Module - UnBan \uD83D\uDE07", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/BanKickModule");
+        eb.setDescription("UnBan Users!");
+        eb.addField("<Command Placeholder>", "- Description Placeholder", true);
+        eb.setFooter("DM wiz#8158 if you have suggestions");
+        eb.setColor(Color.getHSBColor(102,0,153));
+        return eb;
     }
 }

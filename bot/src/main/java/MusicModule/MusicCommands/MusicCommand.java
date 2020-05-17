@@ -9,24 +9,27 @@ import java.awt.*;
 import java.util.Queue;
 
 public class MusicCommand extends Command {
-    private EmbedBuilder eBuilder;
-    private String helpText = "```~  🎷 Music Module 🎷 ~ " +
-            "\n%play <song> - searches youtube and plays first result" +
-            "\n%pause - pauses current song" +
-            "\n%resume - resumes current song" +
-            "\n%queue - displays current song queue" +
-            "\n%song - display currently playing song" +
-            "\n%skip - skips currently playing song" +
-            "\n%search <song> - returns search results from youtube. React and play !" +
-            "\nDM goose#0068 if you have suggestions" +
-            "\nd[link test](https://discordapp.com)```";
+    private EmbedBuilder eb = new EmbedBuilder();
+
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        event.getChannel().sendMessage(helpText).queue();
     }
-    public String getHelp(){
-        return helpText;
+
+    @Override
+    public EmbedBuilder getHelp(){
+        eb.setTitle("🎷 Music Module 🎷", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/MusicModule");
+        eb.setDescription("Play some music!");
+        eb.addField("<%play song>", "- searches youtube and plays first result", true);
+        eb.addField("<%pause - pauses current song>", "- pauses current song", true);
+        eb.addField("<%resume - resumes current song>", "- resumes current song", false);
+        eb.addField("<%queue - displays current song queue>", "- displays current song queue", true);
+        eb.addField("<%song - display currently playing song>", "- display currently playing song", true);
+        eb.addField("<%skip - skips currently playing song>", "- skips currently playing song", true);
+        eb.addField("<%search song>", "- returns search results from youtube. React and play", false);
+        eb.setFooter("DM goose#0068 if you have suggestions");
+        eb.setColor(Color.getHSBColor(153,102,0));
+        return eb;
     }
 
 }
