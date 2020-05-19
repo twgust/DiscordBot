@@ -21,7 +21,7 @@ public class MusicHelp extends Command {
         embedBuilder.addField("%pause", "pauses the music", true);
         embedBuilder.addField("%resume", "resumes the music", true);
         embedBuilder.addField("%search <song>", "searches youtube and returns results", false);
-        embedBuilder.setImage("https://i.imgur.com/IXTvzcm.jpg");
+        embedBuilder.setImage("https://i.imgur.com/Z2DZ2p5.jpg");
         //embedBuilder.setImage("https://i.imgur.com/pD8Pf2y.gif");
         embedBuilder.setFooter("DM @Goose#0068 for support");
 

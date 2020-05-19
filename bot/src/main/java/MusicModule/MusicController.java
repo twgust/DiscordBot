@@ -2,7 +2,10 @@ package MusicModule;
 
 import Commands.Command;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sedmelluq.discord.lavaplayer.player.*;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -11,51 +14,32 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.apache.http.client.utils.URIUtils;
 
-import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 //git
 public class MusicController extends Command {
-    public AudioPlayerManager getPlayerManager() {
-        return playerManager;
-    }
-
-    public TrackScheduler getScheduler() {
-        return scheduler;
-    }
-
-    public AudioPlayer getPlayer() {
-        return player;
-    }
-
-    public Guild getServer() {
-        return server;
-    }
-
+    private final String one = "1️⃣";
+    private final String two = "2️⃣";
+    private final String three = "3️⃣";
+    private final String four = "4️⃣";
     private AudioPlayerManager playerManager;
     private TrackScheduler scheduler;
     private AudioPlayer player;
     private Guild server;
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
-    private final String one = "1️⃣";
-    private final String two = "2️⃣";
-    private final String three = "3️⃣";
-    private final String four = "4️⃣";
     private AudioPlayerSendHandler audioPlayerSendHandler;
     private ArrayList<AudioTrack> listOfTracks;
 
-    //Constructor
+    /**
+     *
+     * @param waiter
+     */
     public MusicController(EventWaiter waiter) {
         this.waiter = waiter;
 
@@ -69,7 +53,36 @@ public class MusicController extends Command {
         AudioSourceManagers.registerRemoteSources(playerManager);
 
     }
-    public void setServer(Guild server){
+
+    /**
+     *
+     * @return returns playerManager
+     */
+    public AudioPlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    /**
+     *
+     * @return returns trackScheduler (used for MusicQueueCommand)
+     */
+    public TrackScheduler getScheduler() {
+        return scheduler;
+    }
+
+    /**
+     *
+     * @return returns Player
+     */
+    public AudioPlayer getPlayer() {
+        return player;
+    }
+
+    /**
+     *
+     * @param server sets the server of instance variable server (type Guild)
+     */
+    public void setServer(Guild server) {
         this.server = server;
     }
 
@@ -79,29 +92,29 @@ public class MusicController extends Command {
      * Servers Music voice channel (if it exists)
      * Servers General voice channel (if it exists)
      * Else music won't load
+     *
      * @param audioManager Handles connections to voice channels
-     * @param user represents the user who invoked the function
+     * @param user         represents the user who invoked the function
      */
 
-    private void connectToVoiceChannels(AudioManager audioManager, Member user){
-        if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()){
-            for(VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()){
-                if(user.getVoiceState().getChannel() != null){
+    private void connectToVoiceChannels(AudioManager audioManager, Member user) {
+        if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
+            for (VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
+                if (user.getVoiceState().getChannel() != null) {
                     audioManager.openAudioConnection(user.getVoiceState().getChannel());
-                }
-                else if("Music".equals(voiceChannel.getName())){
+                } else if ("Music".equals(voiceChannel.getName())) {
                     audioManager.openAudioConnection(voiceChannel);
-                }
-                else if("General".equals(voiceChannel.getName())){
+                } else if ("General".equals(voiceChannel.getName())) {
                     audioManager.openAudioConnection(voiceChannel);
                 }
             }
         }
     }
+
     /**
      * function for searching music
      */
-    public void searchMusic(String identifier, GuildMessageReceivedEvent event){
+    public void searchMusic(String identifier, GuildMessageReceivedEvent event) {
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
 
             public void trackLoaded(AudioTrack audioTrack) {
@@ -118,15 +131,15 @@ public class MusicController extends Command {
                     t = audioPlaylist.getTracks().get(i);
                     listOfTracks.add(t);
                 }
-                try{
+                try {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);
                     embedBuilder.setTitle("Search results - React to play ! 🎶");
-                    embedBuilder.addField("1) "  +listOfTracks.get(0).getInfo().title, "", false);
-                    embedBuilder.addField("2)  " + listOfTracks.get(1).getInfo().title, "" , false);
-                    embedBuilder.addField("3)  " + listOfTracks.get(2).getInfo().title, "" , false);
-                    embedBuilder.addField("4)  " + listOfTracks.get(3).getInfo().title, "" , false);
-                    embedBuilder.setFooter("React to play ! 🎶");
+                    embedBuilder.addField("1) " + listOfTracks.get(0).getInfo().title, "", false);
+                    embedBuilder.addField("2)  " + listOfTracks.get(1).getInfo().title, "", false);
+                    embedBuilder.addField("3)  " + listOfTracks.get(2).getInfo().title, "", false);
+                    embedBuilder.addField("4)  " + listOfTracks.get(3).getInfo().title, "", false);
+                    embedBuilder.setFooter("%music for help ! 🎶");
                     event.getChannel().sendMessage(embedBuilder.build()).queue(message -> {
                         initWaiter(message.getIdLong(), message.getChannel(), listOfTracks, message, event);
                         message.addReaction("1️⃣").queue();
@@ -138,10 +151,12 @@ public class MusicController extends Command {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void noMatches() {
                 event.getChannel().sendMessage("no matches").queue();
             }
+
             @Override
             public void loadFailed(FriendlyException e) {
                 event.getChannel().sendMessage("nothing tracks found").queue();
@@ -150,35 +165,10 @@ public class MusicController extends Command {
     }
 
     /**
-     * Function for formatting time for song duration printout
-     * @param milliseconds Parameter for each track
-     * @return
-     */
-    public String timeFormatting(long milliseconds){
-        long minutes = (milliseconds / 1000)  / 60;
-        int seconds = (int)((milliseconds / 1000) % 60);
-        if(minutes <= 9 && seconds <= 9){
-            return "Duration: 0" + minutes + ":0" + seconds;
-        }
-        else if(minutes <= 9 && seconds > 10){
-            return "Duration: 0" + minutes + ":" + seconds;
-        }
-        return "Duration: " + minutes + ":" + seconds  + " Minutes 🎶";
-    }
-
-    //Generic function for embedded messages(test, probably not that useful due to how different each case is)
-    public void genericEmbeddedMessage(GuildMessageReceivedEvent event, AudioTrack track, EmbedBuilder builder){
-        builder.setColor(Color.YELLOW);
-        builder.setTitle(track.getInfo().title, track.getInfo().uri);
-        /**
-         * rest would be specific for each function which makes this function quite useless
-         */
-    }
-
-    /**
-     *Function that loads all music. Function invoked by %play command.
-     * @param identifier
-     * @param user
+     * Function that loads all music. Function invoked by %play command.
+     *
+     * @param identifier The string provided by a user
+     * @param user the user
      * @param event
      */
     public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event) {
@@ -201,7 +191,7 @@ public class MusicController extends Command {
                     event.getChannel().sendMessage("now").queue();
                 } else if (player.getPlayingTrack() != null) {
                     scheduler.addToQueue(track, user);
-                    event.getChannel().sendMessage("```"+track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
+                    event.getChannel().sendMessage("```" + track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
                 }
             }
 
@@ -247,6 +237,7 @@ public class MusicController extends Command {
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
+
             @Override
             public void noMatches() {
                 event.getChannel().sendMessage("current syntax: %play <youtube-url>").queue();
@@ -258,18 +249,56 @@ public class MusicController extends Command {
             }
         });
     }
+
+    /**
+     * Function for formatting time for song duration printout
+     *
+     * @param milliseconds Parameter for each track
+     * @return
+     */
+    public String timeFormatting(long milliseconds) {
+        long minutes = (milliseconds / 1000) / 60;
+        int seconds = (int) ((milliseconds / 1000) % 60);
+        if (minutes <= 9 && seconds <= 9) {
+            return "Duration: 0" + minutes + ":0" + seconds;
+        } else if (minutes <= 9 && seconds > 10) {
+            return "Duration: 0" + minutes + ":" + seconds;
+        }
+        return "Duration: " + minutes + ":" + seconds + " Minutes 🎶";
+    }
+
+    //Generic function for embedded messages(test, probably not that useful due to how different each case is)
+    public void genericEmbeddedMessage(GuildMessageReceivedEvent event, AudioTrack track, EmbedBuilder builder) {
+        builder.setColor(Color.YELLOW);
+        builder.setTitle(track.getInfo().title, track.getInfo().uri);
+        /**
+         * rest would be specific for each function which makes this function quite useless
+         */
+    }
+
+
     //getter
     public ArrayList<AudioTrack> getListOfTracks() {
         return listOfTracks;
     }
+
     public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
 
     }
+
     public AudioPlayerSendHandler getAudioPlayerSendHandler() {
         return audioPlayerSendHandler;
     }
 
-    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks, Message message, GuildMessageReceivedEvent event){
+    /**
+     *
+     * @param messageId
+     * @param channel
+     * @param tracks
+     * @param message
+     * @param event
+     */
+    public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks, Message message, GuildMessageReceivedEvent event) {
         waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
             User user = e.getUser();
             return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
@@ -277,13 +306,18 @@ public class MusicController extends Command {
             handleReaction(tracks, e.getReactionEmote().getName(), channel, e.getMember(), event);
             message.clearReactions().queue();
 
-        },30, TimeUnit.SECONDS, () ->{
-            
+        }, 30, TimeUnit.SECONDS, () -> {
+
         });
     }
-    public boolean checkEmote(String emote){
 
-        switch (emote){
+    /**
+     *
+     * @param emote
+     * @return
+     */
+    public boolean checkEmote(String emote) {
+        switch (emote) {
             case one:
             case two:
             case three:
@@ -294,49 +328,53 @@ public class MusicController extends Command {
                 return false;
         }
     }
-    //code duplication necessary see @genericEmbeddedMessage() function
+
+    /**
+     * code duplication necessary see @genericEmbeddedMessage() function
+     * @param tracks
+     * @param emote
+     * @param channel
+     * @param member
+     * @param event
+     */
     public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member, GuildMessageReceivedEvent event
-    ){
+    ) {
         setServer(member.getGuild());
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.YELLOW);
         builder.setFooter("%music for help");
 
-        if(emote.equalsIgnoreCase("1️⃣")){
+        if (emote.equalsIgnoreCase("1️⃣")) {
             connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(0), member);
             builder.setTitle("Queued: " + tracks.get(0).getInfo().title, tracks.get(0).getInfo().uri);
-            builder.setDescription("Duration: "+timeFormatting(tracks.get(0).getInfo().length));
+            builder.setDescription("Duration: " + timeFormatting(tracks.get(0).getInfo().length));
 
             event.getChannel().sendMessage(builder.build()).queue();
-        }
-        else if(emote.equalsIgnoreCase("2️⃣")){
+        } else if (emote.equalsIgnoreCase("2️⃣")) {
             connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(1), member);
 
             builder.setTitle("Queued: " + tracks.get(1).getInfo().title, tracks.get(1).getInfo().uri);
-            builder.setDescription("Duration: "+timeFormatting(tracks.get(1).getInfo().length));
+            builder.setDescription("Duration: " + timeFormatting(tracks.get(1).getInfo().length));
 
             event.getChannel().sendMessage(builder.build()).queue();
-        }
-        else if(emote.equalsIgnoreCase("3️⃣")){
+        } else if (emote.equalsIgnoreCase("3️⃣")) {
             connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(2), member);
             builder.setTitle("Queued: " + tracks.get(2).getInfo().title, tracks.get(2).getInfo().uri);
-            builder.setDescription("Duration: "+timeFormatting(tracks.get(2).getInfo().length));
+            builder.setDescription("Duration: " + timeFormatting(tracks.get(2).getInfo().length));
 
             event.getChannel().sendMessage(builder.build()).queue();
-        }
-        else if(emote.equalsIgnoreCase("4️⃣")){
+        } else if (emote.equalsIgnoreCase("4️⃣")) {
             connectToVoiceChannels(server.getAudioManager(), member);
             scheduler.addToQueue(tracks.get(3), member);
             builder.setTitle("Queued: " + tracks.get(3).getInfo().title, tracks.get(3).getInfo().uri);
-            builder.setDescription("Duration: "+timeFormatting(tracks.get(3).getInfo().length));
+            builder.setDescription("Duration: " + timeFormatting(tracks.get(3).getInfo().length));
 
             event.getChannel().sendMessage(builder.build()).queue();
-        }
-        else System.out.println("failed to load something wrong monkaW poggers");
+        } else System.out.println("failed to load something wrong monkaW poggers");
     }
 }
 
