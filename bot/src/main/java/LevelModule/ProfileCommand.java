@@ -25,7 +25,7 @@ public class ProfileCommand extends Command {
         eb.setTitle("\uD83C\uDFC6 Level Module \uD83C\uDFC6", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LevelModule/");
         eb.setDescription("Level system!");
         eb.addField("profile", "- Shows the user's level profile", true);
-        eb.setFooter("wiz#8158 if you have suggestions");
+        eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.white);
         return eb;
     }

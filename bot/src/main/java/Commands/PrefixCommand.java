@@ -45,7 +45,7 @@ public class PrefixCommand extends Command {
         eb.setDescription("Prefix changer!");
         eb.addField("prefix (character)", "- Sets the current prefix to the typed character", true);
         eb.addField("Valid inputs", "Single character, preferably a common character", false);
-        eb.setFooter("wiz#8158 if you have suggestions");
+        eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.blue);
         return eb;
     }

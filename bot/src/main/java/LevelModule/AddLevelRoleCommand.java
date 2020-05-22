@@ -50,7 +50,7 @@ public class AddLevelRoleCommand extends Command {
         eb.setDescription("Level system!");
         eb.addField("profile", "- Shows the user's level profile", true);
         eb.addField("Placeholder", "- Add special level roles", true);
-        eb.setFooter("wiz#8158 if you have suggestions");
+        eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.white);
         return eb;
     }
