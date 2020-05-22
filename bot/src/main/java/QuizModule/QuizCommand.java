@@ -5,11 +5,11 @@ import Main.EventListener;
 import QuizModule.QuizMulti.QuizMulti;
 import QuizModule.QuizSingle.QuizSingle;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+
 
 import java.awt.*;
 import java.util.AbstractMap;
@@ -25,6 +25,13 @@ public class QuizCommand extends Command {
     private QuizMulti quizM = new QuizMulti();
     private TextChannel channel;
     private EmbedBuilder eb = new EmbedBuilder();
+    private JDA jda;
+
+    public QuizCommand(JDA jda) {
+        this.jda=jda;
+    }
+
+
 
     /**
      * Execute method that handles all interaction between user and the game
@@ -46,7 +53,6 @@ public class QuizCommand extends Command {
                 if(quizM.isAlive()){
                     eb.setTitle("A session of Multi-answer Quiz is currently running\n" +
                             "Please wait for it to finish before starting an new session of Single-answer Quiz");
-                    eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                 }
                 else {
@@ -63,7 +69,6 @@ public class QuizCommand extends Command {
                 if(quizS.isAlive()){
                     eb.setTitle("A session of Single-answer Quiz is currently running\n" +
                             "Please wait for it to finish before starting an new session of Multi-answer Quiz");
-                    eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
                 }
@@ -78,12 +83,10 @@ public class QuizCommand extends Command {
                 int points = getPoints(event.getAuthor());
                 if(points == -1) {
                     eb.setTitle(event.getAuthor().getAsTag() + " has " + points + " points!");
-                    eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                 }
                 else {
                     eb.setTitle(event.getAuthor().getAsTag() + " has " + points + " points!");
-                    eb.setDescription("");
                     event.getChannel().sendMessage(eb.build()).queue();
                     break;
                 }
@@ -93,9 +96,11 @@ public class QuizCommand extends Command {
                     eb.setTitle("No score has yet been entered in the database!");
                 }
                 else {
-                    eb.setTitle("<@" + bestScore.getKey() + "> has the highest score with " + bestScore.getValue() + " points!");
+                    User user = jda.getUserById(bestScore.getKey());
+                    eb.setAuthor(user.getAsTag());
+                    eb.setThumbnail(user.getAvatarUrl());
+                    eb.setDescription("**has the highest score with " + bestScore.getValue() + " points!**");
                 }
-                eb.setDescription("");
                 event.getChannel().sendMessage(eb.build()).queue();
         }
 
