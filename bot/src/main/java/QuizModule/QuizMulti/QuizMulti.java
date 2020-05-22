@@ -9,7 +9,11 @@ import org.json.JSONException;
 
 import java.util.LinkedList;
 
-//The Quiz game
+/**
+ * QuizMulti is the Quiz Multi Answer game
+ * @author Carl Johan Helgstrand
+ * @version 2.0
+ */
 public class QuizMulti implements Runnable {
     private Thread thread;
     private volatile boolean isRunning = false;
@@ -45,7 +49,10 @@ public class QuizMulti implements Runnable {
         this.channel=channel;
     }
 
-
+    /**
+     * Starts the quiz game
+     * @param user The user calling the start method
+     */
     public void start(User user) {
         if(!isRunning && working) {
             postMessage("Multi-answer Quiz game was started by " + user.getName());
@@ -61,6 +68,10 @@ public class QuizMulti implements Runnable {
         }
     }
 
+    /**
+     * Stops the game
+     * @param user The user calling the stop method
+     */
     public void stop(User user) {
         if(isRunning) {
             postMessage("Multi-answer Quiz game was stopped by " + user.getName());
@@ -72,12 +83,16 @@ public class QuizMulti implements Runnable {
         }
     }
 
+    /**
+     * Checks if the quiz thread is running
+     * @return True or false
+     */
     public boolean isAlive() {
         return isRunning;
     }
 
 
-    //Thread
+
     @Override
     public void run() {
         try{
@@ -111,11 +126,10 @@ public class QuizMulti implements Runnable {
         }
     }
 
-    /*
-    Methods used by the thread
+    /**
+     * Returns a question
+     * @return The actual question - from QuestionMulti
      */
-
-    //Retrieves the current question if there is one
     public String getQuestion() {
         pollQuestion();
         if(currentQuestion != null){
@@ -124,17 +138,10 @@ public class QuizMulti implements Runnable {
         return null;
     }
 
-    //Retrieves the current questions type
-    public String getQuestionType() {
-        if(currentQuestion != null) {
-            return currentQuestion.getType().toString();
-        }
-        else{
-            return null;
-        }
-    }
 
-    //Polls the current first question in the list
+    /**
+     * Gets a question from a LinkedList
+     */
     private void pollQuestion() {
         if(questions.size() != 0) {
             currentQuestion = questions.poll();
@@ -142,7 +149,11 @@ public class QuizMulti implements Runnable {
     }
 
 
-    //Checks if a user entered a correct answer
+    /**
+     * Check if a user's given answer is correct
+     * @param author User name in Discord server
+     * @param msg Discord user's message
+     */
     public void checkAnswer(User author, Message msg) {
         if(currentQuestion!= null) {
             if (msg.getContentRaw().equalsIgnoreCase(currentQuestion.getCorrectAnswer()) && !answered) {
@@ -153,7 +164,10 @@ public class QuizMulti implements Runnable {
     }
 
 
-    //Retrieves all the alternative answers. Only one is correct
+    /**
+     * Returns alternate answers - only one is correct
+     * @return String with all alternate answers
+     */
     private String getAlternatives() {
         String res = "";
         int counter = 1;
@@ -165,7 +179,10 @@ public class QuizMulti implements Runnable {
     }
 
 
-    //Posts the correct answer
+    /**
+     * Posts the correct answer
+     * The post will change depending on if a user answered correctly, or if nobody did
+     */
     private void postCorrectAnswer() {
         if(correctUser == null) {
             postMessage("**The correct answer is " + currentQuestion.getCorrectAnswer() + "!**");
@@ -175,11 +192,14 @@ public class QuizMulti implements Runnable {
                     "\n**1 point is awarded!**");
             dbConnection.addToPoints(correctUser.getId(),1);
         }
-        resetData(); //Resets references used in the thread to null
+        resetData();
     }
 
 
-    //Posts a message in the chat
+    /**
+     * Posts a message in the channel where the quiz game is running
+     * @param message Outgoing message, ex: Posting a question
+     */
     private void postMessage(String message) {
         if(channel != null) {
             eb.setTitle(message);
@@ -190,14 +210,19 @@ public class QuizMulti implements Runnable {
         }
     }
 
-    //Resets some data used by the thread
+    /**
+     * Resets game data between answers
+     */
     private void resetData() {
         answered = false;
         correctUser = null;
     }
 
 
-    //Limits the user activity in the chat to 1 msg per user per 15 seconds
+    /**
+     * Limits the chat traffic
+     * @param limit seconds when users can only send 1 message
+     */
     private void limitChat(int limit) {
         channel.getManager().setSlowmode(limit);
     }

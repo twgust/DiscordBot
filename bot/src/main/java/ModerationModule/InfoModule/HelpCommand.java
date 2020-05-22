@@ -46,9 +46,10 @@ public class HelpCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
-        eb.setTitle("\uD83E\uDDB5 Moderation Module - Help \uD83E\uDDB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
+        eb.clear();
+        eb.setTitle("\uD83E\uDDAE Moderation Module - Help \uD83E\uDDAE", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
         eb.setDescription("Description Placeholder");
-        eb.addField("<Command Placeholder>", "- Description Placeholder", true);
+        eb.addField("help", "- Placeholder", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

@@ -6,6 +6,12 @@ import java.sql.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 
+/**
+ * QuizSQLConnector is the connecting class between the Quiz Module and its corresponding data table. The table will
+ * contain user points
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuizSQLConnector {
     private Connection conn = null;
 
@@ -14,6 +20,9 @@ public class QuizSQLConnector {
         createTable();
     }
 
+    /**
+     * Setting up a connection with the DB table. The connecting is maintained as long as the Bot is running
+     */
     private void connect() {
         try {
             String url = "jdbc:sqlite:db/quizDB.db";
@@ -23,6 +32,9 @@ public class QuizSQLConnector {
         }
     }
 
+    /**
+     * Creates a new table if none exists in the database
+     */
     private void createTable() {
         try {
             Statement statement = conn.createStatement();
@@ -36,6 +48,11 @@ public class QuizSQLConnector {
         }
     }
 
+    /**
+     * Creates a new row in the database for a new user. User is only added when they gain their first points
+     * @param id Discord user Id
+     * @param initialPoints Users starting points
+     */
     private void createUser(String id, int initialPoints) {
         try {
             Statement stmt = conn.createStatement();
@@ -47,6 +64,11 @@ public class QuizSQLConnector {
         }
     }
 
+    /**
+     * Checks if a user exists in the DB table
+     * @param id Discord user Id
+     * @return True or false
+     */
     private boolean userExists(String id) {
         try {
             Statement stmt = conn.createStatement();
@@ -58,6 +80,11 @@ public class QuizSQLConnector {
         return true;
     }
 
+    /**
+     * Adds points to an existing user
+     * @param id Discord User Id
+     * @param points Users points to be added
+     */
     public void addToPoints(String id, int points) {
         if (!userExists(id)) {
             createUser(id, 0);
@@ -73,6 +100,11 @@ public class QuizSQLConnector {
         }
     }
 
+    /**
+     * Returns the users points
+     * @param id Discord user Id
+     * @return User points
+     */
     public int getPoints(String id) {
         try {
             Statement statement = conn.createStatement();
@@ -85,6 +117,10 @@ public class QuizSQLConnector {
         }
     }
 
+    /**
+     * Returns the user with the highest score
+     * @return Entry with Discord User Id and User points
+     */
     public AbstractMap.SimpleEntry<String, Integer> getHighestScore() {
         AbstractMap.SimpleEntry<String, Integer> bestScoreUser = new AbstractMap.SimpleEntry<String, Integer>("-1", 0); //Temp
         try {

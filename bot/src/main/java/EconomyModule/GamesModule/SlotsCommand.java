@@ -109,9 +109,9 @@ public class SlotsCommand extends Command {
 
     @Override
     public EmbedBuilder getHelp() {
-        eb.setTitle("Placeholder_Icon Games Module Placeholder_Icon", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/GamesModule");
+        eb.setTitle("\uD83C\uDFB0  Games Module \uD83C\uDFB0 ", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/GamesModule");
         eb.setDescription("A slots game!");
-        eb.addField("<%slots amount>", "- Bets the given amount", true);
+        eb.addField("slots amount", "- Bets the given amount", true);
         eb.setFooter("Ugion#1917 if you have suggestions");
         eb.setColor(Color.getHSBColor(51,153,255));
         return eb;

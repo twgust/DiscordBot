@@ -15,6 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * QuizMultiParser is a JSON parser that retrieves question sheets from OpenTrivia DB
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuizMultiParser {
     private String json = null;
     private JSONObject jQuiz = null;
@@ -22,13 +27,13 @@ public class QuizMultiParser {
     private LinkedList<QuestionMulti> parsedQuestions = new LinkedList<QuestionMulti>();
 
 
-    //Constructor
+
     public QuizMultiParser(String url){
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
 
         try {
-            HttpResponse response = client.execute(request); //Retrieves json-file containing questions, from Open Trivia DB
+            HttpResponse response = client.execute(request);
             json = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
             jQuiz = new JSONObject(json);
             responseCode = jQuiz.getInt("response_code");
@@ -38,10 +43,10 @@ public class QuizMultiParser {
             e.printStackTrace();
         }
 
-        //Code 0: Success Returned results successfully.
+
         if(json != null && responseCode == 0){
             try{
-                JSONArray arr = jQuiz.getJSONArray("results"); //Getting the JSONArray containing each JSONObject of questions
+                JSONArray arr = jQuiz.getJSONArray("results");
                 for(Object obj : arr){
                     if(obj != null) {
                         parsedQuestions.add(createQuestion(obj));
@@ -55,29 +60,36 @@ public class QuizMultiParser {
     }
 
 
-    //Return an ArrayList containing all the Question objects created from parsing the quiz database's json-file
+    /**
+     * Returns A LinkedList with all questions gathered from the JSON string
+     * @return LinkedList - filled with QuestionMulti objects
+     */
     public LinkedList<QuestionMulti> getQuestions(){
         return parsedQuestions;
     }
 
 
-    //Create a new Question object
+    /**
+     * Creates a new QuestionMulti object given the JSON information that we parsed into String
+     * @param object Its an JSONObject, but the code that guarantee that for user hence Object
+     * @return A Question - QuestionMulti Object
+     */
     public QuestionMulti createQuestion(Object object) {
         QuestionMulti question = new QuestionMulti();
 
         if (object instanceof JSONObject) {
             JSONObject jObj = (JSONObject)object;
-            JSONArray inCorrectAnswers = jObj.getJSONArray("incorrect_answers"); //Create an JSONArray that contains string values of the incorrect answers
-            ArrayList<String> alternatives = new ArrayList<String>(); //ArrayList containing all alternatives
-            alternatives.add(fixFormat(jObj.getString("correct_answer"))); //Adding the correct answer to the alternatives
-            for(Object o: inCorrectAnswers){ //Adding all the incorrect answers to the alternatives
+            JSONArray inCorrectAnswers = jObj.getJSONArray("incorrect_answers");
+            ArrayList<String> alternatives = new ArrayList<String>();
+            alternatives.add(fixFormat(jObj.getString("correct_answer")));
+            for(Object o: inCorrectAnswers){
                 if(o instanceof String){
                     String wrongAnswer = (String)o;
                     alternatives.add(fixFormat(wrongAnswer));
                 }
             }
 
-            //Adding all the data to the Question object
+
             question.setDifficulty(QuizDifficulty.valueOf(jObj.get("difficulty").toString().toUpperCase()));
             question.setQuestion(fixFormat(fixFormat(jObj.getString("question"))));
             question.setCorrectAnswer(fixFormat(jObj.getString("correct_answer")));
@@ -90,7 +102,11 @@ public class QuizMultiParser {
     }
 
 
-    //Fixing formatting issues with json -> String
+    /**
+     * Fixing JSON formatting issues
+     * @param unfixed An unfixed string
+     * @return Fixed string
+     */
     public String fixFormat(String unfixed){
         String fixed = unfixed.replace("&amp;", "&").replace("&quot;", "\"").replace("&#039;","'");
         return fixed;

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
+import java.util.EnumSet;
 import java.util.List;
 
 public class InfoCommand extends ModCommand {
@@ -22,18 +23,22 @@ public class InfoCommand extends ModCommand {
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num) {
+        eb.clear();
         if (member == null) return;
         List<Role> infoRoles = member.getRoles();
-        String infoMsg = "__**Member name:**__ \n" + member.getEffectiveName() + "\n__**Member ID:**__ \n" + member.getId();
-        infoMsg += "\n__**Roles:**__\n";
+        String roles ="";
         for (int i = 0; i < infoRoles.size(); i++) {
-            infoMsg += infoRoles.get(i).getName() + "\n";
+            roles += infoRoles.get(i).getName() + "\n";
         }
-        infoMsg += "__**Permissions:**__\n";
-        infoMsg += member.getPermissions();
-        member.getPermissions().forEach(perm -> System.out.println(perm.getName() + " : " + perm.getRawValue()));
-        infoMsg += "\n__**Member joined discord:**__ \n" + member.getTimeCreated();
-        channel.sendMessage(infoMsg).queue();
+        eb.setTitle("User Information");
+        eb.setThumbnail(member.getUser().getAvatarUrl());
+        eb.addField("__**Member name:**__", member.getEffectiveName(), false);
+        eb.addField("__**Member ID:**__", member.getId(), false);
+        eb.addField("__**Roles**__", roles, false);
+        eb.addField("__**Permissions:**__", member.getPermissions().toString(), false);
+        eb.addField("__**Member joined discord:**__", member.getTimeCreated().toString(), false);
+        eb.setColor(member.getColor());
+        channel.sendMessage(eb.build()).queue();
     }
     @Override
     public Permission getPerm() {
@@ -42,9 +47,10 @@ public class InfoCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
-        eb.setTitle("\uD83E\uDDB5 Moderation Module - Info \uD83E\uDDB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
+        eb.clear();
+        eb.setTitle("ℹ️ Moderation Module - Info ℹ️", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
         eb.setDescription("Show user information!");
-        eb.addField("<%info user>", "- Description Placeholder", true);
+        eb.addField("info [user]", "- Shows information about the user", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

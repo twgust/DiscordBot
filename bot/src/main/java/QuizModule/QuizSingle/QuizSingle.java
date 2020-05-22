@@ -8,6 +8,11 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.util.Random;
 
+/**
+ * QuizSingle is the Quiz Single Answer game
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuizSingle implements Runnable{
     private volatile boolean isRunning = false;
     private TextChannel channel;
@@ -31,6 +36,10 @@ public class QuizSingle implements Runnable{
         this.channel=channel;
     }
 
+    /**
+     * Starts the quiz game
+     * @param user The user calling the start method
+     */
     public void start(User user){
         if(!isRunning) {
             postMessage("Single-answer Quiz game was started by " + user.getName());
@@ -43,6 +52,10 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Stops the game
+     * @param user The user calling the stop method
+     */
     public void stop(User user){
         if(isRunning) {
             postMessage("Single-answer Quiz game was stopped by " + user.getName());
@@ -54,6 +67,10 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Skips a given question
+     * @param user The user calling the skip method
+     */
     public void skip(User user) {
         if(isRunning) {
             postMessage("The question was skipped by " + user.getName());
@@ -64,6 +81,10 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Checks if the quiz thread is running
+     * @return True or false
+     */
     public boolean isAlive(){
         return isRunning;
     }
@@ -113,6 +134,9 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Generates hints for the users
+     */
     private void generateHints(){
         if(hints == null){
             hintCounter = 0;
@@ -139,6 +163,10 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Returns a hint
+     * @return A hint, ex:B A _ _ U answer would be BASTU
+     */
     private String getHint(){
         String res = "";
         for(String s : hints){
@@ -152,6 +180,11 @@ public class QuizSingle implements Runnable{
         return res.toUpperCase();
     }
 
+    /**
+     * Check if a user's given answer is correct
+     * @param user Discord user Id
+     * @param message Discord User's message
+     */
     public void checkAnswer(User user, Message message){
         if(question != null) {
             if (message.getContentRaw().equalsIgnoreCase(question.getAnswer())) {
@@ -164,6 +197,10 @@ public class QuizSingle implements Runnable{
         }
     }
 
+    /**
+     * Posts a message in the channel where the quiz game is running
+     * @param message Outgoing message, ex: Posting a question
+     */
     private void postMessage(String message){
         if(channel != null) {
             eb.setTitle(message);

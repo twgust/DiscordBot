@@ -33,9 +33,10 @@ public class KickCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83E\uDDB5 Moderation Module - Kick \uD83E\uDDB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/BanKickModule");
         eb.setDescription("Kick Users!");
-        eb.addField("<Command Placeholder>", "- Description Placeholder", true);
+        eb.addField("kick [user]", "- Kicks the user from the server", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

@@ -1278,15 +1278,15 @@ public class LastFmCommand extends Command {
     @Override
     public EmbedBuilder getHelp() {
         eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
-        eb.setDescription("A lastFM music tracker");
-        eb.addField("<%fm set [username]>", "- Links the lastFM username with the discord user", true);
-        eb.addField("<%fm delete>", "- Removes any existing link between the discord user and any lastFM username", true);
-        eb.addField("<%fm [username]>", "- Shows the lastFm profile connected to the username", true);
-        eb.addField("<%fm nowplaying [username]>", "- Shows user activity", true);
-        eb.addField("<%fm recent (amount)>", "- Shows a list of the recent tracks played by the user", true);
-        eb.addField("<%fm toptracks (period) (trackamount)>", "- Shows a list of the top tracks for a given period", true);
-        eb.addField("<%fm topartists (period) (trackamount)>", "- Shows a list of top artists for given period", true);
-        eb.addField("<%fm youtube (username) / (DiscordUser)>", "- Gives youtube-links to the songs the user is listening to", true);
+        eb.setDescription("A lastFM music tracker!");
+        eb.addField("fm set [username]", "- Links the lastFM username with the discord user", true);
+        eb.addField("fm delete", "- Removes any existing link between the discord user and any lastFM username", true);
+        eb.addField("fm [username]", "- Shows the lastFm profile connected to the username", true);
+        eb.addField("fm nowplaying [username]", "- Shows user activity", true);
+        eb.addField("fm recent (amount)", "- Shows a list of the recent tracks played by the user", true);
+        eb.addField("fm toptracks (period) (trackamount)", "- Shows a list of the top tracks for a given period", true);
+        eb.addField("fm topartists (period) (trackamount)", "- Shows a list of top artists for given period", true);
+        eb.addField("fm youtube (username) / (DiscordUser)", "- Gives youtube-links to the songs the user is listening to", true);
         eb.addBlankField(false);
         eb.addField("Valid inputs", "- toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt", false);
         eb.addField("Valid periods", "week/7day/w, 1month/1m, 3month/3m, 6month/6m, 12month/12m, year/y, overall/alltime/at", false);

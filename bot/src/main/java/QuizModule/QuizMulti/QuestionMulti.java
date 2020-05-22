@@ -6,6 +6,11 @@ import QuizModule.QuizMulti.enums.QuizType;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * A question from multi answer game
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuestionMulti {
     private QuizDifficulty difficulty;
     private String question;

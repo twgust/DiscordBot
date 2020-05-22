@@ -15,26 +15,38 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
+/**
+ * QuizSingleParser is a JSON parser that retrieves question sheets from Open Trivia DB
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuizSingleParser {
     private String url;
     private HttpClient client;
 
 
-    //Constructor
+
     public QuizSingleParser(String url){
         client = HttpClientBuilder.create().build();
         this.url=url;
     }
 
+    /**
+     * Returns a question that has been parsed
+     * @return Question - QuestionSingle
+     */
     public QuestionSingle getQuestion(){
         return parse();
     }
 
-
+    /**
+     * Calls the API, which generates a new random question, that question is then retrieved and parsed into a string
+     * @return A Question - QuestionSingle Object
+     */
     private QuestionSingle parse(){
         try {
             HttpGet request = new HttpGet(url);
-            HttpResponse response = client.execute(request); //Retrieves json-file containing questions, from Open Trivia DB
+            HttpResponse response = client.execute(request);
             String json = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
             if(json.contains("*")){
                 return null;
@@ -53,7 +65,7 @@ public class QuizSingleParser {
         }
     }
 
-    //Create a new Question object
+
     private QuestionSingle createQuestion(Object object) {
         if (object instanceof JSONObject) {
             JSONObject jObj = (JSONObject) object;
@@ -69,7 +81,11 @@ public class QuizSingleParser {
     }
 
 
-    //Fixing formatting issues with json -> String and sets first letter to uppercase
+    /**
+     * Fixing JSON formatting issues
+     * @param unfixed An unfixed string
+     * @return Fixed string
+     */
     private String fixFormat(String unfixed){
         String fixed = unfixed.replace("&amp;", "&").replace("&quot;", "\"").replace("&#039;","'");
         fixed = Jsoup.parse(fixed).text();

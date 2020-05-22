@@ -1,5 +1,10 @@
 package QuizModule.QuizSingle;
 
+/**
+ * A question from single answer game
+ * @author Carl Johan Helgstrand
+ * @version 1.0
+ */
 public class QuestionSingle {
     private long id;
     private String answer;

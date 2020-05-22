@@ -288,10 +288,11 @@ public class WeatherCommand extends Command{
 
     @Override
     public EmbedBuilder getHelp() {
-        eb.setTitle("☁️ Quiz Module ☁", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/WeatherModule");
+        eb.clear();
+        eb.setTitle("☁ Quiz Module ☁", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/WeatherModule");
         eb.setDescription("Shows the weather!");
-        eb.addField("<%weather [city]>", "- Shows the current weather reported at given city", false);
-        eb.addField("<%weather [city, countrycode]>", "- Shows the current weather reported at given city, \n with specification to which country the city belongs to", false);
+        eb.addField("weather [city]>", "- Shows the current weather reported at given city", false);
+        eb.addField("weather [city, countrycode]>", "- Shows the current weather reported at given city, \n with specification to which country the city belongs to", false);
         eb.setFooter("DM Robic#2351 if you have suggestions");
         eb.setColor(Color.WHITE);
         return eb;

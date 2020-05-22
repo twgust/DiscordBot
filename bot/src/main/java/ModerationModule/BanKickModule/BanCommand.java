@@ -35,9 +35,10 @@ public class BanCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83D\uDC80 Moderation Module - Ban \uD83D\uDC80", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/BanKickModule");
-        eb.setDescription("Kick Users!");
-        eb.addField("<Command Placeholder>", "- Description Placeholder", true);
+        eb.setDescription("Ban Users!");
+        eb.addField("ban [user]", "- Ban user from the server", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

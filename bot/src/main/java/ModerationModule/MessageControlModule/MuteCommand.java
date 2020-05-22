@@ -45,9 +45,10 @@ public class MuteCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83D\uDC80 Moderation Module - Mute \uD83D\uDC80", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/MessageControlModule");
         eb.setDescription("Mute Users!");
-        eb.addField("<Command Placeholder>", "- Description Placeholder", true);
+        eb.addField("mute [user]", "- Mute the user", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

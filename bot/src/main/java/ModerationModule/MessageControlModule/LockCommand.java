@@ -28,9 +28,10 @@ public class LockCommand extends ModCommand {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83D\uDC80 Moderation Module - Lock \uD83D\uDC80", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/MessageControlModule");
         eb.setDescription("Lock channels!");
-        eb.addField("<%lock>", "- Locks the current channel", true);
+        eb.addField("lock", "- Locks the current channel", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;

@@ -14,6 +14,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.*;
 import java.util.AbstractMap;
 
+/**
+ * QuizCommand is a command that will launch a quiz game. The game is either single-answer or multi-answer based
+ * @author Carl Johan Helgstrand
+ * @version 2.0
+ */
 public class QuizCommand extends Command {
     private QuizSQLConnector dbConnection = new QuizSQLConnector();
     private QuizSingle quizS = new QuizSingle();
@@ -21,9 +26,14 @@ public class QuizCommand extends Command {
     private TextChannel channel;
     private EmbedBuilder eb = new EmbedBuilder();
 
-
+    /**
+     * Execute method that handles all interaction between user and the game
+     * @param event A Discord event such as a message being sent by a user
+     */
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        eb.clear();
+        eb.setColor(Color.RED);
         channel = event.getChannel();
         quizS.setTextChannel(channel);
         quizS.setDatabaseConnection(dbConnection);
@@ -91,6 +101,10 @@ public class QuizCommand extends Command {
 
     }
 
+    /**
+     * Special method that will track user activity while a quiz game is running to gather answers
+     * @param event A Discord event such as a message being sent by a user
+     */
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.getChannel().equals(channel) && !event.getAuthor().isBot()) {
@@ -109,21 +123,32 @@ public class QuizCommand extends Command {
         }
     }
 
+    /**
+     * Retrieves the user's current points
+     * @param user A Discord user
+     * @return Returns the number of points
+     */
     private int getPoints(User user){
         return dbConnection.getPoints(user.getId());
     }
 
+    /**
+     * A special event that will get called when a user types the quiz command without parameter. It
+     * will show the user how to use the module
+     * @return The help message made with an EmbedBuilder
+     */
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("❓ Quiz Module ❓", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/QuizModule");
         eb.setDescription("A trivia game!");
-        eb.addField("<%quiz start single >", "- Starts a single answer game", true);
-        eb.addField("<%quiz stop single>", "- Stops a single answer game", true);
-        eb.addField("<%quiz skip>", "- Skips a question in a single answer game", false);
-        eb.addField("<%quiz start multi>", "- Starts a multi answer game", true);
-        eb.addField("<%quiz stop multi>", "- Stops a multi answer game", true);
-        eb.addField("<%quiz points>", "- Shows your global points", true);
-        eb.addField("<%quiz highscore>", "- shows the highest score", true);
+        eb.addField("quiz start single", "- Starts a single answer game", true);
+        eb.addField("quiz stop single", "- Stops a single answer game", true);
+        eb.addField("quiz skip", "- Skips a question in a single answer game", false);
+        eb.addField("quiz start multi", "- Starts a multi answer game", true);
+        eb.addField("quiz stop multi", "- Stops a multi answer game", true);
+        eb.addField("quiz points", "- Shows your global points", true);
+        eb.addField("quiz highscore", "- shows the highest score", true);
         eb.setFooter("DM Johs#7898 if you have suggestions");
         eb.setColor(Color.RED);
         return eb;
