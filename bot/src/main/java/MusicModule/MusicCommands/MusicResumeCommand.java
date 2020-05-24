@@ -3,18 +3,31 @@ package MusicModule.MusicCommands;
 import Commands.Command;
 import MusicModule.*;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
+
 public class MusicResumeCommand extends Command {
-    private MusicController controller;
+    private MusicController musicController;
 
     public MusicResumeCommand(MusicController controller){
-        this.controller = controller;
+        this.musicController = controller;
     }
+
     @Override
     public void execute(GuildMessageReceivedEvent event){
-        controller.getPlayer().setPaused(false);
-        event.getChannel().sendMessage("```Music has been resumed!```").queue();
+        musicController.getPlayer().setPaused(false);
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.YELLOW);
+        builder.setTitle(" Resumed playing: " +
+                musicController.getPlayer().getPlayingTrack().getInfo().title + " ! "
+                ,
+                musicController.getPlayer().getPlayingTrack().getInfo().uri);
+        builder.setFooter("%music for help");
+
+        event.getChannel().sendMessage(builder.build()).queue();
+
     }
 
 }

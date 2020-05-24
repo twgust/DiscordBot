@@ -4,31 +4,37 @@ import Commands.Command;
 import MusicModule.*;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
 import java.util.Iterator;
 
 public class MusicQueueCommand extends Command {
-  private MusicController controller;
+  private MusicController musicController;
 
 
-  public MusicQueueCommand(MusicController controller){
-      this.controller = controller;
+  public MusicQueueCommand(MusicController musicController){
+    this.musicController = musicController;
   }
 
   @Override
   public void execute(GuildMessageReceivedEvent event){
-    Iterator<AudioTrack> itr = controller.getScheduler().getQueue().iterator();
-    String str = "\nCurrent Queue: " + controller.getScheduler().getQueue().size() + "\n";
-
+    Iterator<AudioTrack> itr = musicController.getScheduler().getQueue().iterator();
+    String str = "\n" +  "\n";
+    int i = 1;
+    str += "Now playing: " + musicController.getPlayer().getPlayingTrack().getInfo().title + "\n";
     while(itr.hasNext()){
-      str += itr.next().getInfo().title +"\n";
+
+      str +=  i + ") " + itr.next().getInfo().title +"\n";
+      i++;
     }
 
-    event.getChannel().sendMessage("```"
-            + str
-            + "\nNow playing: " + controller.getPlayer().getPlayingTrack().getInfo().title
-            + "\nLink: " + controller.getPlayer().getPlayingTrack().getInfo().uri
-            + "``` ... More commands related to queue coming").queue();
+    EmbedBuilder builder = new EmbedBuilder();
+    builder.setColor(Color.YELLOW);
+    builder.setTitle("Current queue: ");
+    builder.setDescription(str);
+    builder.setFooter("%music for help");
+    event.getChannel().sendMessage(builder.build()).queue();
   }
 }
