@@ -87,15 +87,17 @@ public class Controller {
                 int needHelp = event.getMessage().getContentRaw().indexOf(" ");
                 if (needHelp == -1 && !arguments[0].equalsIgnoreCase("hello") && !arguments[0].equalsIgnoreCase("lock")
                         && !arguments[0].equalsIgnoreCase("unlock") && !arguments[0].equalsIgnoreCase("goodbye")
-                        && !arguments[0].equalsIgnoreCase("ping")
-                        && !arguments[0].equalsIgnoreCase("queue") && !arguments[0].equalsIgnoreCase("skip")
-                        && !arguments[0].equalsIgnoreCase("pause") && !arguments[0].equalsIgnoreCase("resume")
-                        && !arguments[0].equalsIgnoreCase("play") && !arguments[0].equalsIgnoreCase("current")
+                        && !arguments[0].equalsIgnoreCase("ping") && !arguments[0].equalsIgnoreCase("queue")
+                        && !arguments[0].equalsIgnoreCase("skip") && !arguments[0].equalsIgnoreCase("pause")
+                        && !arguments[0].equalsIgnoreCase("resume") && !arguments[0].equalsIgnoreCase("play")
+                        && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
                         && !arguments[0].equalsIgnoreCase("profile") && !arguments[0].equalsIgnoreCase("weather")
-                        && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")){
-
-                    event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp().build()).queue();
+                        && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")
+                        && !arguments[0].equalsIgnoreCase("oldmusic") && !arguments[0].equalsIgnoreCase("wallet")
+                        && !arguments[0].equalsIgnoreCase("music")
+                        && !arguments[0].equalsIgnoreCase("stop")){
+                        event.getChannel().sendMessage(((Command) cmdMap.get(arguments[0])).getHelp().build()).queue();
                     return;
                 }
                 arguments[0] = arguments[0].toLowerCase();
@@ -114,6 +116,8 @@ public class Controller {
         cmdMap.put("weather", new WeatherCommand());
         cmdMap.put("prefix", new PrefixCommand());
         cmdMap.put("fm", new LastFmCommand(waiter, musicController));
+
+        //music commands
         cmdMap.put("queue", new MusicQueueCommand(musicController));
         cmdMap.put("skip", new MusicSkipCommand(musicController));
         cmdMap.put("pause", new MusicPauseCommand(musicController));
@@ -123,9 +127,10 @@ public class Controller {
         cmdMap.put("playing", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
-        cmdMap.put("music", new MusicCommand());
-
-        cmdMap.put("embedtest", new MusicEmbedBuilderTest());
+        //deprecated command, only used for displaying differences between embedded and normal message
+        cmdMap.put("oldmusic", new MusicCommand());
+        cmdMap.put("music", new MusicHelp());
+        cmdMap.put("stop", new MusicStopCommand(musicController));
 
 
 

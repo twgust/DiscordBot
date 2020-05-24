@@ -6,13 +6,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
 
-public class MusicEmbedBuilderTest extends Command {
+public class MusicHelp extends Command {
     private EmbedBuilder embedBuilder;
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Music Module", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/MusicModule");
+        embedBuilder.setColor(Color.YELLOW);
+        embedBuilder.setTitle("Music Module 🎶", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/MusicModule");
         embedBuilder.setDescription("https://github.com/twgust/");
         embedBuilder.addField("%play <song>", "plays a song", true);
         embedBuilder.addField("%skip", "skips", true);
@@ -21,18 +22,9 @@ public class MusicEmbedBuilderTest extends Command {
         embedBuilder.addField("%pause", "pauses the music", true);
         embedBuilder.addField("%resume", "resumes the music", true);
         embedBuilder.addField("%search <song>", "searches youtube and returns results", false);
-        embedBuilder.setImage("https://i.imgur.com/pD8Pf2y.gif");
+        embedBuilder.setImage("https://i.imgur.com/Z2DZ2p5.jpg");
+        //embedBuilder.setImage("https://i.imgur.com/pD8Pf2y.gif");
         embedBuilder.setFooter("DM @Goose#0068 for support");
-
-        /*
-        embedBuilder.setColor(Color.RED);
-        embedBuilder.setTitle("EmbedBuilderTest");
-        embedBuilder.setDescription("description");
-        embedBuilder.setThumbnail("https://i.imgur.com/lDWuMVz.gif");
-        embedBuilder.setFooter("footer");
-        embedBuilder.setAuthor("author: " + event.getAuthor().getName());
-        embedBuilder.setImage("https://i.imgur.com/lDWuMVz.gif");
-         */
 
         event.getChannel().sendMessage(embedBuilder.build()).queue();
     }

@@ -4,23 +4,30 @@ import Commands.Command;
 import MusicModule.*;
 
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.awt.*;
+
 public class MusicSkipCommand extends Command {
-    private MusicController controller;
+    private MusicController musicController;
 
 
-    public MusicSkipCommand(MusicController controller){
-        this.controller = controller;
-
+    public MusicSkipCommand(MusicController musicController){
+        this.musicController = musicController;
     }
+
     @Override
     public void execute(GuildMessageReceivedEvent event){
-        String songTitle = controller.getPlayer().getPlayingTrack().getInfo().title;
-        String songURI = controller.getPlayer().getPlayingTrack().getInfo().uri;
-        String formatedSongTitle = ("```Song: " + songTitle + " has beeen skipped```");
-        event.getChannel().sendMessage(formatedSongTitle).queue();
+        String songTitle = musicController.getPlayer().getPlayingTrack().getInfo().title;
+        String songURI = musicController.getPlayer().getPlayingTrack().getInfo().uri;
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.YELLOW);
+        builder.setTitle("Skipped: " +
+                songTitle + " 👻", songURI);
+        builder.setFooter("%music for help");
 
-        controller.getScheduler().nextTrack();
+        event.getChannel().sendMessage(builder.build()).queue();
+        musicController.getScheduler().nextTrack();
     }
 }
