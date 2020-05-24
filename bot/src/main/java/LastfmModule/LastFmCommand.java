@@ -1277,6 +1277,7 @@ public class LastFmCommand extends Command {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
         eb.setDescription("A lastFM music tracker!");
         eb.addField("fm set [username]", "- Links the lastFM username with the discord user", true);
