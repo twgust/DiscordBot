@@ -1546,19 +1546,19 @@ public class LastFmCommand extends Command {
     public EmbedBuilder getHelp() {
         eb.clear();
         eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
-        eb.setDescription("A lastFM music tracker! \n" +
+        eb.setDescription("A lastFM music tracker!\n" +
                 "Arguments in [brackets] are mandatory, arguments in (parenthesis) are not.");
-        eb.addField("fm set [username]", "- Links (username) with discord account", true);
-        eb.addField("fm delete", "- Unlinks username", true);
-        eb.addField("fm profile (username)", "- Shows last fm profile", true);
-        eb.addField("fm nowplaying (username)", "- Shows user activity", true);
-        eb.addField("fm recent (amount)", "- Shows a list of the recent tracks played by the user", true);
-        eb.addField("fm toptracks (period) (trackamount)", "- Shows a list of the top tracks for a given period", true);
-        eb.addField("fm topartists (period) (trackamount)", "- Shows a list of top artists for given period", true);
-        eb.addField("fm youtube (username) / (DiscordUser)", "- Gives youtube-links to the songs the user is listening to", true);
+        eb.addField("`fm set [username]`", "- Links (username) with discord account", true);
+        eb.addField("`fm delete`", "- Unlinks username", true);
+        eb.addField("`fm profile (username)`", "- Shows last fm profile", true);
+        eb.addField("`fm nowplaying (username)`", "- Shows user activity", true);
+        eb.addField("`fm recent (amount)`", "- Shows a list of the recent tracks played by the user", true);
+        eb.addField("`fm toptracks (period) (trackamount)`", "- Shows a list of the top tracks for a given period", true);
+        eb.addField("`fm topartists (period) (trackamount)`", "- Shows a list of top artists for given period", true);
+        eb.addField("`fm youtube (username) / (DiscordUser)`", "- Gives youtube-links to the songs the user is listening to", true);
         eb.addBlankField(false);
-        eb.addField("Valid inputs", "- toptracks = tt, topartists = ta, nowplaying = np, recent = rt, youtube = yt, profile = p", false);
-        eb.addField("Valid periods", "week/7day/w, 1month/1m, 3month/3m, 6month/6m, 12month/12m, year/y, overall/alltime/at", false);
+        eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
+        eb.addField("Valid periods", "Week: `week`/`7day`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
         eb.setFooter("DM Robic#2351 if you have suggestions");
         eb.setColor(Color.RED);
         return eb;

@@ -30,10 +30,12 @@ import WeatherModule.WeatherSQL;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
 import javax.security.auth.login.LoginException;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 
@@ -65,6 +67,7 @@ public class Controller {
         jda.addEventListener(new LastFmCommand(waiter, musicController));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
+        jda.getPresence().setActivity(Activity.playing("ANY PEPEGAS? Pepega Clap"));
         addCommands();
     }
 
