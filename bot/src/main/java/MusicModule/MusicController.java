@@ -206,13 +206,14 @@ public class MusicController extends Command {
                 connectToVoiceChannels(server.getAudioManager(), user);
                 AudioTrack track = playlist.getTracks().get(0);
 
+                StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
+                String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
+                String jpg = stringBuilder.toString();
+
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, user);
 
                     EmbedBuilder builder = new EmbedBuilder();
-                    StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
-                    String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
-                    String jpg = stringBuilder.toString();
 
                     builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription(timeFormatting(track.getInfo().length));
@@ -226,14 +227,13 @@ public class MusicController extends Command {
                     scheduler.addToQueue(track, user);
 
                     EmbedBuilder builder = new EmbedBuilder();
-                    StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
-                    String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
-                    String jpg = stringBuilder.toString();
 
                     builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription("Position in queue: " + scheduler.getQueue().size());
                     builder.setImage(youtubeImageUrl);
                     builder.setColor(Color.YELLOW);
+                    builder.setFooter("%music for help");
+
                     event.getChannel().sendMessage(builder.build()).queue();
                 }
             }
