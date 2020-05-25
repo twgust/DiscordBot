@@ -786,10 +786,9 @@ public class LastFmCommand extends Command {
                     System.out.println(Arrays.deepToString(tracks));
                     int length = tracks.length;
                     int counter = 1;
-                    ArrayList<String> list = new ArrayList<>();
                     for (int i = 0; i < length; i++){
                         String song = tracks[i][0] + " " + tracks[i][1];
-                        list.add(song);
+                        musicController.lastFMTrackLoader(song, event.getMember(), event);
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
                         if(counter == length+1){
