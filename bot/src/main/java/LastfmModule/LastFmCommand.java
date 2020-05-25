@@ -2,13 +2,10 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
-import MusicModule.AudioPlayerSendHandler;
 import MusicModule.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import org.apache.xerces.parsers.DOMParser;
@@ -19,11 +16,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +28,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 public class LastFmCommand extends Command {
     private long start;
@@ -792,7 +786,7 @@ public class LastFmCommand extends Command {
                     int length = tracks.length;
                     int counter = 1;
                     for (int i = 0; i < length; i++){
-                        musicController.loadMusic(tracks[i][2], event.getMember(), event);
+                        musicController.youtubeTrackLoaded(tracks[i][2], event.getMember(), event);
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
                         if(counter == length+1){

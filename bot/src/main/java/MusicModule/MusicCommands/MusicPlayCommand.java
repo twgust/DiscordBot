@@ -21,10 +21,17 @@ public class MusicPlayCommand extends Command {
         Member user = message.getMember();
         String messageRaw = message.getContentRaw();
 
+        //String manipulation to get identifier
         String[] array = messageRaw.split(" ", 2);
         String substring = messageRaw.substring(6);
 
-        musicController.loadMusic("ytsearch:" + substring, user, event);
+        //debug
+        System.out.println("IDENTIFIER: " + substring);
+
+        if(substring.contains("/playlist")){
+            musicController.youtubeTrackLoaded(substring, user, event);
+        }
+        musicController.youtubeTrackLoaded("ytsearch:" + substring, user, event);
 
 
     }
