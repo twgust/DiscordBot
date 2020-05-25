@@ -44,16 +44,16 @@ public class LastFmTopTracksParserMusic {
             JSONObject trackinfo = new JSONObject(responsebody);
             JSONObject toptracks = trackinfo.getJSONObject("toptracks");
             JSONArray tracks = toptracks.getJSONArray("track");
-            String[][] result = new String[tracks.length()][4];
+            String[][] result = new String[tracks.length()][2];
             //System.out.println(tracks);
 
             for (int i = 0; i < tracks.length(); i++) {
                 JSONObject json = tracks.getJSONObject(i);
                 String artistname = json.getJSONObject("artist").getString("name");
                 String trackname = json.getString("name");
-                result[i][2] = "https://www.youtube.com";
+                //result[i][2] = "https://www.youtube.com";
                 //String playcount = json.getString("playcount");
-                String tracklink = json.getString("url");
+                //String tracklink = json.getString("url");
                 //String rank = json.getJSONObject("@attr").getString("rank");
 
 
@@ -61,48 +61,12 @@ public class LastFmTopTracksParserMusic {
                 result[i][0] = artistname;
                 result[i][1] = trackname;
 
-                result[i][3] = tracklink;
+                //result[i][3] = tracklink;
                 //result[i][4] = playcount;
 
                 //test if results work
 
-                try {
-                    Document doc = Jsoup.connect(tracklink).userAgent("Chrome").get();
-                    Elements images = doc.getElementsByClass("js-video-preview-playlink");
-                   // System.out.println(images.toString());
 
-                    String link = images.get(0).getElementsByTag("a").toString();
-                    link = link.replace("data-single-track", "data-single-track=''");
-                    InputSource is = new InputSource(new StringReader(link));
-                    DOMParser dp = new DOMParser();
-                    dp.parse(is);
-                    org.w3c.dom.Document document = dp.getDocument();
-                    NodeList nl = document.getElementsByTagName("a");
-                    Node n = nl.item(0);
-                    NamedNodeMap nnm = n.getAttributes();
-                    link = nnm.getNamedItem("href").getFirstChild().getTextContent();
-                    result[i][2] = link;
-                    System.out.println(link);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    try{
-                        Document doc = Jsoup.connect("https://www.youtube.com/results?search_query=" +artistname + "+"+trackname).userAgent("Chrome").get();
-                        Elements images = doc.getElementsByClass("yt-lockup-title");
-                        String link = images.get(0).getElementsByTag("a").toString();
-                        InputSource is = new InputSource(new StringReader(link));
-                        DOMParser dp = new DOMParser();
-                        dp.parse(is);
-                        org.w3c.dom.Document document = dp.getDocument();
-                        NodeList nl = document.getElementsByTagName("a");
-                        Node n = nl.item(0);
-                        NamedNodeMap nnm = n.getAttributes();
-                        link = nnm.getNamedItem("href").getFirstChild().getTextContent();
-                        System.out.println(link);
-                        result[i][2] += link;
-                    } catch (Exception e1){
-                        e1.printStackTrace();
-                    }
 
                 }
                 /*
@@ -134,7 +98,7 @@ public class LastFmTopTracksParserMusic {
             System.out.println(result[i][4]);
 
              */
-            }
+
 
 
 

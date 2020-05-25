@@ -1547,7 +1547,9 @@ public class LastFmCommand extends Command {
         eb.clear();
         eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
         eb.setDescription("A lastFM music tracker!\n" +
-                "Arguments in [brackets] are mandatory, arguments in (parenthesis) are not.");
+                "Arguments in `[brackets]` are mandatory, arguments in `(parenthesis)` are not.");
+        eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
+        eb.addField("Valid periods", "Week: `week`/`7day`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
         eb.addField("`fm set [username]`", "- Links (username) with discord account", true);
         eb.addField("`fm delete`", "- Unlinks username", true);
         eb.addField("`fm profile (username)`", "- Shows last fm profile", true);
@@ -1557,8 +1559,7 @@ public class LastFmCommand extends Command {
         eb.addField("`fm topartists (period) (trackamount)`", "- Shows a list of top artists for given period", true);
         eb.addField("`fm youtube (username) / (DiscordUser)`", "- Gives youtube-links to the songs the user is listening to", true);
         eb.addBlankField(false);
-        eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
-        eb.addField("Valid periods", "Week: `week`/`7day`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
+
         eb.setFooter("DM Robic#2351 if you have suggestions");
         eb.setColor(Color.RED);
         return eb;

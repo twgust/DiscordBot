@@ -95,7 +95,7 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("resume") && !arguments[0].equalsIgnoreCase("play")
                         && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
-                        && !arguments[0].equalsIgnoreCase("profile") && !arguments[0].equalsIgnoreCase("weather")
+                        && !arguments[0].equalsIgnoreCase("profile")
                         && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")
                         && !arguments[0].equalsIgnoreCase("oldmusic") && !arguments[0].equalsIgnoreCase("wallet")
                         && !arguments[0].equalsIgnoreCase("music")
