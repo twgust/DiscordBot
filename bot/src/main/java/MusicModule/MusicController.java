@@ -35,6 +35,8 @@ public class MusicController {
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
     private AudioPlayerSendHandler audioPlayerSendHandler;
+
+    private ArrayList<AudioTrack> lastFMTracks;
     private ArrayList<AudioTrack> listOfTracks;
 
     /**
@@ -221,6 +223,44 @@ public class MusicController {
             @Override
             public void loadFailed(FriendlyException exception) {
                 event.getChannel().sendMessage(exception.getMessage()).queue();
+            }
+        });
+    }
+    public void lastFMTrackLoader(String identifier, Member member, GuildMessageReceivedEvent event, ArrayList<AudioTrack> tracks){
+        EmbedBuilder builder = new EmbedBuilder();
+
+        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+                System.out.println(1);
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                connectToVoiceChannels(server.getAudioManager(), member);
+                AudioTrack track = audioPlaylist.getTracks().get(0);
+                scheduler.addToQueue(track, member);
+                builder.setTitle("Queued LastFM Top 5 tracks !");
+                builder.addField(tracks.get(0).getInfo().title, "Duration" +
+                        timeFormatting(tracks.get(0).getDuration()), false);
+                builder.addField(tracks.get(1).getInfo().title, "Duration" +
+                        timeFormatting(tracks.get(1).getDuration()), false);
+                builder.addField(tracks.get(2).getInfo().title, "Duration" +
+                        timeFormatting(tracks.get(2).getDuration()), false);
+                builder.addField(tracks.get(3).getInfo().title, "Duration" +
+                        timeFormatting(tracks.get(3).getDuration()), false);
+                builder.addField(tracks.get(4).getInfo().title, "Duration" +
+                        timeFormatting(tracks.get(4).getDuration()), false);
+            }
+
+            @Override
+            public void noMatches() {
+
+            }
+
+            @Override
+            public void loadFailed(FriendlyException e) {
+
             }
         });
     }
