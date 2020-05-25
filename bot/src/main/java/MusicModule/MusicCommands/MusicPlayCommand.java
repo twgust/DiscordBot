@@ -27,10 +27,16 @@ public class MusicPlayCommand extends Command {
 
         //debug
         System.out.println("IDENTIFIER: " + substring);
+        if(substring.contains("youtube") || substring.contains("youtu.be")){
+            if(substring.contains("/playlist")){
+                musicController.youtubeTrackLoaded(substring, user, event);
+            }
+            else {
+                musicController.youtubeTrackLoaded(substring, user, event);
+            }
 
-        if(substring.contains("/playlist")){
-            musicController.youtubeTrackLoaded(substring, user, event);
         }
+
         musicController.youtubeTrackLoaded("ytsearch:" + substring, user, event);
 
 

@@ -54,7 +54,6 @@ public class MusicController {
 
     }
 
-
     /**
      * Connects to voice channels with priority:
      * Users current voice channel (if it exists)
@@ -144,12 +143,15 @@ public class MusicController {
         EmbedBuilder builder = new EmbedBuilder();
         Guild server = member.getGuild();
         server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
-
+        builder.setColor(Color.YELLOW);
+        builder.setFooter("%music for help");
+        
         if (member.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         }
 
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            //metoden som robert kallar i lastFM
             @Override
             public void trackLoaded(AudioTrack track) {
                 connectToVoiceChannels(server.getAudioManager(), member);
@@ -157,10 +159,9 @@ public class MusicController {
 
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, member);
-                    event.getChannel().sendMessage("now").queue();
                 } else if (player.getPlayingTrack() != null) {
                     scheduler.addToQueue(track, member);
-                    event.getChannel().sendMessage("```" + track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
+
                 }
             }
 
@@ -186,8 +187,6 @@ public class MusicController {
                         builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                         builder.setDescription(timeFormatting(track.getInfo().length));
                         builder.setImage(youtubeImageUrl);
-                        builder.setColor(Color.YELLOW);
-                        builder.setFooter("%music for help");
                         event.getChannel().sendMessage(builder.build()).queue();
                         builder.clear();
                     }
@@ -195,8 +194,7 @@ public class MusicController {
                         builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                         builder.setDescription("Position in queue: " + scheduler.getQueue().size());
                         builder.setImage(youtubeImageUrl);
-                        builder.setColor(Color.YELLOW);
-                        builder.setFooter("%music for help");
+
                         event.getChannel().sendMessage(builder.build()).queue();
                         builder.clear();
                     }
@@ -206,8 +204,7 @@ public class MusicController {
                     builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription(timeFormatting(track.getInfo().length));
                     builder.setImage(youtubeImageUrl);
-                    builder.setColor(Color.YELLOW);
-                    builder.setFooter("%music for help");
+
                     event.getChannel().sendMessage(builder.build()).queue();
                     builder.clear();
 
@@ -216,15 +213,13 @@ public class MusicController {
                     builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription("Position in queue: " + scheduler.getQueue().size());
                     builder.setImage(youtubeImageUrl);
-                    builder.setColor(Color.YELLOW);
-                    builder.setFooter("%music for help");
                     event.getChannel().sendMessage(builder.build()).queue();
                     builder.clear();
                 }
             }
             @Override
             public void noMatches() {
-                event.getChannel().sendMessage("current syntax: %play <youtube-url>").queue();
+                event.getChannel().sendMessage("No matches, Use %play [song title/link]").queue();
             }
             @Override
             public void loadFailed(FriendlyException exception) {
@@ -267,7 +262,6 @@ public class MusicController {
     public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
 
     }
-
     public AudioPlayerSendHandler getAudioPlayerSendHandler() {
         return audioPlayerSendHandler;
     }
