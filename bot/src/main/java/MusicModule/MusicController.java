@@ -239,7 +239,9 @@ public class MusicController {
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 connectToVoiceChannels(server.getAudioManager(), member);
                 AudioTrack track = audioPlaylist.getTracks().get(0);
-                scheduler.addToQueue(track, member);
+                for (int i = 0; i <audioPlaylist.getTracks().size() ; i++) {
+                    scheduler.addToQueue(audioPlaylist.getTracks().get(i),member);
+                }
                 builder.setTitle("Queued LastFM Top 5 tracks !");
                 builder.addField(tracks.get(0).getInfo().title, "Duration" +
                         timeFormatting(tracks.get(0).getDuration()), false);
