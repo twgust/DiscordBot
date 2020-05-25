@@ -145,7 +145,7 @@ public class MusicController {
         server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
         builder.setColor(Color.YELLOW);
         builder.setFooter("%music for help");
-        
+
         if (member.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         }
@@ -165,16 +165,13 @@ public class MusicController {
                 }
             }
 
-            /**
-             * This method is invoked with the ytsearch identifier because youtube loads 30~ tracks.
-             * For now it  will only load the first track of the search results,
-             * if "AudioTrack track = playlist.getTracks().get(0);" is not there it will load and queue
-             * 30~ of the same tracks when the user uses the command %play "I'm on fire"
-             */
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 connectToVoiceChannels(server.getAudioManager(), member);
+
+                //for youtube search
                 AudioTrack track = playlist.getTracks().get(0);
+
                 StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
                 String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
                 String jpg = stringBuilder.toString();
@@ -219,7 +216,7 @@ public class MusicController {
             }
             @Override
             public void noMatches() {
-                event.getChannel().sendMessage("No matches, Use %play [song title/link]").queue();
+                event.getChannel().sendMessage("No matches, Use %play [song title/URL]").queue();
             }
             @Override
             public void loadFailed(FriendlyException exception) {
