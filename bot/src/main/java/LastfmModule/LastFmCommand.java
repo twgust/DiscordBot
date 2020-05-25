@@ -67,16 +67,15 @@ public class LastFmCommand extends Command {
         setMessageReceived(event.getMessage().getContentRaw());
         setMessageReceivedArr(getMessageReceived().split(" "));
         LastFmSQL sql1 = new LastFmSQL();
-
+        /*
         if (getMessageReceivedArr().length == 1) {
             executeProfileSelf(sql1, event);
-        } else if (getMessageReceivedArr().length == 2) {
+        } else*/
+        if (getMessageReceivedArr().length == 2) {
             if (getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
                 topTracks(getDiscordID(), 10, "7day", event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
                 topArtists(getDiscordID(), 10, "7day", event, sql1);
-            } else if (getMessageReceivedArr()[1].contains("<@!")) {
-                executeProfileTagged(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("delete") || getMessageReceivedArr()[1].equalsIgnoreCase("del") || getMessageReceivedArr()[1].equalsIgnoreCase("remove")) {
                 deleteUsernameInSQL(getDiscordID(), event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")) {
@@ -87,7 +86,10 @@ public class LastFmCommand extends Command {
                 getChartAlbum(getDiscordID(), 3, "7day", event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("youtube") || getMessageReceivedArr()[1].equalsIgnoreCase("yt")) {
                 executeYoutubeSelf(sql1, event);
-            } else {
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")){
+                executeProfileSelf(sql1, event);
+            }
+            else {
                 executeProfile(sql1, event);
             }
 
@@ -104,9 +106,11 @@ public class LastFmCommand extends Command {
                 executeChart(sql1, event, "7day");
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("youtube") || getMessageReceivedArr()[1].equalsIgnoreCase("yt")) {
                 executeYouTubeUsername(sql1, event, getMessageReceivedArr()[2]);
-            } else {
-                sql1.closeConnection();
-                event.getChannel().sendMessage(wrongFormatMessage).queue();
+            } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")) && getMessageReceivedArr()[2].contains("<@!")) {
+                executeProfileTagged(sql1, event);
+            }
+            else {
+                executeProfile(sql1, event);
             }
 
         } else if (getMessageReceivedArr().length == 4) {
@@ -1091,9 +1095,9 @@ public class LastFmCommand extends Command {
     }
 
     public void executeProfile(LastFmSQL sql, GuildMessageReceivedEvent event) {
-        if (checkIfUserExist(getMessageReceivedArr()[1])) {
+        if (checkIfUserExist(getMessageReceivedArr()[2])) {
             //sql.closeConnection();
-            getProfile(event, sql, getMessageReceivedArr()[1]);
+            getProfile(event, sql, getMessageReceivedArr()[2]);
         } else {
             event.getChannel().sendMessage("```❌ Username '" + getMessageReceivedArr()[1] + "' does not exist ❌```").queue();
             sql.closeConnection();
