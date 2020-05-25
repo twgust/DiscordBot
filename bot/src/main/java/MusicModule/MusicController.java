@@ -35,7 +35,7 @@ public class MusicController {
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
     private AudioPlayerSendHandler audioPlayerSendHandler;
-
+    EmbedBuilder builderLastFM = new EmbedBuilder();
     private ArrayList<AudioTrack> lastFMTracks;
     private ArrayList<AudioTrack> listOfTracks;
 
@@ -226,33 +226,28 @@ public class MusicController {
             }
         });
     }
-    public void lastFMTrackLoader(String identifier, Member member, GuildMessageReceivedEvent event, ArrayList<AudioTrack> tracks){
-        EmbedBuilder builder = new EmbedBuilder();
+    public void lastFMTrackLoader(String identifier, Member member, GuildMessageReceivedEvent event){
+
+        builderLastFM.setTitle("LastFM top 5 tracks queued");
+        builderLastFM.setColor(Color.YELLOW);
+        builderLastFM.setFooter("Parprogrammering poggers");
+
 
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                System.out.println(1);
+                lastFMTracks.add(audioTrack);
+                if(lastFMTracks.size() == 5){
+                    for (int i = 0; i < lastFMTracks.size(); i++) {
+                        scheduler.addToQueue(lastFMTracks.get(i), member);
+                    }
+                    connectToVoiceChannels(server.getAudioManager(), member);
+
+                }
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                connectToVoiceChannels(server.getAudioManager(), member);
-                AudioTrack track = audioPlaylist.getTracks().get(0);
-                for (int i = 0; i <audioPlaylist.getTracks().size() ; i++) {
-                    scheduler.addToQueue(audioPlaylist.getTracks().get(i),member);
-                }
-                builder.setTitle("Queued LastFM Top 5 tracks !");
-                builder.addField(tracks.get(0).getInfo().title, "Duration" +
-                        timeFormatting(tracks.get(0).getDuration()), false);
-                builder.addField(tracks.get(1).getInfo().title, "Duration" +
-                        timeFormatting(tracks.get(1).getDuration()), false);
-                builder.addField(tracks.get(2).getInfo().title, "Duration" +
-                        timeFormatting(tracks.get(2).getDuration()), false);
-                builder.addField(tracks.get(3).getInfo().title, "Duration" +
-                        timeFormatting(tracks.get(3).getDuration()), false);
-                builder.addField(tracks.get(4).getInfo().title, "Duration" +
-                        timeFormatting(tracks.get(4).getDuration()), false);
             }
 
             @Override
