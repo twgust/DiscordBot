@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -785,21 +786,18 @@ public class LastFmCommand extends Command {
                     System.out.println(Arrays.deepToString(tracks));
                     int length = tracks.length;
                     int counter = 1;
+                    ArrayList<String> list = new ArrayList<>();
                     for (int i = 0; i < length; i++){
                         String song = tracks[i][0] + " " + tracks[i][1];
-                        musicController.youtubeTrackLoaded(song, event.getMember(), event);
+                        list.add(song);
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
                         if(counter == length+1){
                             message.editMessage("Finished loading!").queue();
                             break;
                         }
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
+                    
 
                 }
                 else {
