@@ -1,9 +1,7 @@
 package MusicModule;
 
 import Commands.Command;
-import MusicModule.interfaces.AudioPlayerManage;
-import MusicModule.interfaces.SingleTrack;
-import MusicModule.interfaces.SuperMusic;
+
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
