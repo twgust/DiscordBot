@@ -32,10 +32,8 @@ public class MusicPlayCommand extends Command {
         if(substring.contains("youtube.com") || substring.contains("youtu.be")){
                 musicController.youtubeTrackLoaded(substring, user, event);
         }
-
+        else musicController.youtubeTrackLoaded("ytsearch:" + substring, user, event);
         //default case
-        musicController.youtubeTrackLoaded("ytsearch:" + substring, user, event);
-
 
     }
 }
