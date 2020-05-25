@@ -2,6 +2,7 @@ package MusicModule;
 
 import Commands.Command;
 
+import com.gargoylesoftware.htmlunit.javascript.host.html.Audio;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -35,9 +36,10 @@ public class MusicController {
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
     private AudioPlayerSendHandler audioPlayerSendHandler;
-    EmbedBuilder builderLastFM = new EmbedBuilder();
-    private ArrayList<AudioTrack> lastFMTracks;
+    private EmbedBuilder builderLastFM;
+    private ArrayList<AudioTrack> lastFMTracks = new ArrayList<AudioTrack>();
     private ArrayList<AudioTrack> listOfTracks;
+    private int counter = 0;
 
     /**
      *
@@ -227,39 +229,58 @@ public class MusicController {
         });
     }
     public void lastFMTrackLoader(String identifier, Member member, GuildMessageReceivedEvent event){
-
+        builderLastFM = new EmbedBuilder();
         builderLastFM.setTitle("LastFM top 5 tracks queued");
         builderLastFM.setColor(Color.YELLOW);
         builderLastFM.setFooter("Parprogrammering poggers");
+
+        Guild server = member.getGuild();
+        server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
+
 
 
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                lastFMTracks.add(audioTrack);
-                if(lastFMTracks.size() == 5){
-                    for (int i = 0; i < lastFMTracks.size(); i++) {
-                        scheduler.addToQueue(lastFMTracks.get(i), member);
-                    }
-                    connectToVoiceChannels(server.getAudioManager(), member);
 
                 }
-            }
+
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-            }
+                AudioTrack track = audioPlaylist.getTracks().get(0);
+                player.setVolume(100);
+                connectToVoiceChannels(server.getAudioManager(), member);
+
+                lastFMTracks.add(track);
+                scheduler.addToQueue(track, member);
+                counter++;
+                placeHolder(event);
+                }
 
             @Override
             public void noMatches() {
-
+                System.out.println("no matches");
             }
-
             @Override
             public void loadFailed(FriendlyException e) {
+                System.out.println("load failed");
 
             }
         });
+
+    }
+    public void placeHolder(GuildMessageReceivedEvent event){
+        if(counter == 4){
+            counter = 0;
+            int number = lastFMTracks.size();
+            for (int i = 0; i < number ; i++) {
+                builderLastFM.addField(lastFMTracks.get(i).getInfo().title, "Duration: " +
+                        timeFormatting(lastFMTracks.get(i).getDuration()), false);
+            }
+            event.getChannel().sendMessage(builderLastFM.build()).queue();
+            lastFMTracks.clear();
+        }
     }
 
     /**
