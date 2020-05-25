@@ -786,7 +786,8 @@ public class LastFmCommand extends Command {
                     int length = tracks.length;
                     int counter = 1;
                     for (int i = 0; i < length; i++){
-                        musicController.youtubeTrackLoaded(tracks[i][2], event.getMember(), event);
+                        String song = tracks[i][0] + " " + tracks[i][1];
+                        musicController.youtubeTrackLoaded(song, event.getMember(), event);
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
                         if(counter == length+1){
