@@ -22,6 +22,7 @@ import ModerationModule.MessageControlModule.LockCommand;
 import ModerationModule.MessageControlModule.MuteCommand;
 import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
+import MusicModule.Controller.MusicController;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
 import QuizModule.QuizCommand;

@@ -2,7 +2,8 @@ package MusicModule.MusicCommands;
 
 import Commands.Command;
 import MusicModule.AudioPlayerSendHandler;
-import MusicModule.MusicController;
+
+import MusicModule.Controller.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.entities.Guild;
