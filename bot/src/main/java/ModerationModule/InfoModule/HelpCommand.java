@@ -2,6 +2,7 @@ package ModerationModule.InfoModule;
 
 import Commands.Command;
 import Main.Controller;
+import Main.EventListener;
 import ModerationModule.ModCommand;
 import ModerationModule.ModerationController;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -48,8 +49,29 @@ public class HelpCommand extends ModCommand {
     public EmbedBuilder getHelp() {
         eb.clear();
         eb.setTitle("\uD83E\uDDAE Moderation Module - Help \uD83E\uDDAE", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
-        eb.setDescription("Description Placeholder");
-        eb.addField("help", "- Placeholder", true);
+        eb.setDescription("List of all commands! \n" +
+                "`help` - Displays a list of all available commands.\n" +
+                "Type %<command> to get more help for selected command!\n" +
+                "Example: %weather"+
+                "\nModeration:\n"+
+                "`ban`\n" +
+                "`unban`\n" +
+                "`kick`\n"+
+                "`prune`\n" +
+                "`mute`\n"+
+                "`lock`\n"+
+                "`unlock`\n"+
+                "`info`\n"+
+                "`addlevelrole`\n"+
+                "`prefix`"+
+                "\nEntertainment:\n"+
+                "`music`\n"+
+                "`fm`\n"+
+                "`quiz`" +
+                "\nInformation\n"+
+                "`weather`\n"+
+                "`profile`\n");
+        //eb.addField("`help`", "Displays a list of all available commands.", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.getHSBColor(102,0,153));
         return eb;
