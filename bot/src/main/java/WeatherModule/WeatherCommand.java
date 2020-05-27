@@ -37,17 +37,47 @@ public class WeatherCommand extends Command{
     public void execute(GuildMessageReceivedEvent event) {
         WeatherSQL sql = new WeatherSQL();
         setLoaded(false);
-        //String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
+        String[] recievedMessageArr = event.getMessage().getContentRaw().split(" ");
         //System.out.println(Arrays.toString(recievedMessageArr));
         String city = "";
 
-        if(event.getMessage().getContentRaw().split(" ").length != 1){
+        if(event.getMessage().getContentRaw().split(" ").length == 3){
+            if(recievedMessageArr[1].equalsIgnoreCase("set")){
+                city = event.getMessage().getContentRaw().substring(13);
+                city = city.replace(" ", "%20");
+                sql.setCity(event.getAuthor().getId(), city);
+                System.out.println("beep");
+            }
+            else {
+                city = event.getMessage().getContentRaw().substring(13);
+                city = city.replace(" ", "%20");
+                System.out.println("beep else");
+            }
+        }
+        else if(recievedMessageArr.length == 2){
+            if(recievedMessageArr[1].equalsIgnoreCase("linked")){
+                if(sql.checkQuery(event.getAuthor().getId())){
+                    city = sql.getCity(event.getAuthor().getId());
+                }
+            }
+            else {
+                city = event.getMessage().getContentRaw().substring(9);
+                city = city.replace(" ", "%20");
+                System.out.println("beep else2");
+            }
+        }
+        else{
             city = event.getMessage().getContentRaw().substring(9);
             city = city.replace(" ", "%20");
+            System.out.println("beep else2");
         }
+
+        /*
         else if(sql.checkQuery(event.getAuthor().getId())){
             city = sql.getCity(event.getAuthor().getId());
         }
+
+         */
 
 
 
@@ -62,7 +92,6 @@ public class WeatherCommand extends Command{
         if(!city.equalsIgnoreCase("")) {
             connectToOWM(city);
             if (isLoaded()) {
-                sql.setCity(event.getAuthor().getId(), city);
                 sql.closeConnection();
                 EmbedBuilder weather = new EmbedBuilder();
                 weather.setColor(0x349CEE);
@@ -79,8 +108,14 @@ public class WeatherCommand extends Command{
                 event.getChannel().sendMessage(weather.build()).queue();
 
 
-            } else event.getChannel().sendMessage("Invalid city name or time format").queue();
-        } else event.getChannel().sendMessage("No city linked to your account").queue();
+            } else {
+                sql.closeConnection();
+                event.getChannel().sendMessage("Invalid city name or time format").queue();
+            }
+        } else{
+            sql.closeConnection();
+            event.getChannel().sendMessage("No city linked to your account").queue();
+        }
 
     }
 

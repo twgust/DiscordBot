@@ -53,7 +53,9 @@ public class LastFmTopTracksParserMusic {
                 String trackname = json.getString("name");
                 //result[i][2] = "https://www.youtube.com";
                 //String playcount = json.getString("playcount");
-               //String tracklink = json.getString("url");
+
+                //String tracklink = json.getString("url");
+
                 //String rank = json.getJSONObject("@attr").getString("rank");
 
 
@@ -67,8 +69,7 @@ public class LastFmTopTracksParserMusic {
                 //test if results work
 
 
-
-
+            }
                 /*
                 try{
                     Document doc = Jsoup.connect("https://www.youtube.com/results?search_query=" +artistname + "+"+trackname).userAgent("Chrome").get();
@@ -98,8 +99,6 @@ public class LastFmTopTracksParserMusic {
             System.out.println(result[i][4]);
 
              */
-            }
-
 
 
 
@@ -110,6 +109,7 @@ public class LastFmTopTracksParserMusic {
             setLoaded(false);
         }
     }
+
 
     public String[][] getResultTracks() {
         return resultTracks;

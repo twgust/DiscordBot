@@ -31,11 +31,13 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
 import javax.security.auth.login.LoginException;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 
@@ -68,8 +70,12 @@ public class Controller {
         jda.addEventListener(new LastFmCommand(waiter, musicController));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
+
         jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, true);
         jda.getPresence().setActivity(Activity.playing("%help"));
+
+        jda.getPresence().setActivity(Activity.playing("ANY PEPEGAS? Pepega Clap"));
+
         addCommands();
     }
 
@@ -97,7 +103,7 @@ public class Controller {
                         && !arguments[0].equalsIgnoreCase("resume") && !arguments[0].equalsIgnoreCase("play")
                         && !arguments[0].equalsIgnoreCase("current")
                         && !arguments[0].equalsIgnoreCase("playing") && !arguments[0].equalsIgnoreCase("song")
-                        && !arguments[0].equalsIgnoreCase("profile") && !arguments[0].equalsIgnoreCase("weather")
+                        && !arguments[0].equalsIgnoreCase("profile")
                         && !arguments[0].equalsIgnoreCase("wallet") && !arguments[0].equalsIgnoreCase("embedtest")
                         && !arguments[0].equalsIgnoreCase("oldmusic") && !arguments[0].equalsIgnoreCase("wallet")
                         && !arguments[0].equalsIgnoreCase("music")
