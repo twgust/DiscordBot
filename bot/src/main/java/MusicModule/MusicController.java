@@ -177,7 +177,7 @@ public class MusicController {
 
                     String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
 
-                    builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription(timeFormatting(track.getInfo().length));
                     builder.setImage(youtubeImageUrl);
                     event.getChannel().sendMessage(builder.build()).queue();

@@ -74,7 +74,7 @@ public class Controller {
         jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, true);
         jda.getPresence().setActivity(Activity.playing("%help"));
 
-        jda.getPresence().setActivity(Activity.playing("ANY PEPEGAS? Pepega Clap"));
+
 
         addCommands();
     }
