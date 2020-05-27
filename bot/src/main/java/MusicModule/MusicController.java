@@ -150,6 +150,7 @@ public class MusicController {
         builder.setColor(Color.YELLOW);
         builder.setFooter("%music for help");
 
+
         if (member.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         }
@@ -163,9 +164,24 @@ public class MusicController {
 
                 if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, member);
+                    String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
+
+                    builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setDescription(timeFormatting(track.getInfo().length));
+                    builder.setImage(youtubeImageUrl);
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
+
                 } else if (player.getPlayingTrack() != null) {
                     scheduler.addToQueue(track, member);
 
+                    String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
+
+                    builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setDescription(timeFormatting(track.getInfo().length));
+                    builder.setImage(youtubeImageUrl);
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
                 }
             }
 

@@ -25,6 +25,8 @@ import WeatherModule.WeatherCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
@@ -54,11 +56,14 @@ public class Controller {
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
 
+
         jda.addEventListener(new EventListener(this));
         jda.addEventListener(new LevelListener(economyController));
         jda.addEventListener(new LastFmCommand(waiter, musicController));
         jda.addEventListener(waiter);
         jda.addEventListener(quizCommand);
+        jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, true);
+        jda.getPresence().setActivity(Activity.playing("%help"));
         addCommands();
     }
 
