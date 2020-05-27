@@ -1,4 +1,4 @@
-package MusicModule;
+package MusicModule.Controller;
 //git
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;

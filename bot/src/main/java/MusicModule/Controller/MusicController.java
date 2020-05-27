@@ -1,8 +1,6 @@
-package MusicModule;
+package MusicModule.Controller;
 
-import Commands.Command;
-
-import com.gargoylesoftware.htmlunit.javascript.host.html.Audio;
+import MusicModule.AudioPlayerSendHandler;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -10,8 +8,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
@@ -33,6 +30,7 @@ public class MusicController {
     private TrackScheduler scheduler;
     private AudioPlayer player;
     private Guild server;
+    private AudioTrack track;
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
     private AudioPlayerSendHandler audioPlayerSendHandler;
@@ -47,7 +45,6 @@ public class MusicController {
      */
     public MusicController(EventWaiter waiter) {
         this.waiter = waiter;
-
         playerManager = new DefaultAudioPlayerManager();
         player = playerManager.createPlayer();
         audioPlayerSendHandler = new AudioPlayerSendHandler(player);
@@ -55,9 +52,7 @@ public class MusicController {
         player.addListener(scheduler);
 
         AudioSourceManagers.registerRemoteSources(playerManager);
-
     }
-
     /**
      * Connects to voice channels with priority:
      * Users current voice channel (if it exists)
@@ -69,7 +64,7 @@ public class MusicController {
      * @param user         represents the user who invoked the function
      */
 
-    private void connectToVoiceChannels(AudioManager audioManager, Member user) {
+    public void connectToVoiceChannels(AudioManager audioManager, Member user) {
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
             for (VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
                 if (user.getVoiceState().getChannel() != null) {
@@ -82,7 +77,6 @@ public class MusicController {
             }
         }
     }
-
     /**
      * function for searching music
      */
@@ -92,7 +86,6 @@ public class MusicController {
             public void trackLoaded(AudioTrack audioTrack) {
                 //function never invoked as searchMusic() always creates an array of 4 tracks from youtube
             }
-
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
                 System.out.println("playlistloaded() under searchmusic() invoked by %search <input> command");
@@ -135,6 +128,7 @@ public class MusicController {
             }
         });
     }
+
 
     /**
      * Function that loads all music. Function invoked by %play command.

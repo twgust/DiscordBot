@@ -3,13 +3,14 @@ package MusicModule.MusicCommands;
 import Commands.Command;
 import MusicModule.*;
 
+import MusicModule.Controller.MusicController;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class MusicPlayCommand extends Command {
-    private  MusicController musicController;
+    private MusicController musicController;
 
     public MusicPlayCommand(MusicController musicController){
         this.musicController = musicController;

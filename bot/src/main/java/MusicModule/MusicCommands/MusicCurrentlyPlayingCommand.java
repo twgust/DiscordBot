@@ -1,7 +1,8 @@
 package MusicModule.MusicCommands;
 
 import Commands.Command;
-import MusicModule.MusicController;
+import MusicModule.Controller.MusicController;
+
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
