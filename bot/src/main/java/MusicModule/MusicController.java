@@ -1,6 +1,8 @@
 package MusicModule;
 
 import Commands.Command;
+
+import com.gargoylesoftware.htmlunit.javascript.host.html.Audio;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 //git
-public class MusicController extends Command {
+public class MusicController {
     private final String one = "1️⃣";
     private final String two = "2️⃣";
     private final String three = "3️⃣";
@@ -34,7 +36,10 @@ public class MusicController extends Command {
     private GuildMessageReceivedEvent event;
     private EventWaiter waiter;
     private AudioPlayerSendHandler audioPlayerSendHandler;
+    private EmbedBuilder builderLastFM;
+    private ArrayList<AudioTrack> lastFMTracks = new ArrayList<AudioTrack>();
     private ArrayList<AudioTrack> listOfTracks;
+    private int counter = 0;
 
     /**
      *
@@ -44,7 +49,6 @@ public class MusicController extends Command {
         this.waiter = waiter;
 
         playerManager = new DefaultAudioPlayerManager();
-
         player = playerManager.createPlayer();
         audioPlayerSendHandler = new AudioPlayerSendHandler(player);
         scheduler = new TrackScheduler(player);
@@ -52,38 +56,6 @@ public class MusicController extends Command {
 
         AudioSourceManagers.registerRemoteSources(playerManager);
 
-    }
-
-    /**
-     *
-     * @return returns playerManager
-     */
-    public AudioPlayerManager getPlayerManager() {
-        return playerManager;
-    }
-
-    /**
-     *
-     * @return returns trackScheduler (used for MusicQueueCommand)
-     */
-    public TrackScheduler getScheduler() {
-        return scheduler;
-    }
-
-    /**
-     *
-     * @return returns Player
-     */
-    public AudioPlayer getPlayer() {
-        return player;
-    }
-
-    /**
-     *
-     * @param server sets the server of instance variable server (type Guild)
-     */
-    public void setServer(Guild server) {
-        this.server = server;
     }
 
     /**
@@ -168,86 +140,163 @@ public class MusicController extends Command {
      * Function that loads all music. Function invoked by %play command.
      *
      * @param identifier The string provided by a user
-     * @param user the user
+     * @param member the user
      * @param event
      */
-    public void loadMusic(String identifier, Member user, GuildMessageReceivedEvent event) {
-        Guild server = user.getGuild();
+    public void youtubeTrackLoaded(String identifier, Member member, GuildMessageReceivedEvent event) {
+        EmbedBuilder builder = new EmbedBuilder();
+        Guild server = member.getGuild();
         server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
+        builder.setColor(Color.YELLOW);
+        builder.setFooter("%music for help");
 
-        if (user.getVoiceState().getChannel() == null) {
+
+        if (member.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         }
 
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            //metoden som robert kallar i lastFM
             @Override
             public void trackLoaded(AudioTrack track) {
-
-                connectToVoiceChannels(server.getAudioManager(), user);
+                connectToVoiceChannels(server.getAudioManager(), member);
                 player.setVolume(100);
 
                 if (player.getPlayingTrack() == null) {
-                    scheduler.addToQueue(track, user);
-                    event.getChannel().sendMessage("now").queue();
-                } else if (player.getPlayingTrack() != null) {
-                    scheduler.addToQueue(track, user);
-                    event.getChannel().sendMessage("```" + track.getInfo().title + " added to queue(" + scheduler.getQueue().size() + ")```").queue();
-                }
-            }
-
-            /**
-             * This method is invoked with the ytsearch identifier because youtube loads 30~ tracks.
-             * For now it  will only load the first track of the search results,
-             * if "AudioTrack track = playlist.getTracks().get(0);" is not there it will load and queue
-             * 30~ of the same tracks when the user uses the command %play "I'm on fire"
-             */
-            @Override
-            public void playlistLoaded(AudioPlaylist playlist) {
-                connectToVoiceChannels(server.getAudioManager(), user);
-                AudioTrack track = playlist.getTracks().get(0);
-
-                if (player.getPlayingTrack() == null) {
-                    scheduler.addToQueue(track, user);
-
-                    EmbedBuilder builder = new EmbedBuilder();
-                    StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
+                    scheduler.addToQueue(track, member);
                     String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
-                    String jpg = stringBuilder.toString();
 
                     builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription(timeFormatting(track.getInfo().length));
                     builder.setImage(youtubeImageUrl);
-                    builder.setColor(Color.YELLOW);
-                    builder.setFooter("%music for help");
-
                     event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
 
                 } else if (player.getPlayingTrack() != null) {
-                    scheduler.addToQueue(track, user);
+                    scheduler.addToQueue(track, member);
 
-                    EmbedBuilder builder = new EmbedBuilder();
-                    StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
                     String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
-                    String jpg = stringBuilder.toString();
 
-                    builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
-                    builder.setDescription("Position in queue: " + scheduler.getQueue().size());
+                    builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setDescription(timeFormatting(track.getInfo().length));
                     builder.setImage(youtubeImageUrl);
-                    builder.setColor(Color.YELLOW);
                     event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
                 }
             }
 
             @Override
-            public void noMatches() {
-                event.getChannel().sendMessage("current syntax: %play <youtube-url>").queue();
-            }
+            public void playlistLoaded(AudioPlaylist playlist) {
+                connectToVoiceChannels(server.getAudioManager(), member);
 
+                //for youtube search
+                AudioTrack track = playlist.getTracks().get(0);
+
+                StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
+                String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
+                String jpg = stringBuilder.toString();
+
+                if(identifier.contains("/playlist")){
+                    for (int i = 0; i < playlist.getTracks().size(); i++) {
+                        scheduler.addToQueue(playlist.getTracks().get(i),member);
+                    }
+                    if(player.getPlayingTrack() == null){
+                        builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                        builder.setDescription(timeFormatting(track.getInfo().length));
+                        builder.setImage(youtubeImageUrl);
+                        event.getChannel().sendMessage(builder.build()).queue();
+                        builder.clear();
+                    }
+                    else if(player.getPlayingTrack() != null){
+                        builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
+                        builder.setDescription("Position in queue: " + scheduler.getQueue().size());
+                        builder.setImage(youtubeImageUrl);
+
+                        event.getChannel().sendMessage(builder.build()).queue();
+                        builder.clear();
+                    }
+                }
+                else if (player.getPlayingTrack() == null) {
+                    scheduler.addToQueue(track, member);
+                    builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setDescription(timeFormatting(track.getInfo().length));
+                    builder.setImage(youtubeImageUrl);
+
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
+
+                } else if (player.getPlayingTrack() != null) {
+                    scheduler.addToQueue(track, member);
+                    builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
+                    builder.setDescription("Position in queue: " + scheduler.getQueue().size());
+                    builder.setImage(youtubeImageUrl);
+                    event.getChannel().sendMessage(builder.build()).queue();
+                    builder.clear();
+                }
+            }
+            @Override
+            public void noMatches() {
+                event.getChannel().sendMessage("No matches, Use %play [song title/URL]").queue();
+            }
             @Override
             public void loadFailed(FriendlyException exception) {
                 event.getChannel().sendMessage(exception.getMessage()).queue();
             }
         });
+    }
+    public void lastFMTrackLoader(String identifier, Member member, GuildMessageReceivedEvent event){
+        builderLastFM = new EmbedBuilder();
+        builderLastFM.setTitle("LastFM top 5 tracks queued");
+        builderLastFM.setColor(Color.YELLOW);
+        builderLastFM.setFooter("Parprogrammering poggers");
+
+        Guild server = member.getGuild();
+        server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
+
+
+
+        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+
+                }
+
+
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                AudioTrack track = audioPlaylist.getTracks().get(0);
+                player.setVolume(100);
+                connectToVoiceChannels(server.getAudioManager(), member);
+
+                lastFMTracks.add(track);
+                scheduler.addToQueue(track, member);
+                counter++;
+                placeHolder(event);
+                }
+
+            @Override
+            public void noMatches() {
+                System.out.println("no matches");
+            }
+            @Override
+            public void loadFailed(FriendlyException e) {
+                System.out.println("load failed");
+
+            }
+        });
+
+    }
+    public void placeHolder(GuildMessageReceivedEvent event){
+        if(counter == 4){
+            counter = 0;
+            int number = lastFMTracks.size();
+            for (int i = 0; i < number ; i++) {
+                builderLastFM.addField(lastFMTracks.get(i).getInfo().title, "Duration: " +
+                        timeFormatting(lastFMTracks.get(i).getDuration()), false);
+            }
+            event.getChannel().sendMessage(builderLastFM.build()).queue();
+            lastFMTracks.clear();
+        }
     }
 
     /**
@@ -276,7 +325,6 @@ public class MusicController extends Command {
          */
     }
 
-
     //getter
     public ArrayList<AudioTrack> getListOfTracks() {
         return listOfTracks;
@@ -285,7 +333,6 @@ public class MusicController extends Command {
     public void playerClosed(Guild server, GuildVoiceLeaveEvent event) {
 
     }
-
     public AudioPlayerSendHandler getAudioPlayerSendHandler() {
         return audioPlayerSendHandler;
     }
@@ -340,7 +387,6 @@ public class MusicController extends Command {
     public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member, GuildMessageReceivedEvent event
     ) {
         setServer(member.getGuild());
-
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.YELLOW);
         builder.setFooter("%music for help");
@@ -375,6 +421,35 @@ public class MusicController extends Command {
 
             event.getChannel().sendMessage(builder.build()).queue();
         } else System.out.println("failed to load something wrong monkaW poggers");
+    }
+    /**
+     *
+     * @return returns playerManager
+     */
+    public AudioPlayerManager getPlayerManager() {
+        return playerManager;
+    }
+    /**
+     *
+     * @return returns trackScheduler (used for MusicQueueCommand)
+     */
+    public TrackScheduler getScheduler() {
+        return scheduler;
+    }
+    /**
+     *
+     * @return returns Player
+     */
+    public AudioPlayer getPlayer() {
+        return player;
+    }
+
+    /**
+     *
+     * @param server sets the server of instance variable server (type Guild)
+     */
+    public void setServer(Guild server) {
+        this.server = server;
     }
 }
 

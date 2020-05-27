@@ -32,7 +32,7 @@ public class MusicSearchCommand extends Command {
         AudioSourceManagers.registerRemoteSources(musicController.getPlayerManager());
 
         server.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(musicController.getPlayer()));
-        String s = "ytsearch:" + substring;
+
         musicController.searchMusic("ytsearch:" + substring, event);
     }
 }
