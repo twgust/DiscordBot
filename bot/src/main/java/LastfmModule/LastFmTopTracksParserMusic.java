@@ -69,8 +69,7 @@ public class LastFmTopTracksParserMusic {
                 //test if results work
 
 
-
-
+            }
                 /*
                 try{
                     Document doc = Jsoup.connect("https://www.youtube.com/results?search_query=" +artistname + "+"+trackname).userAgent("Chrome").get();
@@ -103,8 +102,6 @@ public class LastFmTopTracksParserMusic {
 
 
 
-
-
             resultTracks = result;
             setLoaded(true);
         }catch (Exception e){
@@ -112,6 +109,7 @@ public class LastFmTopTracksParserMusic {
             setLoaded(false);
         }
     }
+
 
     public String[][] getResultTracks() {
         return resultTracks;
