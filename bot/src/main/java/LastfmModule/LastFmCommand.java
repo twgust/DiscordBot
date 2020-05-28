@@ -912,7 +912,7 @@ public class LastFmCommand extends Command {
     }
 
     public void getYoutubeLink(String username, GuildMessageReceivedEvent event) {
-        event.getChannel().sendMessage("```Loading data```").queue(message -> {
+        event.getChannel().sendMessage("```Loading data...```").queue(message -> {
 
             LastFmYoutube fmYoutube = new LastFmYoutube(apikey, username);
             if (fmYoutube.isLoaded()) {
