@@ -109,9 +109,11 @@ public class LastFmCommand extends Command {
                 executeYouTubeUsername(sql1, event, getMessageReceivedArr()[2]);
             } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")) && getMessageReceivedArr()[2].contains("<@!")) {
                 executeProfileTagged(sql1, event);
-            }
-            else {
+            } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile"))){
                 executeProfile(sql1, event);
+            }else {
+                sql1.closeConnection();
+                event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
 
         } else if (getMessageReceivedArr().length == 4) {
