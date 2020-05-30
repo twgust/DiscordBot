@@ -10,6 +10,7 @@ import EconomyModule.TransferCommand;
 import EconomyModule.WalletCommand;
 import LastfmModule.LastFmCommand;
 import LastfmModule.LastFmSQL;
+import LastfmModule.TestingClass;
 import LevelModule.AddLevelRoleCommand;
 import LevelModule.ProfileCommand;
 import ModerationModule.*;
@@ -135,7 +136,7 @@ public class Controller {
         cmdMap.put("music", new MusicHelp());
         cmdMap.put("stop", new MusicStopCommand(musicController));
 
-
+        cmdMap.put("test", new TestingClass());
 
         cmdMap.put("quiz", quizCommand);
         cmdMap.put("profile", new ProfileCommand());

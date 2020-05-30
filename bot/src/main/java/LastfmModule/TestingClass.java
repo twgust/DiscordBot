@@ -26,6 +26,14 @@ import org.jsoup.nodes.Entities;
 import org.jsoup.select.Elements;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -98,6 +106,409 @@ public class TestingClass extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        if(event.getMessage().getContentRaw().equalsIgnoreCase("%test chart")){
+            String htmlbody = "<html>\n" +
+                    "  <head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    "  </head>\n" +
+                    "  <style>\n" +
+                    "    div {\n" +
+                    "        font-size: 0px;\n" +
+                    "        overflow: hidden;\n" +
+                    "        text-overflow: ellipsis;\n" +
+                    "        white-space: nowrap;\n" +
+                    "}\n" +
+                    "\n" +
+                    "body {\n" +
+                    "        display: block;\n" +
+                    "        margin: 0px;\n" +
+                    "}\n" +
+                    "\n" +
+                    ".grid {\n" +
+                    "\tbackground-color: #ffc5c8;\n" +
+                    "}\n" +
+                    "\n" +
+                    ".container {\n" +
+                    "\twidth: 300px;\n" +
+                    "\tdisplay: inline-block;\n" +
+                    "\tposition: relative;\n" +
+                    "}\n" +
+                    "\n" +
+                    ".text {\n" +
+                    "\twidth: 299px;\n" +
+                    "\tposition: absolute;\n" +
+                    "\ttext-align: left;\n" +
+                    "\tline-height: 1;\n" +
+                    "\t\n" +
+                    "\tfont-family: 'Helvetica', 'Serif';\n" +
+                    "\tfont-size: 16px;\n" +
+                    "\tfont-weight: medium;\n" +
+                    "\tcolor: white;\n" +
+                    "\ttext-shadow: 1px 1px black;\n" +
+                    "\t\n" +
+                    "\ttop: 2px;\n" +
+                    " \tleft: 2px;\n" +
+                    "\tright:2px;\n" +
+                    "}\n" +
+                    "  </style>\n" +
+                    "  <body>\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/a562ecf500f2331b088f1fdb26c6ff07.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Zion.T<br>\n" +
+                    "            The King: Eternal Monarch (Original Television Soundtrack), Pt. 1<br>\n" +
+                    "            plays: 18\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/5fa4de507ad1b738dd5ae969b4ec9b52.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            LOOΠΔ 1/3<br>\n" +
+                    "            Love & Evil<br>\n" +
+                    "            plays: 7\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/ca5db669f9a3b5570e05e4297aa89f71.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Mad Clown<br>\n" +
+                    "            Love is a Dog from Hell<br>\n" +
+                    "            plays: 6\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/7a878e2359ff0d544ba8453e94561823.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            OH MY GIRL<br>\n" +
+                    "            NONSTOP<br>\n" +
+                    "            plays: 5\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/5f5614357e43a83b69e4811afcce517b.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Yung Gravy<br>\n" +
+                    "            Baby Gravy 2<br>\n" +
+                    "            plays: 4\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/24653139a8cbdcc71fd4691fc6d6fd12.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            BENEE<br>\n" +
+                    "            STELLA & STEVE<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/c6f59c1e5e7240a4c0d427abd71f3dbb.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Internet Girl<br>\n" +
+                    "            Pretend<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/29a0e7984be76ad9bd0b047f7de2242f.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Keshi<br>\n" +
+                    "            bandaids<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/75db353fa83e63cddb65bdbf90f58e5d.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            LANY<br>\n" +
+                    "            malibu nights<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/fff716db0b935ab873c03e7b95fca9e3.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Lauv<br>\n" +
+                    "            ~how i'm feeling~<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/e2c7c99f00f510df270aeda2b66419b9.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Powfu<br>\n" +
+                    "            death bed (coffee for your head) (feat. beabadoobee)<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/e2304715c2e14ec8ce83ee1a3ae98a36.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            SALES<br>\n" +
+                    "            chinese new year<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/e414994d5d7871be206038513b7e738e.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Stray Kids<br>\n" +
+                    "            Mixtape : On Track<br>\n" +
+                    "            plays: 3\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/e8a5a2c98516adcdffea49a8607775ab.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Girl In Red<br>\n" +
+                    "            summer depression<br>\n" +
+                    "            plays: 2\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/c76ca4d7659292b13295c79ea9180713.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            IZ*ONE<br>\n" +
+                    "            BLOOM*IZ<br>\n" +
+                    "            plays: 2\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/3012764719c99f3f940af213ba009198.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Yung Gravy<br>\n" +
+                    "            Snow Cougar<br>\n" +
+                    "            plays: 2\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/9bdc605a8d70786a40357420b5ad129d.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Zion.T<br>\n" +
+                    "            ZZZ<br>\n" +
+                    "            plays: 2\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/b1105d10fdba5ec41cb73c87432820cc.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Alina Baraz<br>\n" +
+                    "            Urban Flora<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/1a6c7811b2a14583c577dafd1193b459.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            alt-J<br>\n" +
+                    "            This Is All Yours<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/a4817fdf11fb18c20c11f10cf3febc90.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            bbno$<br>\n" +
+                    "            i don't care at all<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/cd5a54c0665691d78477d301755d7706.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Bon Iver<br>\n" +
+                    "            22, A Million<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/86a0c2c50cc5b3150f0d54e44d9221d6.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Cashmere Cat<br>\n" +
+                    "            Love Incredible (feat. Camila Cabello)<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/abc2a7fedf6342c5d4421f765214e2eb.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            CLC<br>\n" +
+                    "            CRYSTYLE<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/1f94c09f4e7eed619ec44a0077d52c74.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            DAVICHI<br>\n" +
+                    "            Crash Landing on You (Original Television Soundtrack), Pt. 3<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/b37901795bec294a005afec0864c4b5a.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            DMX<br>\n" +
+                    "            The Definition Of X: Pick Of The Litter<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/8276e09f42cd135c25c1715a10a9157a.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Eden<br>\n" +
+                    "            909<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/e0ead669eece848cc2bb9ef0b414f165.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Eden<br>\n" +
+                    "            I Think You Think Too Much of Me<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/1bb40cc4173fd23fe43485889874175c.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            EVERGLOW<br>\n" +
+                    "            REMINISCENCE<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/6c093c386671c325b5868427e74ab618.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Goth Babe<br>\n" +
+                    "            Sometimes<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/67416f0f7d8d18f1b6ed18b722164ce7.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Jeremy Zucker<br>\n" +
+                    "            summer,<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/dfc3d412b7a74a0acac8b34bb7aef5b2.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Mad Clown<br>\n" +
+                    "            Piece Of Mine<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/60c0e6229bced64f334db574b63db7d7.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Mura Masa<br>\n" +
+                    "            R.Y.C<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/249ef46711a6c7ccd26ed77af0aa35ab.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Sunmi<br>\n" +
+                    "            Full Moon<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/811d68035cebdfcdca7b97a0a1a6b292.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            SZA<br>\n" +
+                    "            The Weekend (Funk Wav Remix)<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/bbd57b4f204e90e9b11145fc2cc56dd9.png\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            The Wombats<br>\n" +
+                    "            Glitterbug<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "\n" +
+                    "<div class=\"grid\">\n" +
+                    "      <div class=\"row\">\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/18a3cf1f234185e22d0df133fa323346.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Yerin Baek<br>\n" +
+                    "            Crash Landing on You (Original Television Soundtrack), Pt. 4<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/bc85d77d2746baca88059f32c12395ec.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Yoon MiRae<br>\n" +
+                    "            Crash Landing on You (Original Television Soundtrack), Pt. 2<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/4a78c6d65c8c29d9378d7ac8719fc69c.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Zion.T<br>\n" +
+                    "            No Make Up<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>\n" +
+                    "        <div class=\"container\">\n" +
+                    "          <img src=\"https://lastfm.freetls.fastly.net/i/u/300x300/c6ba4de6560afab8183fb7b89c5f9902.jpg\" width=300 height=300>\n" +
+                    "          <div class=\"text\">\n" +
+                    "            Zoology<br>\n" +
+                    "            Maroon<br>\n" +
+                    "            plays: 1\n" +
+                    "        </div>\n" +
+                    "      </div>"+
+                    "  </body>\n" +
+                    "</html>";
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter("testimages/albumtestclass.html"));
+                bw.write(htmlbody);
+                bw.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setJavascriptEnabled(true);
+            capabilities.setCapability("takesScreenshot", true);
+            capabilities.setCapability(
+                    PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
+                    "C:\\Users\\Robert\\Documents\\phantomjs\\bin\\phantomjs.exe"
+            );
+            PhantomJSDriver driver = new PhantomJSDriver(capabilities);
+            driver.manage().window().setSize(new Dimension(2100,1800));
+            driver.get("data:text/html;charset=utf-8," + htmlbody);
+            byte[] bytes = driver.getScreenshotAs(OutputType.BYTES);
+            event.getChannel().sendMessage("test").addFile(bytes, "testxd.jpg").queue();
+
+
+
+        }
+
+        /*
         int page = 1;
         String[] array = event.getMessage().getContentRaw().split(" ");
         if (array[0].equalsIgnoreCase("%test")) {
@@ -118,6 +529,8 @@ public class TestingClass extends Command {
 
             }
 
+         */
+
             /*
             pbuilder.clearItems();
             pbuilder.addItems(pages);
@@ -133,7 +546,7 @@ public class TestingClass extends Command {
              */
 
 
-        }
+
     }
 
     public void testThumbnail() {
@@ -542,6 +955,8 @@ public class TestingClass extends Command {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        /*
         long start = System.nanoTime();
         TestingClass test = new TestingClass();
         //test.testChart();
@@ -556,6 +971,8 @@ public class TestingClass extends Command {
         BigDecimal bd = BigDecimal.valueOf(elapsedTimeDouble);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         System.out.println(bd.doubleValue());
+
+         */
 
     }
 }

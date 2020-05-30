@@ -2,13 +2,10 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
-import MusicModule.AudioPlayerSendHandler;
 import MusicModule.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import org.apache.xerces.parsers.DOMParser;
@@ -19,11 +16,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +28,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 public class LastFmCommand extends Command {
     private long start;
@@ -891,16 +885,24 @@ public class LastFmCommand extends Command {
                         if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
                             rowSize++;
                         }
+                        System.out.println(rowColSize);
+                        System.out.println(rowSize);
 
 
                         int dimensionHeight = rowColSize * 300;
                         int dimensionWidth = rowSize * 300;
                         LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
-                        albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
+                        albumHTML.createImageFromHTML(albumsInfo, rowColSize, rowSize, username, getPeriodForAPICall(period), event, message);
+                        /*
                         albumHTML.createJSFile(dimensionHeight, dimensionWidth);
                         albumHTML.runJSFile();
                         message.delete().queue();
                         event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
+
+                         */
+
+
+
                     } else message.editMessage("```❌ No albums found for your account ❌```").queue();
                 } else message.editMessage("```Failed to load, try again please```").queue();
             });
