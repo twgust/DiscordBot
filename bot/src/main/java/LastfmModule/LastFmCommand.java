@@ -2,7 +2,9 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
+
 import MusicModule.Controller.MusicController;
+
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -888,16 +890,24 @@ public class LastFmCommand extends Command {
                         if (albumsInfo.length > rowColSize * rowColSize && rowColSize < 10) {
                             rowSize++;
                         }
+                        System.out.println(rowColSize);
+                        System.out.println(rowSize);
 
 
                         int dimensionHeight = rowColSize * 300;
                         int dimensionWidth = rowSize * 300;
                         LastFmTopAlbumHTML albumHTML = new LastFmTopAlbumHTML();
-                        albumHTML.createHTMLfile(albumsInfo, rowColSize, rowSize);
+                        albumHTML.createImageFromHTML(albumsInfo, rowColSize, rowSize, username, getPeriodForAPICall(period), event, message);
+                        /*
                         albumHTML.createJSFile(dimensionHeight, dimensionWidth);
                         albumHTML.runJSFile();
                         message.delete().queue();
                         event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(getPeriodForAPICall(period))).addFile(new File("testimages/image.jpg")).queue();
+
+                         */
+
+
+
                     } else message.editMessage("```❌ No albums found for your account ❌```").queue();
                 } else message.editMessage("```Failed to load, try again please```").queue();
             });

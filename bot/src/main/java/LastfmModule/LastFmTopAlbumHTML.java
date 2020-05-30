@@ -1,12 +1,18 @@
 package LastfmModule;
 
-import de.umass.lastfm.Caller;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.*;
 
 public class LastFmTopAlbumHTML {
 
-    public boolean createHTMLfile(String [][] array,  int rowColSize, int colSize){
+    public boolean createImageFromHTML(String [][] array, int rowColSize, int colSize, String username, String period, GuildMessageReceivedEvent event, Message message){
 
         String[][] albums = array;
         int size = rowColSize;
@@ -57,11 +63,11 @@ public class LastFmTopAlbumHTML {
                 counter++;
             }
             div.append(result);
+            System.out.println(result);
             i++;
         }
         System.out.println(counter);
         System.out.println(albums.length);
-
 
         String htmlbody = "<html>\n" +
                 "  <head>\n" +
@@ -112,16 +118,53 @@ public class LastFmTopAlbumHTML {
                 "  </body>\n" +
                 "</html>";
         try {
+            /*
             BufferedWriter bw = new BufferedWriter(new FileWriter("testimages/album.html"));
             bw.write(htmlbody);
             bw.close();
+
+             */
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setJavascriptEnabled(true);
+            capabilities.setCapability("takesScreenshot", true);
+            capabilities.setCapability(
+                    PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
+                    "C:\\Users\\Robert\\Documents\\phantomjs\\bin\\phantomjs.exe"
+            );
+            PhantomJSDriver driver = new PhantomJSDriver(capabilities);
+            driver.manage().window().setSize(new Dimension(colSize*300,rowColSize*300));
+            driver.get("data:text/html;charset=utf-8," + htmlbody);
+            byte[] bytes = driver.getScreenshotAs(OutputType.BYTES);
+            message.delete().queue();
+            event.getChannel().sendMessage(username + "'s top albums " + getPeriodForBuilder(period)).addFile(bytes, username+period+".jpg").queue();
+
             return true;
-        } catch (IOException e) {
+
+
+        } catch (Exception e) {
+            event.getChannel().sendMessage("```Failed to load, try again please ( PLEASE CONTACT OWNER OF BOT peepoSad)``` ").queue();
             e.printStackTrace();
             return false;
         }
     }
 
+    public String getPeriodForBuilder(String periodStr) {
+        if (periodStr.equalsIgnoreCase("week") || periodStr.equalsIgnoreCase("7day")) {
+            return "Last week";
+        } else if (periodStr.equalsIgnoreCase("1month")) {
+            return "Last month";
+        } else if (periodStr.equalsIgnoreCase("3month")) {
+            return "Last 3 months";
+        } else if (periodStr.equalsIgnoreCase("6month")) {
+            return "Last 6 months";
+        } else if (periodStr.equalsIgnoreCase("12month")) {
+            return "Last year";
+        } else if (periodStr.equalsIgnoreCase("overall")) {
+            return "Overall";
+        } else return "Last week";
+    }
+
+    /*
     public boolean createJSFile(int dimensionHeight, int dimensionWidth){
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("testimages/html.js"));
@@ -143,6 +186,9 @@ public class LastFmTopAlbumHTML {
         }
     }
 
+
+     */
+    /*
     public boolean runJSFile() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -175,6 +221,8 @@ public class LastFmTopAlbumHTML {
 
     }
 
+     */
+
     public static void main(String[] args) throws IOException {
         LastFmTopAlbumHTML topAlbumHTML = new LastFmTopAlbumHTML();
         String[][]array = new String[97][4];
@@ -192,8 +240,8 @@ public class LastFmTopAlbumHTML {
                 array[i][3] = "https://lastfm.freetls.fastly.net/i/u/300x300/29a0e7984be76ad9bd0b047f7de2242f.jpg";
             }
         }
-        topAlbumHTML.createHTMLfile(array, 10, 10);
-        topAlbumHTML.createJSFile(300*10, 300*10);
-        topAlbumHTML.runJSFile();
+        //topAlbumHTML.createImageFromHTML(array, 10, 10);
+        //topAlbumHTML.createJSFile(300*10, 300*10);
+        //topAlbumHTML.runJSFile();
     }
 }
