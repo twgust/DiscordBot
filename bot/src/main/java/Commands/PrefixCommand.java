@@ -18,6 +18,7 @@ public class PrefixCommand extends Command {
        Member member = event.getMember();
 
 
+
         if (member != null) {
             if (member.hasPermission(Permission.ADMINISTRATOR) ||  member.getUser().getId().equalsIgnoreCase("110372734118174720")) {
                 if (receivedMessage.length() > 1) {

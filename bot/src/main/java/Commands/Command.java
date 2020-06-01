@@ -12,7 +12,7 @@ public class Command extends ListenerAdapter implements ICommand {
 
     public Command() {
         helpText = new EmbedBuilder().setTitle("No help available for this command");
-        helpText.setColor(Color.ORANGE); //Temp color
+        helpText.setColor(Color.YELLOW); //Same color as the bot
     }
 
     @Override
