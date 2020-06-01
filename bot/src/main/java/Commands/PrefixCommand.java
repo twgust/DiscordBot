@@ -22,12 +22,15 @@ public class PrefixCommand extends Command {
         if (member != null) {
             if (member.hasPermission(Permission.ADMINISTRATOR) ||  member.getUser().getId().equalsIgnoreCase("110372734118174720")) {
                 if (receivedMessage.length() > 1) {
+                    eb.clear();
                     eb.setTitle("**Prefix has to be __1__ letter**");
                     event.getChannel().sendMessage(eb.build()).queue();
                 } else if (receivedMessage.length() == 0) {
+                    eb.clear();
                     eb.setTitle("**You didn't enter a prefix**");
                     event.getChannel().sendMessage(eb.build()).queue();
                 } else {
+                    eb.clear();
                     EventListener.setPrefix(receivedMessage.charAt(0));
                     eb.setTitle("**The prefix is now '" + receivedMessage + "'**");
                     event.getChannel().sendMessage(eb.build()).queue();
@@ -42,6 +45,7 @@ public class PrefixCommand extends Command {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83D\uDD11 Commands Module - Prefix \uD83D\uDD11", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/Commands/");
         eb.setDescription("Prefix changer!");
         eb.addField("prefix (character)", "- Sets the current prefix to the typed character", true);

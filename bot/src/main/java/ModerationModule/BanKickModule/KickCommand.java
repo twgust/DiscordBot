@@ -22,10 +22,19 @@ public class KickCommand extends ModCommand {
 
     @Override
     public void execute(TextChannel channel, Member member, String text, int num){
-        channel.sendMessage("User " + member.getUser().getName() + " was kicked").queue();
-        if (getLogChannel() != null) getLogChannel().sendMessage("User " + member.getUser().getName() + " was kicked").queue();
+        eb.clear();
+        eb.setTitle("User " + member.getUser().getName() + " was kicked");
+        eb.setColor(Color.YELLOW);
+        channel.sendMessage(eb.build()).queue();
         member.kick(text).queue();
+        if (getLogChannel() != null) {
+            eb.clear();
+            eb.setTitle("User " + member.getUser().getName() + " was kicked");
+            eb.setColor(Color.YELLOW);
+            getLogChannel().sendMessage(eb.build()).queue();
+        }
     }
+
     @Override
     public Permission getPerm() {
         return perm;
@@ -38,7 +47,7 @@ public class KickCommand extends ModCommand {
         eb.setDescription("Kick Users!");
         eb.addField("kick [user]", "- Kicks the user from the server", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

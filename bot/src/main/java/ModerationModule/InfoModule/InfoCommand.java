@@ -37,7 +37,7 @@ public class InfoCommand extends ModCommand {
         eb.addField("__**Roles**__", roles, false);
         eb.addField("__**Permissions:**__", member.getPermissions().toString(), false);
         eb.addField("__**Member joined discord:**__", member.getTimeCreated().toString(), false);
-        eb.setColor(member.getColor());
+        eb.setColor(Color.YELLOW);
         channel.sendMessage(eb.build()).queue();
     }
     @Override
@@ -52,7 +52,7 @@ public class InfoCommand extends ModCommand {
         eb.setDescription("Show user information!");
         eb.addField("info [user]", "- Shows information about the user", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -203,7 +204,9 @@ public class QuizSingle implements Runnable{
      */
     private void postMessage(String message){
         if(channel != null) {
+            eb.clear();
             eb.setTitle(message);
+            eb.setColor(Color.YELLOW);
             channel.sendMessage(eb.build()).queue();
         }
         else{

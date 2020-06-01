@@ -41,15 +41,20 @@ public class UnBanCommand extends ModCommand {
             }
         }
         if (unBanUser.size() == 0){
-            event.getChannel().sendMessage("User not found. Command cancelled.").queue();
+            eb.clear();
+            eb.setTitle("User not found. Command cancelled.");
+            eb.setColor(Color.YELLOW);
+            event.getChannel().sendMessage(eb.build()).queue();
             return;
         } else if (unBanUser.size() != 1)  {
             String multipleMembersMsg = "Multiple members found. Please choose one of the following, or type cancel.";
             for (int i = 0; i < unBanUser.size(); i++) {
                 multipleMembersMsg += "\n" + i + ". " + unBanUser.get(i).getName();
             }
-
-            event.getChannel().sendMessage(multipleMembersMsg).complete();
+            eb.clear();
+            eb.setTitle(multipleMembersMsg);
+            eb.setColor(Color.YELLOW);
+            event.getChannel().sendMessage(eb.build()).complete();
             long time = System.currentTimeMillis() + 10000;
             int userChoice = -1;
             while (time > System.currentTimeMillis() && userChoice == -1) {
@@ -67,14 +72,23 @@ public class UnBanCommand extends ModCommand {
             if (userChoice > -1 && userChoice < unBanUser.size()){
                 unBanUser.add(0, unBanUser.get(userChoice));
             }else {
-                event.getChannel().sendMessage("Command cancelled.").queue();
+                eb.clear();
+                eb.setTitle("Command cancelled.");
+                eb.setColor(Color.YELLOW);
+                event.getChannel().sendMessage(eb.build()).queue();
                 return;
             }
         }
-        event.getChannel().sendMessage("User " + unBanUser.get(0).getName() + " was unbanned.").queue();
-        if (getLogChannel() != null)
-            getLogChannel().sendMessage("User " + unBanUser.get(0).getName() + " was unbanned.").queue();
+        eb.clear();
+        eb.setTitle("User " + unBanUser.get(0).getName() + " was unbanned.");
+        eb.setColor(Color.YELLOW);
+        event.getChannel().sendMessage(eb.build()).queue();
         event.getGuild().unban(unBanUser.get(0)).queue();
+        if (getLogChannel() != null)
+            eb.clear();
+            eb.setTitle("User " + unBanUser.get(0).getName() + " was unbanned.");
+            eb.setColor(Color.YELLOW);
+            getLogChannel().sendMessage(eb.build()).queue();
     }
     @Override
     public Permission getPerm() {
@@ -88,7 +102,7 @@ public class UnBanCommand extends ModCommand {
         eb.setDescription("UnBan Users!");
         eb.addField("UnBan [user]", "- UnBans user from the server", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

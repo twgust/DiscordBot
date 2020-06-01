@@ -50,7 +50,7 @@ public class MuteCommand extends ModCommand {
         eb.setDescription("Mute Users!");
         eb.addField("mute [user]", "- Mute the user", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

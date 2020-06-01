@@ -21,12 +21,21 @@ public class BanCommand extends ModCommand {
     }
 
     @Override
-    public void execute(TextChannel channel, Member member, String text, int num){
-        if (num < 0) num = 0;
-        channel.sendMessage("Member " + member.getUser().getName() + " was banned.").queue();
-        if (getLogChannel() != null) getLogChannel().sendMessage("User " + member.getUser().getName() + " was banned").queue();
-        member.ban(num, text).queue();
-
+    public void execute(TextChannel channel, Member member, String text, int num) {
+        if (num < 0 ) {
+            num = 0;
+        }
+            eb.clear();
+            eb.setTitle("Member " + member.getUser().getName() + " was banned.");
+            eb.setColor(Color.YELLOW);
+            channel.sendMessage(eb.build()).queue();
+            member.ban(num, text).queue();
+            if(getLogChannel() != null) {
+                eb.clear();
+                eb.setTitle("User " + member.getUser().getName() + " was banned");
+                eb.setColor(Color.YELLOW);
+                getLogChannel().sendMessage(eb.build()).queue();
+            }
     }
     @Override
     public Permission getPerm() {
@@ -40,7 +49,7 @@ public class BanCommand extends ModCommand {
         eb.setDescription("Ban Users!");
         eb.addField("ban [user]", "- Ban user from the server", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

@@ -23,15 +23,20 @@ public class SlotsCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        eb.clear();
         String[][] emojiArray = new String[3][3];
         int[][] slotArray = new int[3][3];
         Random rd = new Random();
         int bet = Integer.parseInt(event.getMessage().getContentRaw().split(" ", 2)[1]);
         if(economyController.subtractFromUser(event.getAuthor().getId(), bet) == EconomyResponses.INSUFFICIENT_FUNDS) {
-            event.getChannel().sendMessage("You don't have enough Ⱡ for this bet!").queue();
+            eb.setTitle("You don't have enough Ⱡ for this bet!");
+            eb.setColor(Color.YELLOW);
+            event.getChannel().sendMessage(eb.build()).queue();
             return;
         }
-        event.getChannel().sendMessage("Putting in your Ⱡ").queue(message -> {
+        eb.setTitle("Putting in your Ⱡ");
+        eb.setColor(Color.YELLOW);
+        event.getChannel().sendMessage(eb.build()).queue(message -> {
             int iteration = 0;
             while (iteration < 3) {
                 try {
@@ -50,10 +55,16 @@ public class SlotsCommand extends Command {
             }
             int winnings = checkWins(emojiArray, slotArray, bet);
             if (winnings == 0) {
-                event.getChannel().sendMessage("You lost "+bet+"Ⱡ.").queue();
+                eb.clear();
+                eb.setTitle("You lost "+bet+"Ⱡ.");
+                eb.setColor(Color.YELLOW);
+                event.getChannel().sendMessage(eb.build()).queue();
             }
             else {
-                event.getChannel().sendMessage("You won "+winnings+"Ⱡ!").queue();
+                eb.clear();
+                eb.setTitle("You won "+winnings+"Ⱡ!");
+                eb.setColor(Color.YELLOW);
+                event.getChannel().sendMessage(eb.build()).queue();
                 economyController.addToUser(event.getAuthor().getId(), winnings);
             }
         });
@@ -109,11 +120,12 @@ public class SlotsCommand extends Command {
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83C\uDFB0  Games Module \uD83C\uDFB0 ", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/GamesModule");
         eb.setDescription("A slots game!");
         eb.addField("slots amount", "- Bets the given amount", true);
         eb.setFooter("DM Ugion#1917 if you have suggestions");
-        eb.setColor(Color.getHSBColor(51,153,255));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

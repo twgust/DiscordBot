@@ -50,7 +50,6 @@ public class HelpCommand extends ModCommand {
         eb.clear();
         eb.setTitle("\uD83E\uDDAE Moderation Module - Help \uD83E\uDDAE", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
         eb.setDescription("List of all commands! \n" +
-                "`help` - Displays a list of all available commands.\n" +
                 "Type %<command> to get more help for selected command!\n" +
                 "Example: %weather"+
                 "\nModeration:\n"+
@@ -71,9 +70,8 @@ public class HelpCommand extends ModCommand {
                 "\nInformation\n"+
                 "`weather`\n"+
                 "`profile`\n");
-        //eb.addField("`help`", "Displays a list of all available commands.", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

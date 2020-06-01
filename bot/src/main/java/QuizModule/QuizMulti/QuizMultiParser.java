@@ -108,7 +108,7 @@ public class QuizMultiParser {
      * @return Fixed string
      */
     public String fixFormat(String unfixed){
-        String fixed = unfixed.replace("&amp;", "&").replace("&quot;", "\"").replace("&#039;","'");
+        String fixed = unfixed.replace("&amp;", "&").replace("&quot;", "\"").replace("&#039;","'").replace("&pi;=", "π =");
         return fixed;
     }
 }

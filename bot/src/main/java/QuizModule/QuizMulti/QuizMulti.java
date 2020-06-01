@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.json.JSONException;
 
+import java.awt.*;
 import java.util.LinkedList;
 
 /**
@@ -170,10 +171,8 @@ public class QuizMulti implements Runnable {
      */
     private String getAlternatives() {
         String res = "";
-        int counter = 1;
         for(String alternative : currentQuestion.getAlternatives()){
-            res += counter+". " + alternative + "\n";
-            counter++;
+            res += "⚪" + "  " + alternative + "\n";
         }
         return res;
     }
@@ -202,7 +201,9 @@ public class QuizMulti implements Runnable {
      */
     private void postMessage(String message) {
         if(channel != null) {
+            eb.clear();
             eb.setTitle(message);
+            eb.setColor(Color.YELLOW);
             channel.sendMessage(eb.build()).queue();
         }
         else{

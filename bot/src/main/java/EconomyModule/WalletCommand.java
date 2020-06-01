@@ -15,13 +15,16 @@ public class WalletCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         int total = controller.getWalletTotalForUser((event.getAuthor().getId()));
+        eb.clear();
         eb.setAuthor(event.getAuthor().getName() + "'s wallet", "https://github.com/twgust/DiscordBot", event.getAuthor().getAvatarUrl());
         eb.addField("Total",Integer.toString(total) + "Ⱡ", true);
+        eb.setColor(Color.YELLOW);
         event.getChannel().sendMessage(eb.build()).queue();
     }
 
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83D\uDCB0  Economy Module \uD83D\uDCB0", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/");
         eb.setDescription("Server Economy!");
         eb.addField("wallet", "- Shows the content of the user's wallet", true);

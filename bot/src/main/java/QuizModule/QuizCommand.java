@@ -40,7 +40,7 @@ public class QuizCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         eb.clear();
-        eb.setColor(Color.RED);
+        eb.setColor(Color.YELLOW);
         channel = event.getChannel();
         quizS.setTextChannel(channel);
         quizS.setDatabaseConnection(dbConnection);
@@ -155,7 +155,7 @@ public class QuizCommand extends Command {
         eb.addField("quiz points", "- Shows your global points", true);
         eb.addField("quiz highscore", "- shows the highest score", true);
         eb.setFooter("DM Johs#7898 if you have suggestions");
-        eb.setColor(Color.RED);
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

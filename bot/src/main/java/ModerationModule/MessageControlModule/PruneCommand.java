@@ -76,7 +76,7 @@ public class PruneCommand extends ModCommand {
         eb.setDescription("Prune messages!");
         eb.addField("Placeholder", "- Placeholder", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

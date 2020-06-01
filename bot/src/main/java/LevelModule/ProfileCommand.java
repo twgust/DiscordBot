@@ -18,15 +18,19 @@ public class ProfileCommand extends Command {
         if (startIndex != -1){
             member = GetMember.get(event.getMessage().getContentRaw().substring(startIndex).trim(), event.getChannel(), event.getMember());
         }
-        event.getChannel().sendMessage(LevelController.getUserInfo(event.getGuild(), member)).queue();
+        eb.clear();
+        eb.setTitle(LevelController.getUserInfo(event.getGuild(), member));
+        eb.setColor(Color.YELLOW);
+        event.getChannel().sendMessage(eb.build()).queue();
     }
     @Override
     public EmbedBuilder getHelp() {
+        eb.clear();
         eb.setTitle("\uD83C\uDFC6 Level Module \uD83C\uDFC6", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LevelModule/");
         eb.setDescription("Level system!");
         eb.addField("profile", "- Shows the user's level profile", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.white);
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

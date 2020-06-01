@@ -277,7 +277,7 @@ public class LastFmCommand extends Command {
                         pbuilder.setThumbnail(thumbnail);
                         pbuilder.setTitle(getPeriodForBuilder(periodStr));
                         pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlaycount));
-                        Paginator p = pbuilder.setColor(Color.RED)
+                        Paginator p = pbuilder.setColor(Color.YELLOW)
                                 .setText("")
                                 .build();
                         message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
@@ -429,7 +429,7 @@ public class LastFmCommand extends Command {
                         pbuilder.setThumbnail(thumbnail);
                         pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlayount));
                         pbuilder.setTitle(getPeriodForBuilder(periodStr));
-                        Paginator p = pbuilder.setColor(Color.RED)
+                        Paginator p = pbuilder.setColor(Color.YELLOW)
                                 .setText("")
                                 .build();
                         message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
@@ -605,7 +605,7 @@ public class LastFmCommand extends Command {
                         pbuilder.setThumbnail(thumbnail);
                         pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlayount));
                         pbuilder.setTitle("Recent tracks");//getPeriodForBuilder(periodStr));
-                        Paginator p = pbuilder.setColor(Color.RED)
+                        Paginator p = pbuilder.setColor(Color.YELLOW)
                                 .setText("")
                                 .build();
                         message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
@@ -741,7 +741,7 @@ public class LastFmCommand extends Command {
                         pbuilder.setThumbnail(albumImage);
                         pbuilder.setFooter("    |   Total scrobbles: " + decimalFormat.format(totalPlayount));
                         pbuilder.setTitle(getPeriodForBuilder(periodStr));
-                        Paginator p = pbuilder.setColor(Color.RED)
+                        Paginator p = pbuilder.setColor(Color.YELLOW)
                                 .setText("")
                                 .build();
                         message.editMessage("Response time: " + getResponseTime() + " seconds").queue();
@@ -1564,9 +1564,8 @@ public class LastFmCommand extends Command {
         eb.addField("`fm topartists (period) (trackamount)`", "- Shows a list of top artists for given period", true);
         eb.addField("`fm youtube (username) / (DiscordUser)`", "- Gives youtube-links to the songs the user is listening to", true);
         eb.addBlankField(false);
-
         eb.setFooter("DM Robic#2351 if you have suggestions");
-        eb.setColor(Color.RED);
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 

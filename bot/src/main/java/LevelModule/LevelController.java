@@ -1,15 +1,18 @@
 package LevelModule;
 
 import Main.Controller;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
 import java.io.*;
 
 public class LevelController {
     private static LevelDBConnector levelDB = new LevelDBConnector();
+    private static EmbedBuilder eb = new EmbedBuilder();
 
     public static void addGuild(Guild guild) {
         levelDB.newGuildTable("G"+guild.getId());
@@ -35,8 +38,11 @@ public class LevelController {
     public static void levelUP(long memberID, int level, TextChannel channel){
         Guild guild = channel.getGuild();
         Member member = guild.getMemberById(memberID);
-        channel.sendMessage("Oi c*nt! Yeah you " + member.getAsMention() +
-                ". You just leveled up. Hope you are happy being level " + level + " now!").queue();
+        eb.clear();
+        eb.setTitle("Oi c*nt! Yeah you " + member.getAsMention() +
+                ". You just leveled up. Hope you are happy being level " + level + " now!");
+        eb.setColor(Color.YELLOW);
+        channel.sendMessage(eb.build()).queue();
     }
 
     public static boolean addLevelRole(Guild guild, Integer level, Role role) {

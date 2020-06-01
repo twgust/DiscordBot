@@ -30,6 +30,7 @@ import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import WeatherModule.WeatherSQL;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -39,6 +40,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
@@ -55,6 +57,7 @@ public class Controller {
     private QuizCommand quizCommand;
     private ModerationController modCtrl = new ModerationController(this);
     private EconomyController economyController;
+    private EmbedBuilder eb = new EmbedBuilder();
 
     public Controller() throws LoginException, IOException {
         token = new Token();
@@ -91,9 +94,11 @@ public class Controller {
         try {
             String[] arguments = event.getMessage().getContentRaw().substring(1).trim().split("\\s+");
             if (cmdMap.containsKey(arguments[0]) && cmdMap.get(arguments[0]) instanceof Command) {
-
                 if (!event.getMember().hasPermission(((Command) cmdMap.get(arguments[0])).getPerm())) {
-                    event.getChannel().sendMessage("You do not have the permission to use that command.").queue();
+                    eb.clear();
+                    eb.setTitle("You do not have the permission to use that command.");
+                    eb.setColor(Color.YELLOW);
+                    event.getChannel().sendMessage(eb.build()).queue();
                     return;
                 }
 

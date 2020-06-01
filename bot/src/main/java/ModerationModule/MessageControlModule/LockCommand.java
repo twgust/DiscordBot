@@ -33,7 +33,7 @@ public class LockCommand extends ModCommand {
         eb.setDescription("Lock channels!");
         eb.addField("lock", "- Locks the current channel", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.getHSBColor(102,0,153));
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

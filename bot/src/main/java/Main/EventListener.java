@@ -1,6 +1,7 @@
 package Main;
 
 import Commands.ErrorCommand;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 import static ModerationModule.ModerationController.getLogChannel;
@@ -17,6 +19,7 @@ public class EventListener extends ListenerAdapter {
     public char getPrefix() {
         return prefix;
     }
+    private EmbedBuilder eb = new EmbedBuilder();
 
     public static char prefix = '%';
     private Controller ctrl;
@@ -48,7 +51,10 @@ public class EventListener extends ListenerAdapter {
 
     public void onRoleCreate(RoleCreateEvent roleCreateEvent){
         try {
-            getLogChannel().sendMessage("Role " + roleCreateEvent.getRole().getName() + " has been created.").queue();
+            eb.clear();
+            eb.setTitle("Role " + roleCreateEvent.getRole().getName() + " has been created.");
+            eb.setColor(Color.YELLOW);
+            getLogChannel().sendMessage(eb.build()).queue();
         } catch (Exception e) {
         }
         if (roleCreateEvent.getRole().getName().equals("%BotMuted")) roleCreateEvent.getRole().getManager().
@@ -57,7 +63,12 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onGuildBan(@Nonnull GuildBanEvent event) {
-        if (getLogChannel() != null) getLogChannel().sendMessage("User " + event.getUser().getName() + " was banned.").queue();
+        if (getLogChannel() != null) {
+            eb.clear();
+            eb.setTitle("User " + event.getUser().getName() + " was banned.");
+            eb.setColor(Color.YELLOW);
+            getLogChannel().sendMessage(eb.build()).queue();
+        }
     }
 
     public static void setPrefix(char inprefix) {
