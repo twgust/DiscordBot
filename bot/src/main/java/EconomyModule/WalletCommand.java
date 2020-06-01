@@ -15,7 +15,9 @@ public class WalletCommand extends Command {
     @Override
     public void execute(GuildMessageReceivedEvent event) {
         int total = controller.getWalletTotalForUser((event.getAuthor().getId()));
-        event.getChannel().sendMessage("You have " + total + "Ⱡ in your wallet.").queue();
+        eb.setAuthor(event.getAuthor().getName() + "'s wallet", "https://github.com/twgust/DiscordBot", event.getAuthor().getAvatarUrl());
+        eb.addField("Total",Integer.toString(total) + "Ⱡ", true);
+        event.getChannel().sendMessage(eb.build()).queue();
     }
 
     @Override
