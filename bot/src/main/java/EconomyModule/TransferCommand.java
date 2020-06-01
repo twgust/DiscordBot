@@ -23,6 +23,10 @@ public class TransferCommand extends Command {
         else {
             mentionedUser = event.getMessage().getMentionedUsers().get(0);
         }
+        if (event.getAuthor().getId().equals(mentionedUser.getId())) {
+            event.getChannel().sendMessage("You can't transfer money to yourself!").queue();
+            return;
+        }
         String messageRaw = event.getMessage().getContentRaw();
         String[] array = messageRaw.split(" ", 3);
         if (array.length < 3) {
@@ -33,6 +37,10 @@ public class TransferCommand extends Command {
             transferAmount = Integer.parseInt(array[2]);
         } catch (NumberFormatException e) {
             event.getChannel().sendMessage("You did not enter a number as your second argument!").queue();
+            return;
+        }
+        if (transferAmount <= 0) {
+            event.getChannel().sendMessage("You can't transfer 0 or a negative amount!").queue();
             return;
         }
         EconomyResponses response = economyController.transferToUser(event.getAuthor().getId(), mentionedUser.getId(), transferAmount);
