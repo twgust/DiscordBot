@@ -25,6 +25,14 @@ public class MusicQueueCommand extends Command {
     int i = 1;
     EmbedBuilder builder = new EmbedBuilder();
     StringBuilder str = new StringBuilder();
+    AudioTrack nowPlayingTrack = musicController.getPlayer().getPlayingTrack();
+
+    String nowPlayingTrackTitle = nowPlayingTrack.getInfo().title;
+    String nowPlayingTrackURI = nowPlayingTrack.getInfo().uri;
+    str.append("Now playing : [").append(nowPlayingTrackTitle)
+            .append("](").append(nowPlayingTrackURI).append(")").append("\n\n");
+
+    //iterates through the queue to add track data to the %queue printout
     while(itr.hasNext() && i <= 5){
       AudioTrack track = itr.next();
       String trackName = track.getInfo().title;
@@ -33,6 +41,7 @@ public class MusicQueueCommand extends Command {
               .append("\n").append(musicController.timeFormatting(track.getDuration())).append("\n\n");
       i++;
     }
+    //Limiting how much information is going to be in one message
     if(i > 5){
       str.append("More Tracks are queued but not yet visible!");
     }
