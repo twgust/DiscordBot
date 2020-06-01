@@ -55,7 +55,7 @@ public class Controller {
         musicController = new MusicController(waiter);
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
-        
+
 
 
         jda.addEventListener(new EventListener(this));
@@ -127,7 +127,7 @@ public class Controller {
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
         //deprecated command, only used for displaying differences between embedded and normal message
-        cmdMap.put("oldmusic", new MusicCommand());
+
         cmdMap.put("music", new MusicHelp());
         cmdMap.put("stop", new MusicStopCommand(musicController));
 

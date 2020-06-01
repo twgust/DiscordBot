@@ -790,6 +790,11 @@ public class LastFmCommand extends Command {
                         String song = tracks[i][0] + " " + tracks[i][1];
                         System.out.println(song);
                         musicController.lastFMTrackLoader("ytsearch:" + song, event.getMember(), event);
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
                         if(counter == length+1){

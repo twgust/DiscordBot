@@ -99,12 +99,15 @@ public class MusicController {
                 try {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);
+                    StringBuilder descriptionBuilder = new StringBuilder();
+                    for (int i = 0; i < listOfTracks.size(); i++) {
+                        String trackTitle = listOfTracks.get(i).getInfo().title;
+                        String trackURI = listOfTracks.get(i).getInfo().uri;
+                        descriptionBuilder.append((i + 1) +" : [").append(trackTitle).append("](").append(trackURI)
+                                .append(")").append("\n\n");
+                    }
                     embedBuilder.setTitle("Search results - React to play ! 🎶");
-                    embedBuilder.addField("1) " + listOfTracks.get(0).getInfo().title, "", false);
-                    embedBuilder.addField("2)  " + listOfTracks.get(1).getInfo().title, "", false);
-                    embedBuilder.addField("3)  " + listOfTracks.get(2).getInfo().title, "", false);
-                    embedBuilder.addField("4)  " + listOfTracks.get(3).getInfo().title, "", false);
-                    embedBuilder.setFooter("%music for help ! 🎶");
+                    embedBuilder.setDescription(descriptionBuilder);
                     event.getChannel().sendMessage(embedBuilder.build()).queue(message -> {
                         initWaiter(message.getIdLong(), message.getChannel(), listOfTracks, message, event);
                         message.addReaction("1️⃣").queue();
@@ -134,8 +137,8 @@ public class MusicController {
      * Function that loads all music. Function invoked by %play command.
      *
      * @param identifier The string provided by a user
-     * @param member the user
-     * @param event
+     * @param member the user who invoked the function
+     * @param event The messages event (used to get the channel in which the function was invoked)
      */
     public void youtubeTrackLoaded(String identifier, Member member, GuildMessageReceivedEvent event) {
         EmbedBuilder builder = new EmbedBuilder();
@@ -186,9 +189,8 @@ public class MusicController {
                 //for youtube search
                 AudioTrack track = playlist.getTracks().get(0);
 
-                StringBuilder stringBuilder = new StringBuilder(track.getInfo().uri);
                 String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
-                String jpg = stringBuilder.toString();
+
 
                 if(identifier.contains("/playlist")){
                     for (int i = 0; i < playlist.getTracks().size(); i++) {
@@ -247,14 +249,12 @@ public class MusicController {
         Guild server = member.getGuild();
         server.getAudioManager().setSendingHandler(getAudioPlayerSendHandler());
 
-
-
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-
+                    //impossible to invoke since a playlist is always invoked while using
+                    //"ytsearch: + identifier" as an identifier.
                 }
-
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
@@ -270,10 +270,12 @@ public class MusicController {
 
             @Override
             public void noMatches() {
+                //TODO add a printout (either dm or guild message)
                 System.out.println("no matches");
             }
             @Override
             public void loadFailed(FriendlyException e) {
+                //TODO add a printout (either dm or guild message)
                 System.out.println("load failed");
 
             }
@@ -284,7 +286,7 @@ public class MusicController {
         if(counter == 4){
             counter = 0;
             int number = lastFMTracks.size();
-            for (int i = 0; i < number ; i++) {
+            for (int i = 0; i <= number ; i++) {
                 builderLastFM.addField(lastFMTracks.get(i).getInfo().title, "Duration: " +
                         timeFormatting(lastFMTracks.get(i).getDuration()), false);
             }
@@ -295,28 +297,29 @@ public class MusicController {
 
     /**
      * Function for formatting time for song duration printout
-     *
+     * Invoked in multiple functions
      * @param milliseconds Parameter for each track
-     * @return
+     * @return returns a formatted string to be used for printouts
      */
     public String timeFormatting(long milliseconds) {
         long minutes = (milliseconds / 1000) / 60;
         int seconds = (int) ((milliseconds / 1000) % 60);
         if (minutes <= 9 && seconds <= 9) {
             return "Duration: 0" + minutes + ":0" + seconds;
-        } else if (minutes <= 9 && seconds > 10) {
+        }
+        else if (minutes <= 9 && seconds > 10) {
             return "Duration: 0" + minutes + ":" + seconds;
         }
-        return "Duration: " + minutes + ":" + seconds + " Minutes 🎶";
+        return "Duration: " + minutes + " minutes";
     }
 
     //Generic function for embedded messages(test, probably not that useful due to how different each case is)
     public void genericEmbeddedMessage(GuildMessageReceivedEvent event, AudioTrack track, EmbedBuilder builder) {
         builder.setColor(Color.YELLOW);
         builder.setTitle(track.getInfo().title, track.getInfo().uri);
-        /**
-         * rest would be specific for each function which makes this function quite useless
-         */
+
+        //rest would be specific for each function which makes this function quite useless
+
     }
 
     //getter
@@ -333,11 +336,11 @@ public class MusicController {
 
     /**
      *
-     * @param messageId
-     * @param channel
-     * @param tracks
-     * @param message
-     * @param event
+     * @param messageId Unique ID for the message.
+     * @param channel The channel in which the message is sent
+     * @param tracks The list of tracks
+     * @param message The message which is being sent
+     * @param event The messages event (used to get the channel in which the function was invoked)
      */
     public void initWaiter(long messageId, MessageChannel channel, ArrayList<AudioTrack> tracks, Message message, GuildMessageReceivedEvent event) {
         waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
@@ -348,7 +351,6 @@ public class MusicController {
             message.clearReactions().queue();
 
         }, 30, TimeUnit.SECONDS, () -> {
-
         });
     }
 
@@ -372,11 +374,11 @@ public class MusicController {
 
     /**
      * code duplication necessary see @genericEmbeddedMessage() function
-     * @param tracks
-     * @param emote
-     * @param channel
-     * @param member
-     * @param event
+     * @param tracks A list of tracks
+     * @param emote An emote as a listener
+     * @param channel The channel which the message will be sent in
+     * @param member The member whom invoked the function
+     * @param event The messages event (used to get the channel in which the function was invoked)
      */
     public void handleReaction(ArrayList<AudioTrack> tracks, String emote, MessageChannel channel, Member member, GuildMessageReceivedEvent event
     ) {

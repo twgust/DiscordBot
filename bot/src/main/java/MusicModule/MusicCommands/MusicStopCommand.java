@@ -17,6 +17,8 @@ public class MusicStopCommand extends Command {
 
     @Override
     public void execute(GuildMessageReceivedEvent event) {
+        //Unpausing the player so that next time someone plays music, the player won't be in a paused state
+        musicController.getPlayer().setPaused(false);
         int size = musicController.getScheduler().getQueue().size();
 
         for (int i = 0; i <= size ; i++) {

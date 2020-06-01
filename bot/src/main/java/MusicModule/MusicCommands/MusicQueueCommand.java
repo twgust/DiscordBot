@@ -31,8 +31,6 @@ public class MusicQueueCommand extends Command {
       String trackUrl= track.getInfo().uri;
       str.append("Track ").append(i).append(" : [").append(trackName).append("](").append(trackUrl).append(")")
               .append("\n").append(musicController.timeFormatting(track.getDuration())).append("\n\n");
-      //builder.addField(i + "[" +trackName + "](" +trackUrl +")"
-        //      , musicController.timeFormatting(track.getDuration()), false);
       i++;
     }
     if(i > 5){

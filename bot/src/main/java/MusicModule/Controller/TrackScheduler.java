@@ -107,26 +107,9 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
-            if (queue.isEmpty()) {
-                addToQueue(track);
-            } else nextTrack();
-        }
-        if (AudioTrackEndReason.FINISHED.mayStartNext) {
-            //nextTrack(true);
-            System.out.println("FINISHED");
+            nextTrack();
         }
 
-        if (AudioTrackEndReason.REPLACED.mayStartNext) {
-            System.out.println("REPLACED");
-            nextTrack();
-        }
-        if (AudioTrackEndReason.CLEANUP.mayStartNext) {
-            System.out.println("CLEANUP");
-            nextTrack();
-        }
-        if (AudioTrackEndReason.LOAD_FAILED.mayStartNext) {
-            System.out.println("LOAD_FAILED");
-        }
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
         // endReason == LOAD_FAILED: Loading of a track failed (mayStartNext = true).
         // endReason == STOPPED: The player was stopped.
@@ -137,55 +120,21 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        nextTrack();
         System.out.println("onTrackException");
-        /*
-        System.out.println("---------------onTrackStuck TrackScheduler-------------");
-        System.out.println("BUG TEST");
-
-        AudioTrack audioTrack = queue.peekFirst();
-        if (audioTrack == null && counter < 2) {
-            counter++;
-            addToQueue(track);
-            nextTrack();
-            System.out.println("stuck because of next track");
-        }
-        else{
-            counter = 0;
-            nextTrack();
-            System.out.println("ADDING TRACK FAILED! Next TRACK");
-            System.out.println("---------------onTrackStuck TrackScheduler-------------");
-        }
-    */
+        nextTrack();
     }
 
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
+        System.out.println("Track got stuck");
         nextTrack();
-        System.out.println("onTrackStuck");
-        /*
-        System.out.println("---------------onTrackStuck TrackScheduler-------------");
-        System.out.println("BUG TEST");
-
-        AudioTrack audioTrack = queue.peekFirst();
-        if (audioTrack == null && counter < 2) {
-            counter++;
-            addToQueue(track);
-            nextTrack();
-            System.out.println("stuck because of next track");
-        }
-        else{
-            counter = 0;
-            nextTrack();
-            System.out.println("ADDING TRACK FAILED! Next TRACK");
-            System.out.println("---------------onTrackStuck TrackScheduler-------------");
-        }
-*/
     }
-
-
 }
+
+
+
+
 //    public MusicInfo getTrackInfo(AudioTrack track) {
 //        return queue.stream().filter(musicInfo -> musicInfo.getTrack().equals(track)).findFirst().orElse(null);
 //        MusicInfo info;
