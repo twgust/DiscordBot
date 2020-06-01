@@ -18,6 +18,7 @@ import ModerationModule.MessageControlModule.LockCommand;
 import ModerationModule.MessageControlModule.MuteCommand;
 import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
+import MusicModule.Controller.MusicController;
 import MusicModule.MusicCommands.*;
 import MusicModule.*;
 import QuizModule.QuizCommand;
@@ -29,7 +30,6 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
-
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
@@ -55,6 +55,7 @@ public class Controller {
         musicController = new MusicController(waiter);
         quizCommand = new QuizCommand();
         economyController = new EconomyController();
+        
 
 
         jda.addEventListener(new EventListener(this));

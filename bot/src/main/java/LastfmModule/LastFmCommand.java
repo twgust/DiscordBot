@@ -2,7 +2,7 @@ package LastfmModule;
 
 import Commands.Command;
 import Main.EventListener;
-import MusicModule.MusicController;
+import MusicModule.Controller.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;

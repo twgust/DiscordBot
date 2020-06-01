@@ -1,7 +1,7 @@
 package MusicModule.MusicCommands;
 
 import Commands.Command;
-import MusicModule.MusicController;
+import MusicModule.Controller.MusicController;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;

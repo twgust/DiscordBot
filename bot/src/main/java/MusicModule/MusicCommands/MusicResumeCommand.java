@@ -3,6 +3,7 @@ package MusicModule.MusicCommands;
 import Commands.Command;
 import MusicModule.*;
 
+import MusicModule.Controller.MusicController;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
@@ -27,7 +28,7 @@ public class MusicResumeCommand extends Command {
         builder.setFooter("%music for help");
 
         event.getChannel().sendMessage(builder.build()).queue();
-
+        builder.clear();
     }
 
 }

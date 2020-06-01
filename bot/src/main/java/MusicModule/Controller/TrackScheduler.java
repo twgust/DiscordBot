@@ -137,6 +137,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        nextTrack();
+        System.out.println("onTrackException");
+        /*
         System.out.println("---------------onTrackStuck TrackScheduler-------------");
         System.out.println("BUG TEST");
 
@@ -153,12 +156,15 @@ public class TrackScheduler extends AudioEventAdapter {
             System.out.println("ADDING TRACK FAILED! Next TRACK");
             System.out.println("---------------onTrackStuck TrackScheduler-------------");
         }
-
+    */
     }
 
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
+        nextTrack();
+        System.out.println("onTrackStuck");
+        /*
         System.out.println("---------------onTrackStuck TrackScheduler-------------");
         System.out.println("BUG TEST");
 
@@ -175,8 +181,10 @@ public class TrackScheduler extends AudioEventAdapter {
             System.out.println("ADDING TRACK FAILED! Next TRACK");
             System.out.println("---------------onTrackStuck TrackScheduler-------------");
         }
-
+*/
     }
+
+
 }
 //    public MusicInfo getTrackInfo(AudioTrack track) {
 //        return queue.stream().filter(musicInfo -> musicInfo.getTrack().equals(track)).findFirst().orElse(null);
