@@ -43,7 +43,7 @@ public class LevelController {
                 ". You just leveled up. Hope you are happy being level " + level + " now!");
         eb.setColor(Color.YELLOW);
         channel.sendMessage(eb.build()).queue();
-        channel.sendMessage(member.getAsMention()).queue();
+        channel.sendMessage(member.getUser().getAsTag()).queue();
     }
 
     public static boolean addLevelRole(Guild guild, Integer level, Role role) {
