@@ -62,7 +62,7 @@ public class AddLevelRoleCommand extends Command {
         eb.setTitle("Level Module \uD83C\uDFC6", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LevelModule/");
         eb.setDescription("Level system!");
         eb.addField("profile", "- Shows the user's level profile", true);
-        eb.addField("Placeholder", "- Add special level roles", true);
+        eb.addField("addlevelrole", "- Add special level roles", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");
         eb.setColor(Color.YELLOW);
         return eb;
