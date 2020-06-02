@@ -72,7 +72,7 @@ public class PruneCommand extends ModCommand {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("\uD83D\uDC80 Moderation Module - Prune \uD83D\uDC80", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/MessageControlModule");
+        eb.setTitle("Moderation Module - Prune \uD83D\uDC80", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/MessageControlModule");
         eb.setDescription("Prune messages!");
         eb.addField("Placeholder", "- Placeholder", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");

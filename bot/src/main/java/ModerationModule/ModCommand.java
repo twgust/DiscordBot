@@ -28,7 +28,7 @@ public class ModCommand extends Command {
     @Override
     public EmbedBuilder getHelp(){
         eb.clear();
-        eb.setTitle("\uD83D\uDC6E Moderation Command \uD83D\uDC6E");
+        eb.setTitle("Moderation Command \uD83D\uDC6E");
         eb.setDescription("Moderation Module!");
         eb.addField("Ban", "- Shows help for the Ban Command", false);
         eb.addField("Kick", "- Shows help for the Kick Command", false);

@@ -25,7 +25,7 @@ public class WalletCommand extends Command {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("\uD83D\uDCB0  Economy Module \uD83D\uDCB0", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/");
+        eb.setTitle("Economy Module \uD83D\uDCB0", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/EconomyModule/");
         eb.setDescription("Server Economy!");
         eb.addField("wallet", "- Shows the content of the user's wallet", true);
         eb.setFooter("DM Ugion#1917 if you have suggestions");

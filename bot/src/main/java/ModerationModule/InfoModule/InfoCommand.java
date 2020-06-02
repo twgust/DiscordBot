@@ -48,7 +48,7 @@ public class InfoCommand extends ModCommand {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("ℹ️ Moderation Module - Info ℹ️", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
+        eb.setTitle("Moderation Module - Info ℹ️", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
         eb.setDescription("Show user information!");
         eb.addField("info [user]", "- Shows information about the user", true);
         eb.setFooter("DM wiz#8158 if you have suggestions");

@@ -48,7 +48,7 @@ public class HelpCommand extends ModCommand {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("\uD83E\uDDAE Moderation Module - Help \uD83E\uDDAE", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
+        eb.setTitle("Moderation Module - Help \uD83E\uDDAE", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/ModerationModule/InfoModule");
         eb.setDescription("List of all commands! \n" +
                 "Type %<command> to get more help for selected command!\n" +
                 "Example: %weather"+

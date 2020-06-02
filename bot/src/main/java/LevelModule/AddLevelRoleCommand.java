@@ -59,7 +59,7 @@ public class AddLevelRoleCommand extends Command {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("\uD83C\uDFC6 Level Module \uD83C\uDFC6", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LevelModule/");
+        eb.setTitle("Level Module \uD83C\uDFC6", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LevelModule/");
         eb.setDescription("Level system!");
         eb.addField("profile", "- Shows the user's level profile", true);
         eb.addField("Placeholder", "- Add special level roles", true);

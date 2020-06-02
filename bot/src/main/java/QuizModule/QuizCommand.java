@@ -145,7 +145,7 @@ public class QuizCommand extends Command {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("❓ Quiz Module ❓", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/QuizModule");
+        eb.setTitle("Quiz Module ❓", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/QuizModule");
         eb.setDescription("A trivia game!");
         eb.addField("quiz start single", "- Starts a single answer game", true);
         eb.addField("quiz stop single", "- Stops a single answer game", true);

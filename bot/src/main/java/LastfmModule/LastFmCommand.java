@@ -1550,7 +1550,7 @@ public class LastFmCommand extends Command {
     @Override
     public EmbedBuilder getHelp() {
         eb.clear();
-        eb.setTitle("\uD83C\uDFB5 LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
+        eb.setTitle("LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
         eb.setDescription("A lastFM music tracker!\n" +
                 "Arguments in `[brackets]` are mandatory, arguments in `(parenthesis)` are not.");
         eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
