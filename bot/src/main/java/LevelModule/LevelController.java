@@ -39,10 +39,11 @@ public class LevelController {
         Guild guild = channel.getGuild();
         Member member = guild.getMemberById(memberID);
         eb.clear();
-        eb.setTitle("Oi c*nt! Yeah you " + member.getAsMention() +
+        eb.setTitle("Oi c*nt! Yeah you " + member.getNickname() +
                 ". You just leveled up. Hope you are happy being level " + level + " now!");
         eb.setColor(Color.YELLOW);
         channel.sendMessage(eb.build()).queue();
+        channel.sendMessage(member.getAsMention());
     }
 
     public static boolean addLevelRole(Guild guild, Integer level, Role role) {
