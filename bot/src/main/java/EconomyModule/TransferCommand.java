@@ -69,7 +69,7 @@ public class TransferCommand extends Command {
         eb.setTitle("Error!");
         eb.addField("", errorString, true);
         eb.setFooter("DM Ugion#1917 for support.");
-        eb.setColor(Color.MAGENTA);
+        eb.setColor(Color.YELLOW);
         return eb.build();
     }
 }
