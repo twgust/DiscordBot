@@ -50,12 +50,12 @@ public class TransferCommand extends Command {
         }
         EconomyResponses response = economyController.transferToUser(event.getAuthor().getId(), mentionedUser.getId(), transferAmount);
         if (response == EconomyResponses.INSUFFICIENT_FUNDS) {
-            event.getChannel().sendMessage(buildError("You do not have enough funds for this tranfer!")).queue();
+            event.getChannel().sendMessage(buildError("You do not have enough funds for this transfer!")).queue();
         }
         else if (response == EconomyResponses.SUCCESS) {
             eb.clear();
-            eb.setTitle("Succesful transfer");
-            eb.addField("", "Transferred " + transferAmount +"Ⱡ to" + mentionedUser, true);
+            eb.setTitle("Successful transfer");
+            eb.addField("", "Transferred " + transferAmount +"Ⱡ to" + mentionedUser.getName(), true);
             eb.setColor(Color.MAGENTA);
             event.getChannel().sendMessage(eb.build()).queue();
         }
