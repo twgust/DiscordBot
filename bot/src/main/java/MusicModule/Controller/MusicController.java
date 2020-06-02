@@ -190,38 +190,44 @@ public class MusicController {
                 AudioTrack track = playlist.getTracks().get(0);
 
                 String youtubeImageUrl = "https://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg";
+                builder.setImage(youtubeImageUrl);
 
-
-                if(identifier.contains("/playlist")){
+                //if identifier contains list or playlist it is highly likely that it is a youtube playlist.
+                if(identifier.contains("/playlist")|| identifier.contains("&list")){
                     for (int i = 0; i < playlist.getTracks().size(); i++) {
                         scheduler.addToQueue(playlist.getTracks().get(i),member);
+                        System.out.println("playlist test");
                     }
+                    //now playing (if playlist is large enough this won't have time to load before
+                    //the player starts playing tracks
                     if(player.getPlayingTrack() == null){
                         builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                         builder.setDescription(timeFormatting(track.getInfo().length));
-                        builder.setImage(youtubeImageUrl);
+
                         event.getChannel().sendMessage(builder.build()).queue();
                         builder.clear();
                     }
+                    //added to queue
                     else if(player.getPlayingTrack() != null){
                         builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                         builder.setDescription("Position in queue: " + scheduler.getQueue().size());
-                        builder.setImage(youtubeImageUrl);
 
                         event.getChannel().sendMessage(builder.build()).queue();
                         builder.clear();
                     }
                 }
+                //ytsearch Now Playing
                 else if (player.getPlayingTrack() == null) {
                     scheduler.addToQueue(track, member);
                     builder.setTitle("Now playing: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription(timeFormatting(track.getInfo().length));
-                    builder.setImage(youtubeImageUrl);
 
                     event.getChannel().sendMessage(builder.build()).queue();
                     builder.clear();
 
-                } else if (player.getPlayingTrack() != null) {
+                }
+                //ytsearch Added to queue
+                else if (player.getPlayingTrack() != null) {
                     scheduler.addToQueue(track, member);
                     builder.setTitle("Added to Queue: " + track.getInfo().title, track.getInfo().uri);
                     builder.setDescription("Position in queue: " + scheduler.getQueue().size());
@@ -280,8 +286,8 @@ public class MusicController {
 
             }
         });
-
     }
+
     public void placeHolder(GuildMessageReceivedEvent event){
         if(counter == 4){
             counter = 0;
