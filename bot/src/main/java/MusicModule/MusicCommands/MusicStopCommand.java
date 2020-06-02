@@ -32,7 +32,7 @@ public class MusicStopCommand extends Command {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.YELLOW);
         builder.setTitle("Session stopped");
-        builder.setDescription("Thank you for choosing <botname> !");
+        builder.setDescription("Thank you for choosing group 10!");
         builder.setImage("https://i.imgur.com/gKKW6bp.gif");
         builder.setFooter("%music for help");
         event.getChannel().sendMessage(builder.build()).queue();

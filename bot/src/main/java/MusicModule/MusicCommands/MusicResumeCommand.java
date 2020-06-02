@@ -30,5 +30,4 @@ public class MusicResumeCommand extends Command {
         event.getChannel().sendMessage(builder.build()).queue();
         builder.clear();
     }
-
 }

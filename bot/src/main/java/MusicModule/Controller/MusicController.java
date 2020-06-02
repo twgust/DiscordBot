@@ -148,6 +148,8 @@ public class MusicController {
         builder.setFooter("%music for help");
 
 
+
+
         if (member.getVoiceState().getChannel() == null) {
             System.out.println("you are not in a voice channel");
         }

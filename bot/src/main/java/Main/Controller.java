@@ -25,7 +25,6 @@ import ModerationModule.MessageControlModule.PruneCommand;
 import ModerationModule.MessageControlModule.UnlockCommand;
 import MusicModule.Controller.MusicController;
 import MusicModule.MusicCommands.*;
-import MusicModule.*;
 import QuizModule.QuizCommand;
 import WeatherModule.WeatherCommand;
 import WeatherModule.WeatherSQL;
@@ -40,7 +39,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 
