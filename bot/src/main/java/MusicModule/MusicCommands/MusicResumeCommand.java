@@ -28,7 +28,7 @@ public class MusicResumeCommand extends Command {
         builder.setFooter("%music for help");
 
         event.getChannel().sendMessage(builder.build()).queue();
-
+        builder.clear();
     }
 
 }

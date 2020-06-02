@@ -14,11 +14,11 @@ public class WalletCommand extends Command {
     }
     @Override
     public void execute(GuildMessageReceivedEvent event) {
-        int total = controller.getWalletTotalForUser((event.getAuthor().getId()));
         eb.clear();
+        int total = controller.getWalletTotalForUser((event.getAuthor().getId()));
         eb.setAuthor(event.getAuthor().getName() + "'s wallet", "https://github.com/twgust/DiscordBot", event.getAuthor().getAvatarUrl());
-        eb.addField("Total",Integer.toString(total) + "Ⱡ", true);
-        eb.setColor(Color.YELLOW);
+        eb.addField("Total", total + "Ⱡ", true);
+        eb.setColor(Color.MAGENTA);
         event.getChannel().sendMessage(eb.build()).queue();
     }
 

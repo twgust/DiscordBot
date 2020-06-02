@@ -22,20 +22,35 @@ public class MusicQueueCommand extends Command {
   @Override
   public void execute(GuildMessageReceivedEvent event){
     Iterator<AudioTrack> itr = musicController.getScheduler().getQueue().iterator();
-    String str = "\n" +  "\n";
     int i = 1;
-    str += "Now playing: " + musicController.getPlayer().getPlayingTrack().getInfo().title + "\n";
-    while(itr.hasNext()){
+    EmbedBuilder builder = new EmbedBuilder();
+    StringBuilder str = new StringBuilder();
+    AudioTrack nowPlayingTrack = musicController.getPlayer().getPlayingTrack();
 
-      str +=  i + ") " + itr.next().getInfo().title +"\n";
+    String nowPlayingTrackTitle = nowPlayingTrack.getInfo().title;
+    String nowPlayingTrackURI = nowPlayingTrack.getInfo().uri;
+    str.append("Now playing : [").append(nowPlayingTrackTitle)
+            .append("](").append(nowPlayingTrackURI).append(")").append("\n\n");
+
+    //iterates through the queue to add track data to the %queue printout
+    while(itr.hasNext() && i <= 5){
+      AudioTrack track = itr.next();
+      String trackName = track.getInfo().title;
+      String trackUrl= track.getInfo().uri;
+      str.append("Track ").append(i).append(" : [").append(trackName).append("](").append(trackUrl).append(")")
+              .append("\n").append(musicController.timeFormatting(track.getDuration())).append("\n\n");
       i++;
     }
+    //Limiting how much information is going to be in one message
+    if(i > 5){
+      str.append("More Tracks are queued but not yet visible!");
+    }
 
-    EmbedBuilder builder = new EmbedBuilder();
     builder.setColor(Color.YELLOW);
     builder.setTitle("Current queue: ");
     builder.setDescription(str);
     builder.setFooter("%music for help");
     event.getChannel().sendMessage(builder.build()).queue();
+    builder.clear();
   }
 }
