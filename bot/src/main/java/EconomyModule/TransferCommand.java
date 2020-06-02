@@ -58,7 +58,6 @@ public class TransferCommand extends Command {
             eb.addField("", "Transferred " + transferAmount +"Ⱡ to " + mentionedUser.getAsTag(), true);
             eb.setColor(Color.YELLOW);
             event.getChannel().sendMessage(eb.build()).queue();
-            event.getChannel().sendMessage(mentionedUser.getAsTag()).queue();
         }
         else {
             event.getChannel().sendMessage(buildError("Unknown error")).queue();
