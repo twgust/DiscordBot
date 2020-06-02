@@ -38,7 +38,6 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import LevelModule.LevelListener;
-
 import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -68,6 +67,7 @@ public class Controller {
         economyController = new EconomyController();
         LastFmSQL.createDB();
         WeatherSQL.createDB();
+
 
 
         jda.addEventListener(new EventListener(this));
@@ -146,7 +146,7 @@ public class Controller {
         cmdMap.put("song", new MusicCurrentlyPlayingCommand(musicController));
         cmdMap.put("search", new MusicSearchCommand(musicController, waiter));
         //deprecated command, only used for displaying differences between embedded and normal message
-        cmdMap.put("oldmusic", new MusicCommand());
+
         cmdMap.put("music", new MusicHelp());
         cmdMap.put("stop", new MusicStopCommand(musicController));
 
