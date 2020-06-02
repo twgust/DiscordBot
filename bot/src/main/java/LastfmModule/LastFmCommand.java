@@ -8,6 +8,7 @@ import MusicModule.Controller.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import org.apache.xerces.parsers.DOMParser;
@@ -50,7 +51,6 @@ public class LastFmCommand extends Command {
     private Paginator.Builder pbuilder;
     private String noUsernameMessage = "```❌ You've not linked your lastfm username. Type " + EventListener.prefix + "fm set <username>. Type " + EventListener.prefix + "help for more help noob. ❌```";
     private String wrongFormatMessage = "```❌ Invalid format, try again. Type " + EventListener.prefix + "help for more help noob ❌```";
-
     public LastFmCommand(EventWaiter waiter, MusicController musicController) {
         this.waiter = waiter;
         this.musicController = musicController;
@@ -73,8 +73,8 @@ public class LastFmCommand extends Command {
                 topTracks(getDiscordID(), 10, "7day", event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
                 topArtists(getDiscordID(), 10, "7day", event, sql1);
-            } else if(getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("topalbums")) {
-                topAlbums(getDiscordID(), 10, "7day", event, sql1 );
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("topalbums")) {
+                topAlbums(getDiscordID(), 10, "7day", event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("delete") || getMessageReceivedArr()[1].equalsIgnoreCase("del") || getMessageReceivedArr()[1].equalsIgnoreCase("remove")) {
                 deleteUsernameInSQL(getDiscordID(), event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")) {
@@ -85,12 +85,11 @@ public class LastFmCommand extends Command {
                 getChartAlbum(getDiscordID(), 3, "7day", event, sql1);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("youtube") || getMessageReceivedArr()[1].equalsIgnoreCase("yt")) {
                 executeYoutubeSelf(sql1, event);
-            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")) {
                 executeProfileSelf(sql1, event);
-            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("test")){
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("test")) {
                 topAlbums(getDiscordID(), 10, "7day", event, sql1);
-            }
-            else {
+            } else {
                 executeProfile(sql1, event);
             }
 
@@ -101,8 +100,8 @@ public class LastFmCommand extends Command {
                 executeTopTracksNoAmount(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
                 executeTopArtistNoAmount(sql1, event);
-            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("topalbums")){
-                executeTopAlbumsNoAmount(sql1,event);
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("topalbums")) {
+                executeTopAlbumsNoAmount(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("recent") || getMessageReceivedArr()[1].equalsIgnoreCase("rt")) {
                 executeRecentTracks(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
@@ -111,9 +110,9 @@ public class LastFmCommand extends Command {
                 executeYouTubeUsername(sql1, event, getMessageReceivedArr()[2]);
             } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile") || getMessageReceivedArr()[1].equalsIgnoreCase("p")) && getMessageReceivedArr()[2].contains("<@!")) {
                 executeProfileTagged(sql1, event);
-            } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile"))){
+            } else if ((getMessageReceivedArr()[1].equalsIgnoreCase("profile"))) {
                 executeProfile(sql1, event);
-            }else {
+            } else {
                 sql1.closeConnection();
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
@@ -122,18 +121,22 @@ public class LastFmCommand extends Command {
             if (getMessageReceivedArr()[1].equalsIgnoreCase("tt") || getMessageReceivedArr()[1].equalsIgnoreCase("toptracks")) {
                 executeTopTracks(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("ta") || getMessageReceivedArr()[1].equalsIgnoreCase("topartists")) {
-                executeTopArtists(sql1,event);
-            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("talb")){
+                executeTopArtists(sql1, event);
+            } else if (getMessageReceivedArr()[1].equalsIgnoreCase("talb") || getMessageReceivedArr()[1].equalsIgnoreCase("topalbums")) {
                 executeTopAlbums(sql1, event);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("chart")) {
                 executeChart(sql1, event, getMessageReceivedArr()[3]);
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("play")) {
-                if(getMessageReceivedArr()[2].equalsIgnoreCase("tt") || getMessageReceivedArr()[2].equalsIgnoreCase("toptracks")) {
+                if (getMessageReceivedArr()[2].equalsIgnoreCase("tt") || getMessageReceivedArr()[2].equalsIgnoreCase("toptracks")) {
                     playMusicFromTopList(getDiscordID(), event, sql1, getMessageReceivedArr()[3]);
                 }
             }
+            else {
+                sql1.closeConnection();
+                event.getChannel().sendMessage(wrongFormatMessage).queue();
+            }
 
-        }else {
+        } else {
             sql1.closeConnection();
             event.getChannel().sendMessage("Use correct format (HOLDER FOR UPCOMING SHIT POGU)").queue();
         }
@@ -436,7 +439,7 @@ public class LastFmCommand extends Command {
                         p.paginate(message, page);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         message.editMessage("```❌ No artists found for your account ❌```").queue();
-                    } catch (NegativeArraySizeException e){
+                    } catch (NegativeArraySizeException e) {
                         message.editMessage("```❌ Invalid number ❌```").queue();
                     }
                 } else message.editMessage(failedToLoad).queue();
@@ -625,7 +628,8 @@ public class LastFmCommand extends Command {
             sql.closeConnection();
         }
     }
-    public void topAlbums(String discordID, int maxTrackAmount, String periodStr, GuildMessageReceivedEvent event, LastFmSQL sql){
+
+    public void topAlbums(String discordID, int maxTrackAmount, String periodStr, GuildMessageReceivedEvent event, LastFmSQL sql) {
         if (sql.checkQuery(getDiscordID())) {
             setPeriodStr("7day");
 
@@ -669,35 +673,35 @@ public class LastFmCommand extends Command {
                             String albumLink = albums[i][5];
 
 
-                    /*if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
-                    }
-                    if (artist.contains("*")) {
-                        artist = artist.replace("*", "\\*");
-                    }
+                            if (artist.contains("*")) {
+                                artist = artist.replace("*", "\\*");
+                            }
+                            if (album.contains("*")) {
+                                album = album.replace("*", "\\*");
+                            }
 
-                     */
+
                             if (i == 0) {
                                 if (playcount == 1) {
-                                    pages[pagetemp] += "🥇 " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " play)" + "\n";
+                                    pages[pagetemp] += "🥇 " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
                                 } else
-                                    pages[pagetemp] += "🥇 " + artist + "- [" + album + "]("+albumLink+") (" + decimalFormat.format(playcount) + " plays)" + "\n";
+                                    pages[pagetemp] += "🥇 " + artist + "- [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
                             } else if (i == 1) {
                                 if (playcount == 1) {
-                                    pages[pagetemp] += "🥈 " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " play)" + "\n";
+                                    pages[pagetemp] += "🥈 " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
                                 } else
-                                    pages[pagetemp] += "🥈 " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " plays)" + "\n";
+                                    pages[pagetemp] += "🥈 " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
                             } else if (i == 2) {
                                 if (playcount == 1) {
-                                    pages[pagetemp] += "🥉 " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " play)" + "\n";
+                                    pages[pagetemp] += "🥉 " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
                                 } else
-                                    pages[pagetemp] += "🥉 " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " plays)" + "\n";
+                                    pages[pagetemp] += "🥉 " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
                             } else {
 
                                 if (playcount == 1) {
-                                    pages[pagetemp] += "#" + rank + " " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " play)" + "\n";
+                                    pages[pagetemp] += "#" + rank + " " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " play)" + "\n";
                                 } else
-                                    pages[pagetemp] += "#" + rank + " " + artist + " - [" + album + "]("+albumLink+") ("+ decimalFormat.format(playcount) + " plays)" + "\n";
+                                    pages[pagetemp] += "#" + rank + " " + artist + " - [" + album + "](" + albumLink + ") (" + decimalFormat.format(playcount) + " plays)" + "\n";
                             }
                             if (pages[pagetemp].length() > 1800 && albums.length - 1 != i) {
                                 pagetemp++;
@@ -748,8 +752,10 @@ public class LastFmCommand extends Command {
                         p.paginate(message, page);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         message.editMessage("```❌ No artists found for your account ❌```").queue();
-                    } catch (NegativeArraySizeException e){
+                    } catch (NegativeArraySizeException e) {
                         message.editMessage("```❌ Invalid number ❌```").queue();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 } else message.editMessage(failedToLoad).queue();
             });
@@ -907,7 +913,6 @@ public class LastFmCommand extends Command {
                          */
 
 
-
                     } else message.editMessage("```❌ No albums found for your account ❌```").queue();
                 } else message.editMessage("```Failed to load, try again please```").queue();
             });
@@ -940,8 +945,8 @@ public class LastFmCommand extends Command {
         });
     }
 
-    public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period){
-        if (sql.checkQuery(discordID)){
+    public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period) {
+        if (sql.checkQuery(discordID)) {
             event.getChannel().sendMessage("```Loading music...```").queue(message -> {
                 LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), getPeriodForAPICall(period), 5);
                 sql.closeConnection();
@@ -951,7 +956,7 @@ public class LastFmCommand extends Command {
                     System.out.println(Arrays.deepToString(tracks));
                     int length = tracks.length;
                     int counter = 1;
-                    for (int i = 0; i < length; i++){
+                    for (int i = 0; i < length; i++) {
                         String song = tracks[i][0] + " " + tracks[i][1];
                         System.out.println(song);
                         musicController.lastFMTrackLoader("ytsearch:" + song, event.getMember(), event);
@@ -962,23 +967,21 @@ public class LastFmCommand extends Command {
                         }
                         message.editMessage("Loaded " + counter + " song").queue();
                         counter++;
-                        if(counter == length+1){
+                        if (counter == length + 1) {
                             message.editMessage("Finished loading!").queue();
                             break;
                         }
                     }
-                    
 
-                }
-                else {
+
+                } else {
                     event.getChannel().sendMessage(failedToLoad).queue();
                     sql.closeConnection();
                 }
 
             });
 
-        }
-        else {
+        } else {
             event.getChannel().sendMessage(noUsernameMessage).queue();
         }
 
@@ -1234,7 +1237,7 @@ public class LastFmCommand extends Command {
         }
     }
 
-    public void executeTopAlbums(LastFmSQL sql, GuildMessageReceivedEvent event){
+    public void executeTopAlbums(LastFmSQL sql, GuildMessageReceivedEvent event) {
         if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
             setPeriodStr("7day");
             try {
@@ -1243,6 +1246,7 @@ public class LastFmCommand extends Command {
                 topAlbums(getDiscordID(), getMaxTrackAmount(), getPeriodStr(), event, sql);
 
             } catch (NumberFormatException e) {
+
                 sql.closeConnection();
                 setMaxTrackAmount(10);
                 event.getChannel().sendMessage(wrongFormatMessage).queue();
@@ -1311,7 +1315,7 @@ public class LastFmCommand extends Command {
 
     }
 
-    public void executeTopAlbumsNoAmount(LastFmSQL sql, GuildMessageReceivedEvent event){
+    public void executeTopAlbumsNoAmount(LastFmSQL sql, GuildMessageReceivedEvent event) {
         if (sql.checkQuery(getDiscordID())) {
             if (getMessageReceivedArr()[2].equalsIgnoreCase("w") || getMessageReceivedArr()[2].equalsIgnoreCase("week")) {
                 setPeriodStr("7day");
