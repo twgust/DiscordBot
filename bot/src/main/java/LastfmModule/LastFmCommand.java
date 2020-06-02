@@ -1559,7 +1559,7 @@ public class LastFmCommand extends Command {
         eb.setDescription("A lastFM music tracker!\n" +
                 "Arguments in `[brackets]` are mandatory, arguments in `(parenthesis)` are not.");
         eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
-        eb.addField("Valid periods", "Week: `week`/`7day`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
+        eb.addField("Valid periods", "Week: `week`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
         eb.addField("`fm set [username]`", "- Links (username) with discord account", true);
         eb.addField("`fm delete`", "- Unlinks username", true);
         eb.addField("`fm profile (username)`", "- Shows last fm profile", true);
