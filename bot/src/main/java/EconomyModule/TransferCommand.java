@@ -55,7 +55,7 @@ public class TransferCommand extends Command {
         else if (response == EconomyResponses.SUCCESS) {
             eb.clear();
             eb.setTitle("Successful transfer");
-            eb.addField("", "Transferred " + transferAmount +"Ⱡ to " + mentionedUser.getName(), true);
+            eb.addField("", "Transferred " + transferAmount +"Ⱡ to " + mentionedUser.getAsTag(), true);
             eb.setColor(Color.YELLOW);
             event.getChannel().sendMessage(eb.build()).queue();
             event.getChannel().sendMessage(mentionedUser.getAsTag()).queue();
