@@ -35,6 +35,7 @@ public class LastFmProfileParser {
                     .thenAccept(this::parse)
                     .join();
         }catch (Exception e){
+            e.printStackTrace();
             setLoaded(false);
         }
     }

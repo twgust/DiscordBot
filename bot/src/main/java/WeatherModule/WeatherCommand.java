@@ -49,7 +49,8 @@ public class WeatherCommand extends Command{
                 System.out.println("beep");
             }
             else {
-                city = event.getMessage().getContentRaw().substring(13);
+                city = event.getMessage().getContentRaw().substring(9);
+                System.out.println(city);
                 city = city.replace(" ", "%20");
                 System.out.println("beep else");
             }
@@ -69,7 +70,7 @@ public class WeatherCommand extends Command{
         else{
             city = event.getMessage().getContentRaw().substring(9);
             city = city.replace(" ", "%20");
-            System.out.println("beep else2");
+            System.out.println("beep else3");
         }
 
         /*
