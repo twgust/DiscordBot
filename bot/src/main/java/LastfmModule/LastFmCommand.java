@@ -90,7 +90,8 @@ public class LastFmCommand extends Command {
             } else if (getMessageReceivedArr()[1].equalsIgnoreCase("test")) {
                 topAlbums(getDiscordID(), 10, "7day", event, sql1);
             } else {
-                executeProfile(sql1, event);
+                sql1.closeConnection();
+                event.getChannel().sendMessage(wrongFormatMessage).queue();
             }
 
         } else if (getMessageReceivedArr().length == 3) {
