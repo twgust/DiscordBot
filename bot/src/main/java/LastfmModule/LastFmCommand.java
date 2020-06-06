@@ -8,7 +8,6 @@ import MusicModule.Controller.MusicController;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import de.umass.lastfm.User;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import org.apache.xerces.parsers.DOMParser;
@@ -21,13 +20,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.awt.*;
-import java.io.File;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -1561,10 +1558,12 @@ public class LastFmCommand extends Command {
     public EmbedBuilder getHelp() {
         eb.clear();
         eb.setTitle("LastFm Module \uD83C\uDFB5", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/LastfmModule");
-        eb.setDescription("A lastFM music tracker!\n" +
-                "Arguments in `[brackets]` are mandatory, arguments in `(parenthesis)` are not.");
-        eb.addField("Valid inputs", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p`", false);
-        eb.addField("Valid periods", "Week: `week`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at`", false);
+        eb.setDescription("LastFM is a website that tracks what music you listen to.\n" +
+                "You need an account to be able to use this command. Click [here](https://www.last.fm/) to signup!\n\n" +
+                "Text in `[brackets]` are mandatory, text in `(parenthesis)` are not.");
+        eb.addField("`fm set [username]`", "- Links [username] with discord account \n 🛑 MUST BE SET BEFORE USING OTHER COMMANDS 🛑", true);
+        eb.addField("Valid shorthands", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p` \n\nExample: `fm tt week` instead of `fm toptracks week`", false);
+        eb.addField("Valid time periods", "Week: `week`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at` \n\nExample: `fm toptracks ` instead of `fm toptracks week`", false);
         eb.addField("`fm set [username]`", "- Links (username) with discord account", true);
         eb.addField("`fm delete`", "- Unlinks username", true);
         eb.addField("`fm profile (username)`", "- Shows last fm profile", true);
