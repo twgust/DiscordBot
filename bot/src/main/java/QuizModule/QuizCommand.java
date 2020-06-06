@@ -157,7 +157,7 @@ public class QuizCommand extends Command {
         eb.setDescription("A trivia game!");
         eb.addField("quiz start single", "- Starts a single answer game", true);
         eb.addField("quiz stop single", "- Stops a single answer game", true);
-        eb.addField("quiz skip", "- Skips a question in a single answer game", false);
+        eb.addField("quiz skip", "- Skips a question", false);
         eb.addField("quiz start multi", "- Starts a multi answer game", true);
         eb.addField("quiz stop multi", "- Stops a multi answer game", true);
         eb.addField("quiz points", "- Shows your global points", true);
