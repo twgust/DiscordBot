@@ -186,11 +186,11 @@ public class QuizSingle implements Runnable{
      * @param user Discord user Id
      * @param message Discord User's message
      */
-    public void checkAnswer(User user, Message message){
+    public synchronized void checkAnswer(User user, Message message){
         if(question != null) {
             if (message.getContentRaw().equalsIgnoreCase(question.getAnswer())) {
                 postMessage("**" + user.getName() + " is correct with the answer " + question.getAnswer() + "!**" +
-                 "\n**1 point is awarded!**");
+                        "\n**" + user.getName() + " is awarded 1 point!**");
                 question.setAnswered(true);
                 dbConnection.addToPoints(user.getId(), 1);
                 thread.interrupt();

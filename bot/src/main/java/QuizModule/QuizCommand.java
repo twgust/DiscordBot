@@ -4,15 +4,20 @@ import Commands.Command;
 import Main.EventListener;
 import QuizModule.QuizMulti.QuizMulti;
 import QuizModule.QuizSingle.QuizSingle;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 
 
 import java.awt.*;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * QuizCommand is a command that will launch a quiz game. The game is either single-answer or multi-answer based
@@ -25,10 +30,12 @@ public class QuizCommand extends Command {
     private QuizMulti quizM = new QuizMulti();
     private TextChannel channel;
     private EmbedBuilder eb = new EmbedBuilder();
+    private EventWaiter waiter;
     private JDA jda;
 
-    public QuizCommand(JDA jda) {
+    public QuizCommand(JDA jda, EventWaiter waiter) {
         this.jda=jda;
+        this.waiter=waiter;
     }
 
 
@@ -46,6 +53,7 @@ public class QuizCommand extends Command {
         quizS.setDatabaseConnection(dbConnection);
         quizM.setTextChannel(channel);
         quizM.setDatabaseConnection(dbConnection);
+        quizM.setEventWaiter(waiter);
         String subCommand = event.getMessage().getContentRaw().substring(6);
 
         switch(subCommand){
@@ -63,7 +71,12 @@ public class QuizCommand extends Command {
                 quizS.stop(event.getAuthor());
                 break;
             case "skip":
-                quizS.skip(event.getAuthor());
+                if(quizS.isAlive()) {
+                    quizS.skip(event.getAuthor());
+                }
+                else if(quizM.isAlive()) {
+                    quizM.skip(event.getAuthor());
+                }
                 break;
             case "start multi":
                 if(quizS.isAlive()){
@@ -118,11 +131,6 @@ public class QuizCommand extends Command {
             if(quizS != null){
                 if(quizS.isAlive()) {
                     quizS.checkAnswer(user, message);
-                }
-            }
-            if(quizM != null){
-                if(quizM.isAlive()){
-                    quizM.checkAnswer(user, message);
                 }
             }
         }
