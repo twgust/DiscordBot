@@ -24,20 +24,24 @@ public class PrefixCommand extends Command {
                 if (receivedMessage.length() > 1) {
                     eb.clear();
                     eb.setTitle("**Prefix has to be __1__ letter**");
+                    eb.setColor(Color.YELLOW);
                     event.getChannel().sendMessage(eb.build()).queue();
                 } else if (receivedMessage.length() == 0) {
                     eb.clear();
                     eb.setTitle("**You didn't enter a prefix**");
+                    eb.setColor(Color.YELLOW);
                     event.getChannel().sendMessage(eb.build()).queue();
                 } else {
                     eb.clear();
                     EventListener.setPrefix(receivedMessage.charAt(0));
                     eb.setTitle("**The prefix is now '" + receivedMessage + "'**");
+                    eb.setColor(Color.YELLOW);
                     event.getChannel().sendMessage(eb.build()).queue();
                 }
             }
             else {
                 eb.setTitle("**You do not have these privileges**");
+                eb.setColor(Color.YELLOW);
                 event.getChannel().sendMessage(eb.build()).queue();
             }
         }
@@ -51,7 +55,7 @@ public class PrefixCommand extends Command {
         eb.addField("prefix (character)", "- Sets the current prefix to the typed character", true);
         eb.addField("Valid inputs", "Single character, preferably a common character", false);
         eb.setFooter("DM wiz#8158 if you have suggestions");
-        eb.setColor(Color.blue);
+        eb.setColor(Color.YELLOW);
         return eb;
     }
 }

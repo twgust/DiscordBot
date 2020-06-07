@@ -1,14 +1,18 @@
 package QuizModule.QuizMulti;
 
 import QuizModule.QuizSQLConnector;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * QuizMulti is the Quiz Multi Answer game
@@ -16,29 +20,33 @@ import java.util.LinkedList;
  * @version 2.0
  */
 public class QuizMulti implements Runnable {
+    private final String one = "1️⃣";
+    private final String two = "2️⃣";
+    private final String three = "3️⃣";
+    private final String four = "4️⃣";
     private Thread thread;
     private volatile boolean isRunning = false;
     private LinkedList<QuestionMulti> questions = new LinkedList<QuestionMulti>();
     private TextChannel channel;
     private String defaultUrl = "https://opentdb.com/api.php?amount=10&type=multiple"; //default api 10 questions, random categories and multiple choices
     private QuestionMulti currentQuestion = null;
-    private User correctUser;
     private Boolean answered = false;
     private Boolean working = true;
     private EmbedBuilder eb = new EmbedBuilder();
     private QuizSQLConnector dbConnection;
+    private EventWaiter waiter;
+    private ArrayList<String> answers;
 
     /*
     Constructors
      */
     public QuizMulti(TextChannel channel) {
         this.channel=channel;
-        questions = new QuizMultiParser(defaultUrl).getQuestions();
+
     }
 
     public QuizMulti() {
         try {
-            questions = new QuizMultiParser(defaultUrl).getQuestions();
         }
         catch(JSONException e ) {
             System.out.println("API-call error");
@@ -56,16 +64,17 @@ public class QuizMulti implements Runnable {
      */
     public void start(User user) {
         if(!isRunning && working) {
-            postMessage("Multi-answer Quiz game was started by " + user.getName());
+            postMessage("Multi-answer Quiz game was started by " + user.getName(), false);
+            questions = new QuizMultiParser(defaultUrl).getQuestions();
             isRunning = true;
             thread = new Thread(this);
             thread.start();
         }
         else if(!isRunning && !working) {
-            postMessage("Multi-answer Quiz cannot be started at this time, please try again later");
+            postMessage("Multi-answer Quiz cannot be started at this time, please try again later", false);
         }
         else{
-            postMessage("A session of Multi-answer Quiz is already running");
+            postMessage("A session of Multi-answer Quiz is already running", false);
         }
     }
 
@@ -75,12 +84,12 @@ public class QuizMulti implements Runnable {
      */
     public void stop(User user) {
         if(isRunning) {
-            postMessage("Multi-answer Quiz game was stopped by " + user.getName());
+            postMessage("Multi-answer Quiz game was stopped by " + user.getName(), false);
             isRunning = false;
             thread.interrupt();
         }
         else{
-            postMessage("There is no current session to stop");
+            postMessage("There is no current session to stop", false);
         }
     }
 
@@ -96,36 +105,53 @@ public class QuizMulti implements Runnable {
 
     @Override
     public void run() {
-        try{
+        try {
             thread.sleep(3000);
-            while (isRunning) {
-                if (!questions.isEmpty()) {
-                    postMessage(getQuestion()+"\n"+getAlternatives());
-                    limitChat(15);
+        }catch (InterruptedException e) {
+        }
+        while(isRunning){
+            if (!questions.isEmpty()) {
+                try {
+                    resetData();
+                    postMessage(getQuestion() + "\n" + getAlternatives(), true);
                     for (int i = 0; i < 300; i++) {
                         thread.sleep(50);
-                        if (answered || !isRunning) {
-                            break;
+                    }
+                    if(!answered){
+                        postMessage("Nobody answered correctly! \nThe correct answer is " + currentQuestion.getCorrectAnswer(), false);
+                    }
+                }
+            catch(NullPointerException e){
+                    isRunning = false;
+                    break;
+                }
+            catch(InterruptedException e){
+                    if (answered && isRunning) {
+                        try {
+                            thread.sleep(2000);
+                        } catch (InterruptedException iE) {
                         }
+                    } else if (!answered && isRunning) {
+                        try {
+                            thread.sleep(2000);
+                        } catch (InterruptedException iE) {
+                        }
+                        postMessage("Nobody answered correctly! \nThe correct answer is " + currentQuestion.getCorrectAnswer(), false);
                     }
-
-                    if (!isRunning) {
-                        break;
-                    }
-
-                    postCorrectAnswer(); //Posts the correct answer to the chat
-
-                } else{
-                    postMessage("Out of questions! Session will end shortly"); //Session ending
+                }
+            }
+            else {
+                    postMessage("Out of questions! Session will end shortly", false); //Session ending
                     isRunning = false;
                     break; //End of thread
-                }
-                thread.sleep(5000);
+            }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        catch (InterruptedException e) {
         }
-    }
 
     /**
      * Returns a question
@@ -152,15 +178,16 @@ public class QuizMulti implements Runnable {
 
     /**
      * Check if a user's given answer is correct
-     * @param author User name in Discord server
-     * @param msg Discord user's message
+     * @param user User name in Discord server
+     * @param answer  The answer given
      */
-    public void checkAnswer(User author, Message msg) {
-        if(currentQuestion!= null) {
-            if (msg.getContentRaw().equalsIgnoreCase(currentQuestion.getCorrectAnswer()) && !answered) {
-                correctUser = author;
+    public synchronized void checkAnswer(User user, String answer) {
+        if(currentQuestion!= null && answer.equals(currentQuestion.getCorrectAnswer())) {
                 answered = true;
-            }
+                postMessage("**" + user.getName() + " answered " + currentQuestion.getCorrectAnswer() + " which is correct!**" +
+                        "\n**" + user.getName() + " is awarded 1 point!**", false);
+                dbConnection.addToPoints(user.getId(), 1);
+                thread.interrupt();
         }
     }
 
@@ -170,41 +197,42 @@ public class QuizMulti implements Runnable {
      * @return String with all alternate answers
      */
     private String getAlternatives() {
+        answers = new ArrayList<String>();
         String res = "";
+        int counter = 1;
+        System.out.println();
+        System.out.println("Correct answer:" + currentQuestion.getCorrectAnswer());
         for(String alternative : currentQuestion.getAlternatives()){
-            res += "⚪" + "  " + alternative + "\n";
+            answers.add(alternative);
+            System.out.println("Alternative: " + alternative);
+            res += counter + "." + "  " + alternative + "\n";
+            counter++;
         }
         return res;
     }
 
 
     /**
-     * Posts the correct answer
-     * The post will change depending on if a user answered correctly, or if nobody did
-     */
-    private void postCorrectAnswer() {
-        if(correctUser == null) {
-            postMessage("**The correct answer is " + currentQuestion.getCorrectAnswer() + "!**");
-        }
-        else {
-            postMessage("**"+correctUser.getName() + " is correct with the answer " + currentQuestion.getCorrectAnswer() + "!**" +
-                    "\n**1 point is awarded!**");
-            dbConnection.addToPoints(correctUser.getId(),1);
-        }
-        resetData();
-    }
-
-
-    /**
      * Posts a message in the channel where the quiz game is running
-     * @param message Outgoing message, ex: Posting a question
+     * @param post Outgoing message, ex: Posting a question
      */
-    private void postMessage(String message) {
+    private void postMessage(String post, boolean reactions) {
         if(channel != null) {
             eb.clear();
-            eb.setTitle(message);
+            eb.setTitle(post);
             eb.setColor(Color.YELLOW);
-            channel.sendMessage(eb.build()).queue();
+            if(reactions) {
+                channel.sendMessage(eb.build()).queue(message -> {
+                    message.addReaction(one).queue();
+                    message.addReaction(two).queue();
+                    message.addReaction(three).queue();
+                    message.addReaction(four).queue();
+                    initWaiter(message.getIdLong(), message.getChannel(), answers);
+                });
+            }
+            else {
+                channel.sendMessage(eb.build()).queue();
+            }
         }
         else{
             System.out.println("Channel missing");
@@ -216,19 +244,88 @@ public class QuizMulti implements Runnable {
      */
     private void resetData() {
         answered = false;
-        correctUser = null;
-    }
-
-
-    /**
-     * Limits the chat traffic
-     * @param limit seconds when users can only send 1 message
-     */
-    private void limitChat(int limit) {
-        channel.getManager().setSlowmode(limit);
     }
 
     public void setDatabaseConnection(QuizSQLConnector dbConnection) {
         this.dbConnection=dbConnection;
+    }
+
+    public void skip(User user) {
+        if(isRunning) {
+            postMessage("The question was skipped by " + user.getName(), false);
+            thread.interrupt();
+        }
+        else{
+            postMessage("There is no current session running in which a question can be skipped", false);
+        }
+    }
+
+
+    /**
+     *
+     * @param messageId Unique ID for the message.
+     * @param channel The channel in which the message is sent
+     * @param answers The answers to choose from
+     */
+    private void initWaiter(long messageId, MessageChannel channel, ArrayList<String> answers) {
+            waiter.waitForEvent(MessageReactionAddEvent.class, e -> {
+                User user = e.getUser();
+                return checkEmote(e.getReactionEmote().getName()) && !user.isBot() && e.getMessageIdLong() == messageId;
+            }, (e) -> {
+                handleReaction(answers, e.getReactionEmote().getName(), channel, e.getUser());
+                if(!answered) {
+                    initWaiter(messageId, channel, answers);
+                }
+            }, 15, TimeUnit.SECONDS, () -> {
+                Thread.interrupted();
+            });
+    }
+
+    /**
+     *
+     * @param emote The clicked reaction emote
+     * @return
+     */
+    private boolean checkEmote(String emote) {
+        switch (emote) {
+            case one:
+            case two:
+            case three:
+            case four:
+                return true;
+            default:
+                System.out.println(false);
+                return false;
+        }
+    }
+
+    /**
+     * Handles the response when a user clicks on an emote to answer a question
+     * @param answers The listed answers
+     * @param emote The clicked emote
+     * @param channel The channel in which the emote was clicked
+     * @param user The user who clicked the emote
+     */
+    private void handleReaction(ArrayList<String> answers, String emote, MessageChannel channel, User user) {
+        if(currentQuestion != null && !answered) {
+            if (emote.equalsIgnoreCase("1️⃣")) {
+                System.out.println("user clicked alt 1");
+                checkAnswer(user, answers.get(0));
+            } else if (emote.equalsIgnoreCase("2️⃣")) {
+                System.out.println("user clicked alt 2");
+                checkAnswer(user, answers.get(1));
+            } else if (emote.equalsIgnoreCase("3️⃣")) {
+                System.out.println("user clicked alt 3");
+                checkAnswer(user, answers.get(2));
+            } else if (emote.equalsIgnoreCase("4️⃣")) {
+                System.out.println("user clicked alt 4");
+                checkAnswer(user, answers.get(3));
+            }
+        }
+    }
+
+
+    public void setEventWaiter(EventWaiter waiter) {
+        this.waiter=waiter;
     }
 }

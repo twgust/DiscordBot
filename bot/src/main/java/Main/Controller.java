@@ -61,7 +61,7 @@ public class Controller {
         JDA jda = new JDABuilder(token.getToken()).build();
         waiter = new EventWaiter();
         musicController = new MusicController(waiter);
-        quizCommand = new QuizCommand(jda);
+        quizCommand = new QuizCommand(jda, waiter);
         economyController = new EconomyController();
         LastFmSQL.createDB();
         WeatherSQL.createDB();

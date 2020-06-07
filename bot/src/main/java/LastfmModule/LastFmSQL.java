@@ -35,8 +35,8 @@ public class LastFmSQL {
                     "discordID VARCHAR(255) ,"+
                     "fmUsername VARCHAR(255),"+
                     "PRIMARY KEY ( discordID ))");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
