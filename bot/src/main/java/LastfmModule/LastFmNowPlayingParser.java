@@ -148,7 +148,7 @@ public class LastFmNowPlayingParser {
                         trackTemp = trackTemp.replace("%", "%25");
                     }
 
-                    LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "c806a80470bbd773b00c2b46b3a1fd75");
+                    LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "7c8cf63953bf97c9cbd89ca81e6e34c0");
                     if (trackParser.isLoaded()) {
                         result[0][7] = trackParser.getPlaycount();
                     } else result[0][7] = "Failed to load";
@@ -167,7 +167,7 @@ public class LastFmNowPlayingParser {
                 trackTemp = trackTemp.replace(" ", "+");
             }
 
-            LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "c806a80470bbd773b00c2b46b3a1fd75");
+            LastFmTrackParser trackParser = new LastFmTrackParser(artistTemp, trackTemp, getUsername(), "7c8cf63953bf97c9cbd89ca81e6e34c0");
             if(trackParser.isLoaded()){
                 result[0][7] = trackParser.getPlaycount();
             }
@@ -226,9 +226,5 @@ public class LastFmNowPlayingParser {
         this.nowplayingInfo = nowplayingInfo;
     }
 
-    public static void main(String[] args) {
-        LastFmNowPlayingParser lastFmNowPlayingParser = new LastFmNowPlayingParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874");
-        System.out.println(Arrays.deepToString(lastFmNowPlayingParser.getNowplayingInfo()));
 
-    }
 }

@@ -17,7 +17,7 @@ public class LastFmTopAlbumsParser {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=" + username + "&api_key=" + apikey + "&period=" + period + "&limit=" + 1000 + "&format=json"
-                    /*"http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=robi874&api_key=c806a80470bbd773b00c2b46b3a1fd75&format=json"*/)).build();
+                    )).build();
             client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body)
                     .thenAccept(this::parse)
@@ -87,10 +87,6 @@ public class LastFmTopAlbumsParser {
         this.topAlbums = topAlbums;
     }
 
-    public static void main(String[] args) {
-        LastFmTopAlbumsParser ta = new LastFmTopAlbumsParser("robi874" , "c806a80470bbd773b00c2b46b3a1fd75", "7day");
-        System.out.println(Arrays.deepToString(ta.getTopAlbums()));
-    }
 }
 
 

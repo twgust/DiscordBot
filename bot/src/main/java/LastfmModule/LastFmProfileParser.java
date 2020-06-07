@@ -72,8 +72,8 @@ public class LastFmProfileParser {
             }
             String usernameURL = user.getString("url");
             String username = usernameURL.substring(25);
-            LastFmTopTracksProfileParser tt = new LastFmTopTracksProfileParser("c806a80470bbd773b00c2b46b3a1fd75", username);
-            LastFmTopArtistProfileParser ta = new LastFmTopArtistProfileParser("c806a80470bbd773b00c2b46b3a1fd75", username);
+            LastFmTopTracksProfileParser tt = new LastFmTopTracksProfileParser("7c8cf63953bf97c9cbd89ca81e6e34c0", username);
+            LastFmTopArtistProfileParser ta = new LastFmTopArtistProfileParser("7c8cf63953bf97c9cbd89ca81e6e34c0", username);
             String topArtist = "Artist not found";
             String topTrack = "Track not found";
             if (ta.isLoaded() && tt.isLoaded()) {
@@ -141,9 +141,5 @@ public class LastFmProfileParser {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmProfileParser lastFmProfileParser = new LastFmProfileParser("robi874", "c806a80470bbd773b00c2b46b3a1fd75");
-
-    }
 
 }

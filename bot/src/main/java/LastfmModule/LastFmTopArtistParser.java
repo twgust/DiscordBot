@@ -83,12 +83,6 @@ public class LastFmTopArtistParser {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmTopArtistParser ta = new LastFmTopArtistParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874", "overall");
-        System.out.println(Arrays.deepToString(ta.getResultArtists()));
-        LastFmTopArtistParser ta2 = new LastFmTopArtistParser("c806a80470bbd773b00c2b46b3a1fd75", "abhi_sama", "overall");
-        System.out.println(Arrays.deepToString(ta2.getResultArtists()));
-        System.out.println();
-    }
+
 
 }

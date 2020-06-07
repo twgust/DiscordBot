@@ -81,11 +81,5 @@ public class LastFmTopTracksParser {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmTopTracksParser tt2 = new LastFmTopTracksParser("c806a80470bbd773b00c2b46b3a1fd75", "abhi_sama", "overall");
-        System.out.println(Arrays.deepToString(tt2.getResultTracks()));
-        LastFmTopTracksParser tt = new LastFmTopTracksParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874", "overall");
-        System.out.println(Arrays.deepToString(tt.getResultTracks()));
 
-    }
 }

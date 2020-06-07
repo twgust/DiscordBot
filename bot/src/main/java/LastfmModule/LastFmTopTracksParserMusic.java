@@ -123,8 +123,5 @@ public class LastFmTopTracksParserMusic {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmTopTracksParserMusic topTracksParserMusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", "robi874", "week", 5);
-        System.out.println(Arrays.deepToString(topTracksParserMusic.getResultTracks()));
-    }
+
 }

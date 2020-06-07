@@ -89,9 +89,6 @@ public class LastFmTopArtistProfileParser {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmTopArtistProfileParser ta = new LastFmTopArtistProfileParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874");
-        System.out.println(Arrays.deepToString(ta.getResultArtists()));
-    }
+
 
 }

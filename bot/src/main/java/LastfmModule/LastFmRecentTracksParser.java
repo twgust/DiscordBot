@@ -171,8 +171,4 @@ public class LastFmRecentTracksParser {
         this.loaded = loaded;
     }
 
-    public static void main(String[] args) {
-        LastFmRecentTracksParser rt = new LastFmRecentTracksParser("c806a80470bbd773b00c2b46b3a1fd75", "robi874", 10);
-        System.out.println(Arrays.deepToString(rt.getResultsRecents()));
-    }
 }

@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LastFmCommand extends Command {
     private long start;
     private String failedToLoad = "```⚠ Failed to load, try again please. ⚠```";
-    private static final String apikey = "c806a80470bbd773b00c2b46b3a1fd75";
+    private static final String apikey = "7c8cf63953bf97c9cbd89ca81e6e34c0";
     private String discordID;
     private String username;
     private String messageReceived;
@@ -946,7 +946,7 @@ public class LastFmCommand extends Command {
     public void playMusicFromTopList(String discordID, GuildMessageReceivedEvent event, LastFmSQL sql, String period) {
         if (sql.checkQuery(discordID)) {
             event.getChannel().sendMessage("```Loading music...```").queue(message -> {
-                LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("c806a80470bbd773b00c2b46b3a1fd75", sql.getUsername(discordID), getPeriodForAPICall(period), 5);
+                LastFmTopTracksParserMusic ttmusic = new LastFmTopTracksParserMusic("7c8cf63953bf97c9cbd89ca81e6e34c0", sql.getUsername(discordID), getPeriodForAPICall(period), 5);
                 sql.closeConnection();
                 if (ttmusic.isLoaded()) {
 

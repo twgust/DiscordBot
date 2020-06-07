@@ -356,18 +356,4 @@ public class LastFmSQL {
     }
 
 
-
-    public static void main(String[] args) {
-        String test = "test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n test xd \n ";
-        LastFmSQL sql = new LastFmSQL();
-        //sql.setUsername("110372734118174720", " robi874");
-        sql.checkQuery("110372734118174720");
-        sql.deleteQuery("110372734118174720");
-        String test1 = "dab";
-        //sql.getUsername("110372734118174720");
-        //sql.getUsername("110372734118174720");
-        System.out.println();
-
-        sql.closeConnection();
-    }
 }

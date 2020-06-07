@@ -83,8 +83,5 @@ public class LastFmYoutube {
         this.ytLink = ytLink;
     }
 
-    public static void main(String[] args) {
-        LastFmYoutube fmYoutube = new LastFmYoutube("c806a80470bbd773b00c2b46b3a1fd75", "robi874");
-        System.out.println(Arrays.toString(fmYoutube.getYtLink()));
-    }
+
 }

@@ -223,25 +223,4 @@ public class LastFmTopAlbumHTML {
 
      */
 
-    public static void main(String[] args) throws IOException {
-        LastFmTopAlbumHTML topAlbumHTML = new LastFmTopAlbumHTML();
-        String[][]array = new String[97][4];
-        for (int i = 0; i < array.length; i++){
-            if(i == 0 || i == 1){
-                array[i][0] = "artist";
-                array[i][1] = "album";
-                array[i][2] = "playcount";
-                array[i][3] = "https://lastfm.freetls.fastly.net/i/u/300x300/bc85d77d2746baca88059f32c12395ec.jpg";
-            }
-            else {
-                array[i][0] = "artist";
-                array[i][1] = "album";
-                array[i][2] = "playcount";
-                array[i][3] = "https://lastfm.freetls.fastly.net/i/u/300x300/29a0e7984be76ad9bd0b047f7de2242f.jpg";
-            }
-        }
-        //topAlbumHTML.createImageFromHTML(array, 10, 10);
-        //topAlbumHTML.createJSFile(300*10, 300*10);
-        //topAlbumHTML.runJSFile();
-    }
 }
