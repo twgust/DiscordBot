@@ -1563,7 +1563,7 @@ public class LastFmCommand extends Command {
                 "Text in `[brackets]` are mandatory, text in `(parenthesis)` are not.");
         eb.addField("`fm set [username]`", "- Links [username] with discord account \n 🛑 MUST BE SET BEFORE USING OTHER COMMANDS 🛑", true);
         eb.addField("Valid shorthands", "toptracks: `toptracks`/`tt` \ntopartists: `topartists`/`ta` \nnowplaying: `nowplaying`/`np` \nrecent: `recent`/`rt` \nyoutube: `youtube`/`yt` \nprofile: `profile`/`p` \n\nExample: `fm tt week` instead of `fm toptracks week`", false);
-        eb.addField("Valid time periods", "Week: `week`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at` \n\nExample: `fm toptracks ` instead of `fm toptracks week`", false);
+        eb.addField("Valid time periods", "Week: `week`/`w` \nMonth: `1month`/`1m` \n3 months: `3month`/`3m` \n6 months: `6month`/`6m` \nYear: `12month`/`12m`/`year`/`y` \nOverall: `overall`/`alltime`/`at` \n\nExample: `fm toptracks w` instead of `fm toptracks week`", false);
         eb.addField("`fm set [username]`", "- Links (username) with discord account", true);
         eb.addField("`fm delete`", "- Unlinks username", true);
         eb.addField("`fm profile (username)`", "- Shows last fm profile", true);
