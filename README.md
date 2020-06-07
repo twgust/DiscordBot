@@ -1,4 +1,5 @@
 # DiscordBotBotten är skapad med hjälp av JDA, Java Discord API och med ett konto på Discords hemsida. https://discord.com/
+https://github.com/twgust/DiscordBot/
 
 All inmatning sker på deras sida, därför är man tvungen att ha ett konto på deras hemsida.
 
