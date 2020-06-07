@@ -14,7 +14,7 @@ public class MusicHelp extends Command {
         embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(Color.YELLOW);
         embedBuilder.setTitle("Music Module 🎶", "https://github.com/twgust/DiscordBot/tree/master/bot/src/main/java/MusicModule");
-        embedBuilder.setDescription("https://github.com/twgust/");
+        //embedBuilder.setDescription("https://github.com/twgust/");
         embedBuilder.addField("play [song]", "plays a song", true);
         embedBuilder.addField("skip", "skips", true);
         embedBuilder.addField("queue", "returns queue", true);
