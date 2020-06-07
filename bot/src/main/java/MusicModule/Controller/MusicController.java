@@ -273,7 +273,7 @@ public class MusicController {
                 lastFMTracks.add(track);
                 scheduler.addToQueue(track, member);
                 counter++;
-                placeHolder(event);
+                embeddBuilderFM(event);
                 }
 
             @Override
@@ -290,7 +290,7 @@ public class MusicController {
         });
     }
 
-    public void placeHolder(GuildMessageReceivedEvent event){
+    public void embeddBuilderFM(GuildMessageReceivedEvent event){
         if(counter == 4){
             counter = 0;
             int number = lastFMTracks.size();
