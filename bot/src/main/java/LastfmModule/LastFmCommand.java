@@ -1572,6 +1572,7 @@ public class LastFmCommand extends Command {
         eb.addField("`fm toptracks (period) (trackamount)`", "- Shows a list of the top tracks for a given period", true);
         eb.addField("`fm topartists (period) (trackamount)`", "- Shows a list of top artists for given period", true);
         eb.addField("`fm youtube (username) / (DiscordUser)`", "- Gives youtube-links to the songs the user is listening to", true);
+        eb.addField("`fm topalbums (period) (amount)`", "- Shows a list of top albums for given period", true);
         eb.addBlankField(false);
         eb.setFooter("DM Robic#2351 if you have suggestions");
         eb.setColor(Color.YELLOW);
