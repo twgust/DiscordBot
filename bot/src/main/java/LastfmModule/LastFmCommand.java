@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LastFmCommand extends Command {
     private long start;
     private String failedToLoad = "```⚠ Failed to load, try again please. ⚠```";
-    private static final String apikey = "7c8cf63953bf97c9cbd89ca81e6e34c0";
+    private static final String apikey = "";
     private String discordID;
     private String username;
     private String messageReceived;
